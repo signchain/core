@@ -41,9 +41,6 @@ describe("Signchain", function () {
       const document = await contractInstance.connect(account1).signAndShareDocument(
         docHash,
         "test Doc",
-        "doc location",
-        ["AesEncKeyPartyA","AesEncKeyPartyB"],
-        [account1._address,account2._address],
         [account1._address,account2._address],
         replayNonce,
         signature,
@@ -84,9 +81,6 @@ describe("Signchain", function () {
     const document = await contractInstance.connect(account1).signAndShareDocument(
       docHash,
       "test Doc",
-      "doc location",
-      ["AesEncKeyPartyA","AesEncKeyPartyB"],
-      [account1._address,account2._address],
       [account1._address, notary._address],
       replayNonce,
       signature,
