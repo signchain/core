@@ -32,25 +32,15 @@ contract Signchain is DocumentRegistry, SigningModule {
         _;
     }
 
-    function signAndShareDocument(bytes32 documentHash, string memory title, string memory documentLocation,
-                                string[] memory key, address[] memory users, address[] memory signers,
+    function signAndShareDocument(bytes32 documentHash, string memory title, address[] memory signers,
                                 uint nonce, bytes memory signature, address notary) public payable {
-
-        uploadDocument(
-        documentHash,
-        documentLocation,
-        key,
-        users);
 
         if(notary!= address(0)) {
             require(msg.value == notaryFee, "Invalid Notary Fee");
             notarizedDocs[documentHash] = Notarize(notary, msg.value, false);
         }
-    
         addDocument(documentHash, title, signers);
-
         signDocument(documentHash, nonce, signature);
-  
     }
 
     function notarizeDocument(bytes32 documentHash, uint nonce, bytes memory signature) isNotary public {

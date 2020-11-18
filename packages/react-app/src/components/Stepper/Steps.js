@@ -11,6 +11,7 @@ import SelectParties from './SelectParties'
 import Preview from './Preview'
 
 const index = require('../../lib/e2ee.js')
+const threadDb = require('../../lib/threadDb.js')
 
 const { Step } = Steps;
 
@@ -52,6 +53,7 @@ const steps = [
 
 const stepper = props => {
   const password = localStorage.getItem("password");
+  const loggedUser = localStorage.getItem("USER");
 
   const [signer, setSigner] = useState({});
   const fileStorage = ["AWS", "Fleek"];
@@ -65,20 +67,26 @@ const stepper = props => {
   const [storageType, setStorage] = useState("AWS");
   const [fileInfo, setFileInfo] = useState({});
   const [title, setTitle] = useState(null);
+  const [dbClient,setDBClient] = useState(null)
+  const [identity, setIdentity] = useState(null)
 
   let fileInputRef = React.createRef();
 
   useEffect(() => {
     if (props.writeContracts) {
-      props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
-      });
+      props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {});
       setSigner(props.userProvider.getSigner());
-      index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
-
-        setUsers(result.userArray);
-        setCaller(result.caller);
-        setNotaries(result.notaryArray);
-      });
+      const userInfo = JSON.parse(loggedUser)
+      threadDb.init('0x25f77f929eC8bD36ea7Ef06DB98dECD12501').then((result)=>{
+        setDBClient(result.client)
+        setIdentity(result.identity)
+        threadDb.getAllUsers(result.client, userInfo.email).then(result => {
+          setUsers(result.userArray);
+          setCaller(result.caller);
+          setNotaries(result.notaryArray);
+        });
+        console.log("UseEffect Login all set!!")
+      })
     }
   }, [props.writeContracts]);
 
@@ -134,17 +142,19 @@ const stepper = props => {
                     onClick={() => {
                       const allParties = parties;
                       allParties.push(caller);
-                      index.registerDoc(
+                      threadDb.registerDoc(
                         allParties,
                         fileInfo.fileHash,
                         fileInfo.cipherKey,
                         title,
                         fileInfo.fileKey,
+                        fileInfo.fileName,
                         setSubmitting,
-                        props.tx,
-                        props.writeContracts,
                         signer,
                         docNotary,
+                        dbClient,
+                        props.tx,
+                        props.writeContracts,
                       );
                     }}
                     className="button"

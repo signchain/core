@@ -5,22 +5,24 @@ import { Checkbox } from "semantic-ui-react";
 import { Button } from "antd";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logoInverted.png";
-import Cookies from "universal-cookie";
-const cookies = new Cookies();
 
 const index = require("../../lib/e2ee.js");
+const threadDb = require('../../lib/threadDb.js')
 import { profileSchema } from "../../ceramic/schemas";
 import { createDefinition } from "@ceramicstudio/idx-tools";
 
 import test from "./img/test.png";
 
-function SignUpForm({ writeContracts, tx, ceramic, idx }) {
+function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
   let history = useHistory();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [notary, setNotary] = useState(false);
+  const [dbClient,setDBClient] = useState(null);
+  const [identity, setIdentity] = useState(null);
+
 
   const SignupStatus = { preInit: 0, init: 1, wallet: 2, ceramic: 3, contract: 4 };
   const [signupStatus, setSignupStatus] = useState(SignupStatus.preInit);
@@ -31,17 +33,25 @@ function SignUpForm({ writeContracts, tx, ceramic, idx }) {
     async function getUserData() {
         try{
          if(idx) {
-
-          setSignupStatus(SignupStatus.init);
-             
+           console.log("IDDD")
+           setSignupStatus(SignupStatus.init);
          }
         }catch(err){
             console.log(err);
         }
-        
     }
      getUserData()
  }, [idx] )
+
+  useEffect(()=>{
+    threadDb.init("0x25f77f929eC8bD36ea7Ef06DB98dECD12501").then((result)=>{
+      setDBClient(result.client)
+      setIdentity(result.identity)
+      console.log("USER ADDRESS:",address)
+      console.log("UseEffect all set!!")
+      setSignupStatus(SignupStatus.init);
+    })
+  },[])
 
   const registerUser = async () => {
     setSignupStatus(SignupStatus.wallet);
@@ -49,30 +59,32 @@ function SignUpForm({ writeContracts, tx, ceramic, idx }) {
 
     if (walletStatus) {
       const accounts = await index.getAllAccounts(password);
-      setSignupStatus(SignupStatus.ceramic);
-      const profileId = await createDefinition(ceramic, {
-        name: "Signchain Profile",
-        schema: profileSchema,
-      });
-
-      await idx.set(profileId, {
-        name: name,
-        email: email,
-        notary: notary,
-      });
-
-      localStorage.setItem("profileSchema", profileId);
-      setSignupStatus(SignupStatus.contract);
-      const registrationStatus = await index.registerUser(
+      // setSignupStatus(SignupStatus.ceramic);
+      // const profileId = await createDefinition(ceramic, {
+      //   name: "Signchain Profile",
+      //   schema: profileSchema,
+      // });
+      //
+      // await idx.set(profileId, {
+      //   name: name,
+      //   email: email,
+      //   notary: notary,
+      // });
+      //
+      // localStorage.setItem("profileSchema", profileId);
+      // setSignupStatus(SignupStatus.contract);
+      console.log("CLIENT:",dbClient)
+      const registrationStatus = await threadDb.registerUser(
         name,
         email,
+        password,
         accounts[0],
         notary ? userType.notary : userType.party,
-        tx,
-        writeContracts,
+        address,
+        identity,
+        dbClient
       );
       if (registrationStatus) {
-        cookies.set("userAddress", registrationStatus);
         history.push({
           pathname: "/login",
         });
@@ -155,7 +167,7 @@ function SignUpForm({ writeContracts, tx, ceramic, idx }) {
               ) : 
               <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
                Initiating ...
-            </Button>
+              </Button>
               }
               <span className="form-input-login">
                 Already have an account? Login <Link to="/login">here</Link>
