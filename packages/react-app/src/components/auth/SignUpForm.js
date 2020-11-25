@@ -7,7 +7,7 @@ import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logoInverted.png";
 
 const index = require("../../lib/e2ee.js");
-const threadDb = require('../../lib/threadDb.js')
+import {authorizeUser, registerNewUser} from "../../lib/threadDb";
 import { profileSchema } from "../../ceramic/schemas";
 import { createDefinition } from "@ceramicstudio/idx-tools";
 
@@ -20,38 +20,25 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [notary, setNotary] = useState(false);
-  const [dbClient,setDBClient] = useState(null);
-  const [identity, setIdentity] = useState(null);
-
 
   const SignupStatus = { preInit: 0, init: 1, wallet: 2, ceramic: 3, contract: 4 };
   const [signupStatus, setSignupStatus] = useState(SignupStatus.preInit);
   const userType = { party: 0, notary: 1 };
-  
 
   useEffect(() => {
     async function getUserData() {
-        try{
+      setSignupStatus(SignupStatus.init);
+        /*try{
          if(idx) {
            console.log("IDDD")
            setSignupStatus(SignupStatus.init);
          }
         }catch(err){
             console.log(err);
-        }
+        }*/
     }
      getUserData()
  }, [idx] )
-
-  useEffect(()=>{
-    threadDb.init("0x25f77f929eC8bD36ea7Ef06DB98dECD12501").then((result)=>{
-      setDBClient(result.client)
-      setIdentity(result.identity)
-      console.log("USER ADDRESS:",address)
-      console.log("UseEffect all set!!")
-      setSignupStatus(SignupStatus.init);
-    })
-  },[])
 
   const registerUser = async () => {
     setSignupStatus(SignupStatus.wallet);
@@ -59,35 +46,39 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
 
     if (walletStatus) {
       const accounts = await index.getAllAccounts(password);
-      // setSignupStatus(SignupStatus.ceramic);
-      // const profileId = await createDefinition(ceramic, {
-      //   name: "Signchain Profile",
-      //   schema: profileSchema,
-      // });
-      //
-      // await idx.set(profileId, {
-      //   name: name,
-      //   email: email,
-      //   notary: notary,
-      // });
-      //
-      // localStorage.setItem("profileSchema", profileId);
-      // setSignupStatus(SignupStatus.contract);
-      console.log("CLIENT:",dbClient)
-      const registrationStatus = await threadDb.registerUser(
-        name,
-        email,
-        password,
-        accounts[0],
-        notary ? userType.notary : userType.party,
-        address,
-        identity,
-        dbClient
-      );
-      if (registrationStatus) {
-        history.push({
-          pathname: "/login",
-        });
+      /*setSignupStatus(SignupStatus.ceramic);
+      const profileId = await createDefinition(ceramic, {
+        name: "Signchain Profile",
+        schema: profileSchema,
+      });
+
+      await idx.set(profileId, {
+        name: name,
+        email: email,
+        notary: notary,
+      });
+
+      localStorage.setItem("profileSchema", profileId);
+      setSignupStatus(SignupStatus.contract);*/
+      const dbClient = await authorizeUser(password)
+      if (dbClient!==null) {
+        console.log("CLIENT:", dbClient)
+        const registrationStatus = await registerNewUser(
+          'did',
+          name,
+          email,
+          accounts[0],
+          notary ? userType.notary : userType.party,
+          address,
+          dbClient
+        );
+        if (registrationStatus) {
+          history.push({
+            pathname: "/login",
+          });
+        }
+      }else{
+        console.log("Some error occurred!!!")
       }
     }
   };

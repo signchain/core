@@ -1,11 +1,10 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
 import { Button, Icon, Loader, Table, Modal, Step } from "semantic-ui-react";
-import { InfoCircleOutlined, FieldTimeOutlined, EditOutlined } from "@ant-design/icons";
 import { Badge } from "antd";
+import {authorizeUser, getAllUsers, getAllFile, downloadFiles} from "../lib/threadDb";
 
 const index = require("../lib/e2ee");
-const threadDb = require("../lib/threadDb.js")
 
 import { Collapse } from "antd";
 const userType = { party: 0, notary: 1 };
@@ -32,19 +31,17 @@ export default function Documents(props) {
   useEffect(() => {
     if (props.writeContracts) {
 
-      threadDb.init('0x25f77f929eC8bD36ea7Ef06DB98dECD12501').then((result)=> {
-        setDBClient(result.client)
-        setIdentity(result.identity)
-
+      authorizeUser(password).then((client)=>{
+        setDBClient(client)
         props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
-          getAllDoc(result.client);
+          getAllDoc(client);
         });
         props.writeContracts.Signchain.on("DocumentNatarized", (author, oldValue, newValue, event) => {
-          getAllDoc(result.client);
+          getAllDoc(client);
         });
-        getAllDoc(result.client);
+        getAllDoc(client);
         setSigner(props.userProvider.getSigner());
-        threadDb.getAllUsers(result.client, userInfo.email).then(result => {
+        getAllUsers(client, userInfo.publicKey).then(result => {
           setCaller(result.caller);
         });
       })
@@ -55,8 +52,7 @@ export default function Documents(props) {
   const getAllDoc = async (client) => {
     setLoading(true);
     const userInfo = JSON.parse(loggedUser)
-    const doc = await threadDb.getAllFile(client,userInfo.email, props.tx, props.writeContracts,
-        props.address)
+    const doc = await getAllFile(client,userInfo.publicKey, props.tx, props.writeContracts, props.address)
     if (doc.length > 0) {
       setDocs(doc);
     }
@@ -66,7 +62,7 @@ export default function Documents(props) {
   const downloadFile = (name, key, location) => {
     setDownloading(name);
     console.log("docment:",location)
-    threadDb.downloadFile(name, key, userInfo.email, location, password)
+    downloadFiles(name, key, userInfo.email, location, password)
         .then(result => {setDownloading(null)});
   };
 

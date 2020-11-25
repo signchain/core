@@ -1,7 +1,6 @@
 /* eslint-disable */
 
 import React, {useEffect, useState} from 'react';
-import Dashboard from '../Dashboard'
 import 'antd/dist/antd.css';
 import './stepper.css';
 import { Steps, Button, message } from 'antd';
@@ -9,9 +8,7 @@ import { Grid, Image } from 'semantic-ui-react'
 import SelectFiles from './SelectFiles'
 import SelectParties from './SelectParties'
 import Preview from './Preview'
-
-const index = require('../../lib/e2ee.js')
-const threadDb = require('../../lib/threadDb.js')
+import {authorizeUser, getAllUsers, registerDoc} from "../../lib/threadDb";
 
 const { Step } = Steps;
 
@@ -67,8 +64,7 @@ const stepper = props => {
   const [storageType, setStorage] = useState("AWS");
   const [fileInfo, setFileInfo] = useState({});
   const [title, setTitle] = useState(null);
-  const [dbClient,setDBClient] = useState(null)
-  const [identity, setIdentity] = useState(null)
+  const [dbClient, setDbClient] = useState(null);
 
   let fileInputRef = React.createRef();
 
@@ -77,15 +73,14 @@ const stepper = props => {
       props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {});
       setSigner(props.userProvider.getSigner());
       const userInfo = JSON.parse(loggedUser)
-      threadDb.init('0x25f77f929eC8bD36ea7Ef06DB98dECD12501').then((result)=>{
-        setDBClient(result.client)
-        setIdentity(result.identity)
-        threadDb.getAllUsers(result.client, userInfo.email).then(result => {
+      authorizeUser(password).then(client=>{
+        setDbClient(client)
+        getAllUsers(client, userInfo.publicKey).then(result => {
+          console.log("USERS::",result)
           setUsers(result.userArray);
           setCaller(result.caller);
           setNotaries(result.notaryArray);
         });
-        console.log("UseEffect Login all set!!")
       })
     }
   }, [props.writeContracts]);
@@ -142,7 +137,7 @@ const stepper = props => {
                     onClick={() => {
                       const allParties = parties;
                       allParties.push(caller);
-                      threadDb.registerDoc(
+                      registerDoc(
                         allParties,
                         fileInfo.fileHash,
                         fileInfo.cipherKey,

@@ -18,9 +18,9 @@ export default function Database(){
         type: 'object',
         properties: {
             _id: {type:'string'},
+            did: {type:'string'},
             name: {type: 'string'},
             email: {type: 'string'},
-            password: { type: 'string' },
             address: { type: 'string'},
             publicKey: { type: 'string'},
             userType: { type: 'number'},

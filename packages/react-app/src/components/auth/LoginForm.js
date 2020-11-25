@@ -1,11 +1,8 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
-import { Button, Form, Grid, Header, Image, Message, Segment } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
-//import logo from "../../static/logo.png";
 const index = require("../../lib/e2ee.js");
-const e2e = require("../../lib/e2e-encrypt.js")
-const threadDb = require("../../lib/threadDb.js")
+import {getLoginUser, authorizeUser} from "../../lib/threadDb";
 import test from "./img/test.png";
 import logo from "../../images/logoInverted.png";
 import "./Form.css";
@@ -13,30 +10,20 @@ import "./Form.css";
 function LoginForm(props) {
   let history = useHistory();
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [dbClient,setDBClient] = useState(null)
-  const [identity, setIdentity] = useState(null)
-
-  useEffect(() => {
-    threadDb.init('0x25f77f929eC8bD36ea7Ef06DB98dECD12501').then((result)=>{
-      setDBClient(result.client)
-      setIdentity(result.identity)
-      console.log("UseEffect Login all set!!")
-    })
-  }, []);
 
   async function loginUser() {
-    let loginID = await threadDb.loginUser(email,password,identity,dbClient)
-    if (loginID!==null) {
-      let accounts = await index.getAllAccounts(password);
-      console.log("LoginID:",loginID)
-      const json = {
-        email: email,
-        _id: loginID
+    const dbClient = await authorizeUser(password)
+    if (dbClient!==null) {
+      const accounts = await index.getAllAccounts(password);
+      let userInfo = await getLoginUser(accounts[0], dbClient)
+      if (userInfo !== null) {
+        console.log("User Info:", userInfo)
+        localStorage.setItem("USER", JSON.stringify(userInfo))
+        localStorage.setItem("password", password);
+        history.push('/dashboard')
       }
-      localStorage.setItem("USER",JSON.stringify(json))
-      localStorage.setItem("password", password);
-      history.push('/dashboard')
+    }else {
+      console.log("Some error!!!")
     }
   }
 
@@ -50,18 +37,6 @@ function LoginForm(props) {
             </div>
             <div className="form">
               <h2>Login to your Account</h2>
-
-              <div className="form-inputs">
-                <label className="form-label">Email</label>
-                <input
-                    className="form-input"
-                    type="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                />
-              </div>
 
               <div className="form-inputs">
                 <label className="form-label">Password</label>

@@ -4,90 +4,59 @@ const e2e = require('./e2e-encrypt.js')
 const e2ee = require('./e2ee.js')
 const fileDownload = require('js-file-download')
 const {PrivateKey, createUserAuth, Client, Where, ThreadID} = require('@textile/hub')
-const fleekStorage = require('@fleekhq/fleek-storage-js')
 const wallet = require('wallet-besu')
 const ethers = require('ethers')
-
-let fromUser
 
 const keyInfo = {
     key:'be645tj5wtjuginby3fwnqhe57y',
     secret:'bcm7zjaxlipajgsm6qd6big7lv52cihf2whbbaji'
 }
 
-const threadDbId = [1, 85, 99, 157, 222, 13, 22, 72, 96, 32, 153, 96, 32, 162, 85, 157, 29, 146,
-    214, 75, 9, 49, 56, 114, 130, 72, 139, 200, 123, 33, 51, 80, 191, 201]
+const threadDbId = [1, 85, 96, 42, 105, 247, 113, 107, 30, 172, 138, 152, 79, 105, 200, 155, 166, 203, 19,
+    199, 98, 41, 139, 71, 6, 103, 216, 114, 197, 198, 186, 245, 57, 72]
 
-const fleekApiKey = "t8DYhMZ1ztjUtOFC8qEDqg=="
-const fleekApiSecret = "XwZyU7RZ3H2Z1QHhUdFdi4MJx8j1axJm2hEq1olRWeU="
-
-export const init = async function(seed) {
-    const identity = await generateIdentity(seed)
-    const dbClient = await setThreadDb(identity)
-    return {
-        client: dbClient,
-        identity: identity
+export const authorizeUser = async (password)=>{
+    try {
+        const userAuth = await createUserAuth(keyInfo.key, keyInfo.secret)
+        const seed = e2e.convertPass(password)
+        const seedPhase = new Uint8Array(Buffer.from(seed))
+        const identity = PrivateKey.fromRawEd25519Seed(seedPhase)
+        const privateKey = await PrivateKey.fromString(identity.toString())
+        const dbClient = await Client.withUserAuth(userAuth)
+        const token = await dbClient.getToken(privateKey)
+        console.log("User authorized!!!")
+        return dbClient
+    }catch (err){
+        console.log('ERROR:',err)
+        return null
     }
 }
 
-const generateIdentity = async (seedString) => {
-    const seed = seedString.substring(0,32)
-    console.log("seed:",seed)
-    const seedPhase = new Uint8Array(Buffer.from(seed))
-    const identity = PrivateKey.fromRawEd25519Seed(seedPhase)
-    console.log("identity generated!!",identity)
-    return identity
-}
-
-const setThreadDb = async (identity)=>{
-    const userAuth = await createUserAuth(keyInfo.key,keyInfo.secret)
-    const privateKey = await PrivateKey.fromString(identity.toString())
-    const dbClient = await Client.withUserAuth(userAuth)
-    const token = await dbClient.getToken(privateKey)
-    console.log("ThreadDB setup done!!!")
-    return dbClient
-}
-
-export const registerUser = async function(name, email, password, privateKey, userType, address,
-                                           identity,dbClient){
+export const registerNewUser = async function(did, name, email, privateKey, userType, address, dbClient){
     try {
-        const query = new Where('email').eq(email)
         const threadId = ThreadID.fromBytes(threadDbId)
-        const result = await dbClient.find(threadId, 'RegisterUser', query)
-        if (result.length>0) {
-            console.log("Email exists!")
-            return false
-        }
         let publicKey = e2e.getPublicKey(privateKey)
-        const hashPass = e2e.convertPass(password)
         const data = {
+            did:did,
             name: name,
             email: email,
             address: address,
-            password: hashPass.toString("hex"),
             publicKey: publicKey.toString("hex"),
             userType: userType,
             documentId: ["-1"]
         }
-        const insertStatus = await insertData(dbClient,data,'RegisterUser')
-        console.log("User registration status:",insertStatus)
+        const status = await dbClient.create(threadId, 'RegisterUser', [data])
+        console.log("User registration status:",status)
         return true
     }catch(err){
         throw err
     }
 }
 
-const insertData = async (dbClient,data,schemaName) =>{
-    const threadId = ThreadID.fromBytes(threadDbId)
-    const insertStatus = await dbClient.create(threadId, schemaName, [data])
-    console.log("Insert Data status:",insertStatus)
-    return true
-}
-
-export const loginUser = async function(email,password,identity,dbClient){
+export const getLoginUser = async function(privateKey, dbClient){
     try {
-        const hashPass = e2e.convertPass(password)
-        const query = new Where('email').eq(email)
+        let publicKey = e2e.getPublicKey(privateKey)
+        const query = new Where('publicKey').eq(publicKey.toString("hex"))
         const threadId = ThreadID.fromBytes(threadDbId)
         const result = await dbClient.find(threadId, 'RegisterUser', query)
         console.log("RESULT:",result)
@@ -95,11 +64,7 @@ export const loginUser = async function(email,password,identity,dbClient){
             console.log("Please register user!")
             return null
         }
-        if (result[0].password!==hashPass.toString("hex")){
-            console.log("Wrong pass!!")
-            return null
-        }
-        return result[0]._id
+        return result[0]
     }catch (err) {
         throw err
     }
@@ -107,10 +72,8 @@ export const loginUser = async function(email,password,identity,dbClient){
 
 export const getAllUsers = async function(dbClient,loggedUser){
     console.log("Logg:",loggedUser)
-    //const query = new Where('email').ne(loggedUser)
     const threadId = ThreadID.fromBytes(threadDbId)
     const registeredUsers = await dbClient.find(threadId, 'RegisterUser', {})
-    console.log("REGISTERED:",registeredUsers)
     const userType = {party: 0, notary: 1}
     let caller
     let userArray = []
@@ -125,8 +88,7 @@ export const getAllUsers = async function(dbClient,loggedUser){
             key: result.publicKey,
             userType: result.userType,
         }
-        console.log("RESULT:",result)
-        if (loggedUser === result.email) {
+        if (loggedUser === result.publicKey) {
             caller =value
         }else if (result.userType === userType.notary){
             notaryArray.push(value)
@@ -135,9 +97,6 @@ export const getAllUsers = async function(dbClient,loggedUser){
             userArray.push(value)
         }
     }
-    console.log("UserArray:",userArray)
-    console.log("nota:",notaryArray)
-    console.log("caller:",caller)
     return {
         userArray: userArray,
         notaryArray: notaryArray,
@@ -183,8 +142,9 @@ export const registerDoc = async function(party, fileHash, cipherKey, title, fil
     console.log("Status:",status)
 
     for (let i=0; i<party.length; i++){
-        const query = new Where('email').eq(party[i].email)
+        const query = new Where('publicKey').eq(party[i].key)
         const user = await dbClient.find(threadId, 'RegisterUser', query)
+        console.log("USER222:",user)
         if (user[0].documentId.length===1 && user[0].documentId[0]==="-1"){
             user[0].documentId = [status[0]]
         }else {
@@ -223,9 +183,9 @@ const signDocument = async function (fileHash, tx, writeContracts , signer){
 }
 
 
-export const getAllFile = async function(dbClient, loggedUser, tx, writeContracts,address){
+export const getAllFile = async function(dbClient, loggedUserKey, tx, writeContracts,address){
     const threadId = ThreadID.fromBytes(threadDbId)
-    const query = new Where('email').eq(loggedUser)
+    const query = new Where('publicKey').eq(loggedUserKey)
     const users = await dbClient.find(threadId, 'RegisterUser', query)
     let result = []
     let documents =[]
@@ -265,7 +225,7 @@ export const getAllFile = async function(dbClient, loggedUser, tx, writeContract
     return result
 }
 
-export const downloadFile = async function (name, key, loggedUser,documentLocation, password){
+export const downloadFiles = async function (name, key, loggedUser,documentLocation, password){
 
     let cipherKey = null
     for (let i=0;i<key.length;i++){
