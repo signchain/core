@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 const index = require("../../lib/e2ee.js");
 import {getLoginUser, authorizeUser} from "../../lib/threadDb";
+import wallet from 'wallet-besu'
 import test from "./img/test.png";
 import logo from "../../images/logoInverted.png";
 import "./Form.css";
@@ -12,18 +13,22 @@ function LoginForm(props) {
   const [password, setPassword] = useState("");
 
   async function loginUser() {
-    const dbClient = await authorizeUser(password)
-    if (dbClient!==null) {
-      const accounts = await index.getAllAccounts(password);
-      let userInfo = await getLoginUser(accounts[0], dbClient)
-      if (userInfo !== null) {
-        console.log("User Info:", userInfo)
-        localStorage.setItem("USER", JSON.stringify(userInfo))
-        localStorage.setItem("password", password);
-        history.push('/dashboard')
+    const accounts = await wallet.login(password);
+    if (accounts!==null) {
+      const dbClient = await authorizeUser(password)
+      if (dbClient !== null) {
+        let userInfo = await getLoginUser(accounts[0], dbClient)
+        if (userInfo !== null) {
+          console.log("User Info:", userInfo)
+          localStorage.setItem("USER", JSON.stringify(userInfo))
+          localStorage.setItem("password", password);
+          history.push('/dashboard')
+        }
+      } else {
+        console.log("Some error!!!")
       }
-    }else {
-      console.log("Some error!!!")
+    }else{
+      console.log("Wrong password!!")
     }
   }
 
