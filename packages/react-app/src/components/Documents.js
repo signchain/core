@@ -1,10 +1,11 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
 import { Button, Icon, Loader, Table, Modal, Step } from "semantic-ui-react";
-import { InfoCircleOutlined, FieldTimeOutlined, EditOutlined } from "@ant-design/icons";
 import { Badge } from "antd";
+import {authorizeUser, getAllUsers, getAllFile, downloadFiles} from "../lib/threadDb";
 
 const index = require("../lib/e2ee");
+
 import { Collapse } from "antd";
 const userType = { party: 0, notary: 1 };
 
@@ -13,6 +14,8 @@ const { Panel } = Collapse;
 
 export default function Documents(props) {
   const password = localStorage.getItem("password");
+  const loggedUser = localStorage.getItem("USER");
+  const userInfo = JSON.parse(loggedUser)
 
   const [open, setOpen] = useState(false);
   const [caller, setCaller] = useState({});
@@ -21,46 +24,56 @@ export default function Documents(props) {
   const [docInfo, setDocInfo] = useState({});
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(null);
+  const [dbClient,setDBClient] = useState(null)
+  const [identity, setIdentity] = useState(null)
 
 
   useEffect(() => {
     if (props.writeContracts) {
-      props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
-        getAllDoc();
-      });
-      props.writeContracts.Signchain.on("DocumentNatarized", (author, oldValue, newValue, event) => {
-        getAllDoc();
-      });
-      getAllDoc();
-      setSigner(props.userProvider.getSigner());
-      index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
-        setCaller(result.caller);
-      });
+
+      authorizeUser(password).then((client)=>{
+        setDBClient(client)
+        props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
+          getAllDoc(client);
+        });
+        props.writeContracts.Signchain.on("DocumentNatarized", (author, oldValue, newValue, event) => {
+          getAllDoc(client);
+        });
+        getAllDoc(client);
+        setSigner(props.userProvider.getSigner());
+        getAllUsers(client, userInfo.publicKey).then(result => {
+          setCaller(result.caller);
+        });
+      })
     }
   }, [props.writeContracts]);
 
 
-  const getAllDoc = async () => {
+  const getAllDoc = async (client) => {
     setLoading(true);
-    const result = await index.getAllFile(props.tx, props.writeContracts, props.address);
-    if (result.length > 0) {
-      setDocs(result);
+    const userInfo = JSON.parse(loggedUser)
+    const doc = await getAllFile(client,userInfo.publicKey, props.tx, props.writeContracts, props.address)
+    if (doc.length > 0) {
+      setDocs(doc);
     }
     setLoading(false);
   };
 
-  const downloadFile = (name, docHash) => {
-
-    setDownloading(docHash);
-    index.downloadFile(name, docHash, password, props.tx, props.writeContracts).then(result => {setDownloading(null)});
+  const downloadFile = (name, key, location) => {
+    setDownloading(name);
+    console.log("docment:",location)
+    downloadFiles(name, key, userInfo.email, location, password)
+        .then(result => {setDownloading(null)});
   };
 
   const signDocument = async docHash => {
-    const result = await index.attachSignature(docHash, props.tx, props.writeContracts, props.userProvider.getSigner());
+    const result = await index.attachSignature(docHash, props.tx, props.writeContracts,
+        props.userProvider.getSigner());
   };
 
   const notarizeDocument = async docHash => {
-    const result = await index.notarizeDoc(docHash, props.tx, props.writeContracts, props.userProvider.getSigner());
+    const result = await index.notarizeDoc(docHash, props.tx, props.writeContracts,
+        props.userProvider.getSigner());
   };
 
   return (
@@ -133,7 +146,8 @@ export default function Documents(props) {
                     )}
                   </Table.Cell>
                   <Table.Cell collapsing textAlign="right">
-                    <Button loading={downloading === value.hash} icon="download" onClick={() => downloadFile(value.title, value.hash)} />
+                    <Button loading={downloading === value.hash} icon="download" onClick={() => downloadFile(value.title,
+                        value.key, value.documentLocation)} />
                   </Table.Cell>
                 </Table.Row>
               );

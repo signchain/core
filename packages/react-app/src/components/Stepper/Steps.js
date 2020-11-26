@@ -1,7 +1,6 @@
 /* eslint-disable */
 
 import React, {useEffect, useState} from 'react';
-import Dashboard from '../Dashboard'
 import 'antd/dist/antd.css';
 import './stepper.css';
 import { Steps, Button, message } from 'antd';
@@ -9,8 +8,7 @@ import { Grid, Image } from 'semantic-ui-react'
 import SelectFiles from './SelectFiles'
 import SelectParties from './SelectParties'
 import Preview from './Preview'
-
-const index = require('../../lib/e2ee.js')
+import {authorizeUser, getAllUsers, registerDoc} from "../../lib/threadDb";
 
 const { Step } = Steps;
 
@@ -52,6 +50,7 @@ const steps = [
 
 const stepper = props => {
   const password = localStorage.getItem("password");
+  const loggedUser = localStorage.getItem("USER");
 
   const [signer, setSigner] = useState({});
   const fileStorage = ["AWS", "Fleek"];
@@ -65,20 +64,24 @@ const stepper = props => {
   const [storageType, setStorage] = useState("AWS");
   const [fileInfo, setFileInfo] = useState({});
   const [title, setTitle] = useState(null);
+  const [dbClient, setDbClient] = useState(null);
 
   let fileInputRef = React.createRef();
 
   useEffect(() => {
     if (props.writeContracts) {
-      props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
-      });
+      props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {});
       setSigner(props.userProvider.getSigner());
-      index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
-
-        setUsers(result.userArray);
-        setCaller(result.caller);
-        setNotaries(result.notaryArray);
-      });
+      const userInfo = JSON.parse(loggedUser)
+      authorizeUser(password).then(client=>{
+        setDbClient(client)
+        getAllUsers(client, userInfo.publicKey).then(result => {
+          console.log("USERS::",result)
+          setUsers(result.userArray);
+          setCaller(result.caller);
+          setNotaries(result.notaryArray);
+        });
+      })
     }
   }, [props.writeContracts]);
 
@@ -134,17 +137,19 @@ const stepper = props => {
                     onClick={() => {
                       const allParties = parties;
                       allParties.push(caller);
-                      index.registerDoc(
+                      registerDoc(
                         allParties,
                         fileInfo.fileHash,
                         fileInfo.cipherKey,
                         title,
                         fileInfo.fileKey,
+                        fileInfo.fileName,
                         setSubmitting,
-                        props.tx,
-                        props.writeContracts,
                         signer,
                         docNotary,
+                        dbClient,
+                        props.tx,
+                        props.writeContracts,
                       );
                     }}
                     className="button"

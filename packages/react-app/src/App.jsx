@@ -22,6 +22,7 @@ import Profile from "./components/Profile";
 import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
 import Verify from './components/Verify/Verify'
+import Database from "./components/database/Database";
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 
 const Ceramic = require('@ceramicnetwork/ceramic-http-client').default;
@@ -89,6 +90,7 @@ function App() {
     }, [loadWeb3Modal, address]);
 
     const [route, setRoute] = useState();
+
     useEffect(() => {
         console.log("SETTING ROUTE",window.location.pathname)
         setRoute(window.location.pathname)
@@ -123,7 +125,7 @@ function App() {
           <div className="App">
              
             <Switch>
-                
+                <Route exact path="/db" component={Database} />
               <Route exact path="/" render={(props) =>
                   <SignUpForm
                       address={address}
@@ -152,19 +154,17 @@ function App() {
                   />}/>
 
               <Layout
-              address={address}
-              localProvider={userProvider}
-              userProvider={userProvider}
-              mainnetProvider={mainnetProvider}
-              price={price}
-              web3Modal={web3Modal}
-              loadWeb3Modal={loadWeb3Modal}
-              logoutOfWeb3Modal={logoutOfWeb3Modal}
-              blockExplorer={blockExplorer}
-              
+                  address={address}
+                  localProvider={userProvider}
+                  userProvider={userProvider}
+                  mainnetProvider={mainnetProvider}
+                  price={price}
+                  web3Modal={web3Modal}
+                  loadWeb3Modal={loadWeb3Modal}
+                  logoutOfWeb3Modal={logoutOfWeb3Modal}
+                  blockExplorer={blockExplorer}
               >
-
-                    {/* <Steps/> */}
+                {/* <Steps/> */}
                 <Route exact path="/sign" render={(props) =>
                     <Steps
                         address={address}
@@ -174,38 +174,33 @@ function App() {
                         userProvider={userProvider}
                         {...props}
                     />}/>
-               <Route exact path="/dashboard" render={(props) =>
-                    <Dashboard
-                       
-                    />}/>
-            <Route exact path="/verify" render={(props) =>
-            <Verify
-                address={address}
-                tx={tx}
-                writeContracts={writeContracts}
-                readContracts={readContracts}
-                userProvider={userProvider}
-                {...props}
-            />}/>
-                   
-                 <Route exact path="/documents" render={(props) =>
-                    <Documents
-                        address={address}
-                        tx={tx}
-                        writeContracts={writeContracts}
-                        userProvider={userProvider}
-                        {...props}
-                    />}/>
-                    <Route exact path="/profile" render={(props) =>
-                    <Profile
-                        address={address}
-                        tx={tx}
-                        writeContracts={writeContracts}
-                        {...props}
-                        ceramic={ceramic}
-                        idx={idx}
-                    />}/>
-            
+               <Route exact path="/dashboard" render={(props) => <Dashboard/>}/>
+               <Route exact path="/verify" render={(props) =>
+                   <Verify
+                       address={address}
+                       tx={tx}
+                       writeContracts={writeContracts}
+                       readContracts={readContracts}
+                       userProvider={userProvider}
+                       {...props}
+                   />}/>
+               <Route exact path="/documents" render={(props) =>
+                   <Documents
+                       address={address}
+                       tx={tx}
+                       writeContracts={writeContracts}
+                       userProvider={userProvider}
+                       {...props}
+                   />}/>
+               <Route exact path="/profile" render={(props) =>
+                   <Profile
+                       address={address}
+                       tx={tx}
+                       writeContracts={writeContracts}
+                       {...props}
+                       ceramic={ceramic}
+                       idx={idx}
+                   />}/>
               </Layout>
             </Switch>
           </div>

@@ -68,10 +68,10 @@ export const getAllUsers = async function(loggedUser, tx, writeContracts){
                 key: result.publicKey,
                 userType: result.userType,
             }
-            if (loggedUser.toLowerCase()==registeredUsers[i].toLowerCase()) {
+            if (loggedUser.toLowerCase()===registeredUsers[i].toLowerCase()) {
                 caller =value
                 
-            }else if (result.userType == userType.notary){
+            }else if (result.userType === userType.notary){
                 notaryArray.push(value)
             }
             else {
@@ -99,7 +99,7 @@ const storeFileFleek = async (fileName,encryptedData)=>{
     })
 }
 
-const getFileFleek = async (fileName)=>{
+export const getFileFleek = async (fileName)=>{
     const file = await fleekStorage.get({
         apiKey: fleekApiKey,
         apiSecret: fleekApiSecret,
@@ -124,7 +124,7 @@ const storeFileAWS = function (awsKey, encryptedData){
     })
 }
 
-const getFileAWS = function (key){
+export const getFileAWS = function (key){
     return new Promise((resolve,reject) =>{
         s3.getObject({
             Bucket: 'secure-doc-test',
@@ -161,7 +161,7 @@ const storeFileSlate = function (encryptedData){
 
 }
 
-const getFileSlate = function(url){
+export const getFileSlate = function(url){
     return new Promise((resolve, reject) => {
         fetch(url, {
             headers: {

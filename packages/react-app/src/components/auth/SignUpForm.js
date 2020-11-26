@@ -5,16 +5,15 @@ import { Checkbox } from "semantic-ui-react";
 import { Button } from "antd";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logoInverted.png";
-import Cookies from "universal-cookie";
-const cookies = new Cookies();
 
 const index = require("../../lib/e2ee.js");
+import {authorizeUser, registerNewUser} from "../../lib/threadDb";
 import { profileSchema } from "../../ceramic/schemas";
 import { createDefinition } from "@ceramicstudio/idx-tools";
 
 import test from "./img/test.png";
 
-function SignUpForm({ writeContracts, tx, ceramic, idx }) {
+function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
   let history = useHistory();
 
   const [name, setName] = useState("");
@@ -25,20 +24,18 @@ function SignUpForm({ writeContracts, tx, ceramic, idx }) {
   const SignupStatus = { preInit: 0, init: 1, wallet: 2, ceramic: 3, contract: 4 };
   const [signupStatus, setSignupStatus] = useState(SignupStatus.preInit);
   const userType = { party: 0, notary: 1 };
-  
 
   useEffect(() => {
     async function getUserData() {
-        try{
+      setSignupStatus(SignupStatus.init);
+        /*try{
          if(idx) {
-
-          setSignupStatus(SignupStatus.init);
-             
+           console.log("IDDD")
+           setSignupStatus(SignupStatus.init);
          }
         }catch(err){
             console.log(err);
-        }
-        
+        }*/
     }
      getUserData()
  }, [idx] )
@@ -49,7 +46,7 @@ function SignUpForm({ writeContracts, tx, ceramic, idx }) {
 
     if (walletStatus) {
       const accounts = await index.getAllAccounts(password);
-      setSignupStatus(SignupStatus.ceramic);
+      /*setSignupStatus(SignupStatus.ceramic);
       const profileId = await createDefinition(ceramic, {
         name: "Signchain Profile",
         schema: profileSchema,
@@ -62,20 +59,26 @@ function SignUpForm({ writeContracts, tx, ceramic, idx }) {
       });
 
       localStorage.setItem("profileSchema", profileId);
-      setSignupStatus(SignupStatus.contract);
-      const registrationStatus = await index.registerUser(
-        name,
-        email,
-        accounts[0],
-        notary ? userType.notary : userType.party,
-        tx,
-        writeContracts,
-      );
-      if (registrationStatus) {
-        cookies.set("userAddress", registrationStatus);
-        history.push({
-          pathname: "/login",
-        });
+      setSignupStatus(SignupStatus.contract);*/
+      const dbClient = await authorizeUser(password)
+      if (dbClient!==null) {
+        console.log("CLIENT:", dbClient)
+        const registrationStatus = await registerNewUser(
+          'did',
+          name,
+          email,
+          accounts[0],
+          notary ? userType.notary : userType.party,
+          address,
+          dbClient
+        );
+        if (registrationStatus) {
+          history.push({
+            pathname: "/login",
+          });
+        }
+      }else{
+        console.log("Some error occurred!!!")
       }
     }
   };
@@ -155,7 +158,7 @@ function SignUpForm({ writeContracts, tx, ceramic, idx }) {
               ) : 
               <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
                Initiating ...
-            </Button>
+              </Button>
               }
               <span className="form-input-login">
                 Already have an account? Login <Link to="/login">here</Link>

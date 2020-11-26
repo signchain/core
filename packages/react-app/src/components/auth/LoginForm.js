@@ -1,9 +1,9 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
-import { Button, Form, Grid, Header, Image, Message, Segment } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
-//import logo from "../../static/logo.png";
 const index = require("../../lib/e2ee.js");
+import {getLoginUser, authorizeUser} from "../../lib/threadDb";
+import wallet from 'wallet-besu'
 import test from "./img/test.png";
 import logo from "../../images/logoInverted.png";
 import "./Form.css";
@@ -12,17 +12,29 @@ function LoginForm(props) {
   let history = useHistory();
   const [password, setPassword] = useState("");
 
-  useEffect(() => {}, []);
-
   async function loginUser() {
-    let accounts = await index.getAllAccounts(password);
-    localStorage.setItem("password", password);
-    history.push("/dashboard");
+    const accounts = await wallet.login(password);
+    if (accounts!==null) {
+      const dbClient = await authorizeUser(password)
+      if (dbClient !== null) {
+        let userInfo = await getLoginUser(accounts[0], dbClient)
+        if (userInfo !== null) {
+          console.log("User Info:", userInfo)
+          localStorage.setItem("USER", JSON.stringify(userInfo))
+          localStorage.setItem("password", password);
+          history.push('/dashboard')
+        }
+      } else {
+        console.log("Some error!!!")
+      }
+    }else{
+      console.log("Wrong password!!")
+    }
   }
 
   return (
     <>
-      <div className="form__container">
+      {/*<div className="form__container">*/}
         <div className="form-container">
           <div className="form-content-left">
             <div className="logo_inverted ">
@@ -55,7 +67,7 @@ function LoginForm(props) {
             <img src={test} className="form-img" alt="left" srcset="" />
           </div>
         </div>
-      </div>
+      {/*</div>*/}
     </>
   );
 }

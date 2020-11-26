@@ -28,6 +28,7 @@
     "@ethersproject/providers": "^5.0.5",
     "@ethersproject/units": "^5.0.2",
     "@fleekhq/fleek-storage-js": "^1.0.2",
+    "@textile/hub": "^1.0.0",
     "@ramp-network/ramp-instant-sdk": "^1.8.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
