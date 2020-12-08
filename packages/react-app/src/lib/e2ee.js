@@ -388,7 +388,7 @@ export const uploadDoc = async function(file, password, setSubmitting, storageTy
         setSubmitting(false)
         setFileInfo({
             cipherKey: cipherKey,
-            fileKey: fileKey,
+            fileLocation: fileKey,
             fileHash: fileHash,
             fileName: file.name,
             fileFormat: fileFormat

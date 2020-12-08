@@ -54,4 +54,14 @@ contract Signchain is DocumentRegistry, SigningModule {
 
     }
 
+    function saveNotarizeDoc(bytes32 documentHash, address notary) public payable{
+        require(msg.value == notaryFee, "Invalid Notary Fee");
+        notarizedDocs[documentHash] = Notarize(notary, msg.value, false);
+    }
+
+    function notarizeDoc(bytes32 documentHash) public {
+        notarizedDocs[documentHash].notarized = true;
+        payable(address(msg.sender)).transfer(notarizedDocs[documentHash].notaryFee);
+        emit DocumentNatarized(documentHash, now, msg.sender);
+    }
 }

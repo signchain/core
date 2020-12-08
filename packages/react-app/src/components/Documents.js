@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Icon, Loader, Table, Modal, Step } from "semantic-ui-react";
 import { Badge } from "antd";
-import {authorizeUser, getAllUsers, getAllFile, downloadFiles} from "../lib/threadDb";
+import {authorizeUser, getAllUsers, getAllFile, downloadFiles, attachSignature, notarizeDoc} from "../lib/threadDb";
 
 const index = require("../lib/e2ee");
 
@@ -52,7 +52,7 @@ export default function Documents(props) {
   const getAllDoc = async (client) => {
     setLoading(true);
     const userInfo = JSON.parse(loggedUser)
-    const doc = await getAllFile(client,userInfo.publicKey, props.tx, props.writeContracts, props.address)
+    const doc = await getAllFile(client,userInfo.publicKey, props.address, props.tx, props.writeContracts)
     if (doc.length > 0) {
       setDocs(doc);
     }
@@ -62,18 +62,17 @@ export default function Documents(props) {
   const downloadFile = (name, key, location) => {
     setDownloading(name);
     console.log("docment:",location)
-    downloadFiles(name, key, userInfo.email, location, password)
+    downloadFiles(name, key, userInfo.address, location, password)
         .then(result => {setDownloading(null)});
   };
 
-  const signDocument = async docHash => {
-    const result = await index.attachSignature(docHash, props.tx, props.writeContracts,
-        props.userProvider.getSigner());
+  const signDocument = async (docHash, docId) => {
+    const result = await attachSignature(docId, props.userProvider.getSigner(), caller, docHash, dbClient);
   };
 
-  const notarizeDocument = async docHash => {
-    const result = await index.notarizeDoc(docHash, props.tx, props.writeContracts,
-        props.userProvider.getSigner());
+  const notarizeDocument = async (docId, docHash) => {
+    const result = await notarizeDoc(docId, docHash, props.tx, props.writeContracts, props.userProvider.getSigner(),
+      caller, dbClient);
   };
 
   return (
@@ -111,7 +110,7 @@ export default function Documents(props) {
                     </span>
                   </Table.Cell>
 
-                  <Table.Cell>{new Date(value.timestamp).toDateString()}</Table.Cell>
+                  <Table.Cell>{value.timestamp}</Table.Cell>
 
                   <Table.Cell>
                     {" "}
@@ -129,12 +128,14 @@ export default function Documents(props) {
 
                   <Table.Cell>
                     {value.notary === caller.address && !value.notarySigned ? (
-                      <Button basic color="blue" icon labelPosition="left" onClick={() => notarizeDocument(value.hash)}>
+                      <Button basic color="blue" icon labelPosition="left" onClick={() => notarizeDocument(value.docId,
+                        value.hash)}>
                         <Icon name="signup" />
                         Notarize
                       </Button>
                     ) : !value.partySigned ? (
-                      <Button basic color="blue" icon labelPosition="left" onClick={() => signDocument(value.hash)}>
+                      <Button basic color="blue" icon labelPosition="left" onClick={() => signDocument(value.hash,
+                        value.docId)}>
                         <Icon name="signup" />
                         Sign Document
                       </Button>

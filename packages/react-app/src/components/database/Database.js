@@ -24,10 +24,15 @@ export default function Database(){
             address: { type: 'string'},
             publicKey: { type: 'string'},
             userType: { type: 'number'},
-            documentId: {
+            nonce: {type:'number'},
+            documentInfo: {
                 type:'array',
                 items: {
-                    type: 'string'
+                    type: 'object',
+                    properties: {
+                        documentId: {type:'string'},
+                        signatureId: {type:'string'}
+                    }
                 }
             }
         },
@@ -39,6 +44,7 @@ export default function Database(){
         type: 'object',
         properties: {
             _id: {type:'string'},
+            title: {type:'string'},
             documentHash : {type: 'string'},
             fileLocation: {type: 'string'},
             fileName: {type: 'string'},
@@ -47,12 +53,37 @@ export default function Database(){
                 items :{
                     type: 'object',
                     properties:{
-                        email: {type: 'string'},
-                        key: {type:'string'}
+                        address: {type: 'string'},
+                        cipherKey: {type:'string'}
                     }
                 }
             }
         },
+    }
+
+    const signatureDetails = {
+        $schema: 'http://json-schema.org/draft-07/schema#',
+        title: 'SignatureDetails',
+        type: 'object',
+        properties: {
+            _id: {type:'string'},
+            signers:{
+                type:'array',
+                items: {type:'string'}
+            },
+            signature: {
+                type: 'array',
+                items: {
+                    type:'object',
+                    properties:{
+                        signer: {type:'string'},            //user address
+                        signatureDigest: {type: 'string'},
+                        timeStamp: {type: 'string'},
+                        nonce: {type: 'number'}
+                    }
+                },
+            }
+        }
     }
 
     const setThreadDb = async ()=>{
@@ -84,6 +115,7 @@ export default function Database(){
         console.log("Creating tables!!!")
         const result1 = await dbClient.newCollection(threadID, {name:'RegisterUser', schema: registrationSchema})
         const result2 = await dbClient.newCollection(threadID, {name:'Document', schema: documentSchema})
+        await dbClient.newCollection(threadID, {name:'SignatureDetails', schema: signatureDetails})
         console.log("Tables created!!:")
         setThreadID(threadID)
     }
