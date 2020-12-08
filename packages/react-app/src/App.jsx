@@ -85,7 +85,7 @@ function App() {
             loadWeb3Modal();
         }
         if(address){
-            init(address).then(data => console.log(idx))
+            //init(address).then(data => console.log(idx))
         }
     }, [loadWeb3Modal, address]);
 

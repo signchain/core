@@ -139,17 +139,13 @@ const stepper = props => {
                       allParties.push(caller);
                       registerDoc(
                         allParties,
-                        fileInfo.fileHash,
-                        fileInfo.cipherKey,
+                        fileInfo,
                         title,
-                        fileInfo.fileKey,
-                        fileInfo.fileName,
                         setSubmitting,
                         signer,
                         docNotary,
                         dbClient,
-                        props.tx,
-                        props.writeContracts,
+                        caller
                       );
                     }}
                     className="button"
