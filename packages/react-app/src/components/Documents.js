@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Icon, Loader, Table, Modal, Step } from "semantic-ui-react";
 import { Badge } from "antd";
-import {authorizeUser, getAllUsers, getAllFile, downloadFiles, attachSignature} from "../lib/threadDb";
+import {authorizeUser, getAllUsers, getAllFile, downloadFiles, attachSignature, notarizeDoc} from "../lib/threadDb";
 
 const index = require("../lib/e2ee");
 
@@ -52,7 +52,7 @@ export default function Documents(props) {
   const getAllDoc = async (client) => {
     setLoading(true);
     const userInfo = JSON.parse(loggedUser)
-    const doc = await getAllFile(client,userInfo.publicKey, props.address)
+    const doc = await getAllFile(client,userInfo.publicKey, props.address, props.tx, props.writeContracts)
     if (doc.length > 0) {
       setDocs(doc);
     }
@@ -70,9 +70,9 @@ export default function Documents(props) {
     const result = await attachSignature(docId, props.userProvider.getSigner(), caller, docHash, dbClient);
   };
 
-  const notarizeDocument = async docHash => {
-    const result = await index.notarizeDoc(docHash, props.tx, props.writeContracts,
-        props.userProvider.getSigner());
+  const notarizeDocument = async (docId, docHash) => {
+    const result = await notarizeDoc(docId, docHash, props.tx, props.writeContracts, props.userProvider.getSigner(),
+      caller, dbClient);
   };
 
   return (
@@ -128,7 +128,8 @@ export default function Documents(props) {
 
                   <Table.Cell>
                     {value.notary === caller.address && !value.notarySigned ? (
-                      <Button basic color="blue" icon labelPosition="left" onClick={() => notarizeDocument(value.hash)}>
+                      <Button basic color="blue" icon labelPosition="left" onClick={() => notarizeDocument(value.docId,
+                        value.hash)}>
                         <Icon name="signup" />
                         Notarize
                       </Button>

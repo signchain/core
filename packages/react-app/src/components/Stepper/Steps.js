@@ -145,7 +145,9 @@ const stepper = props => {
                         signer,
                         docNotary,
                         dbClient,
-                        caller
+                        caller,
+                        props.tx,
+                        props.writeContracts
                       );
                     }}
                     className="button"

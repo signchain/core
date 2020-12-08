@@ -1,5 +1,3 @@
-import {getNotaryInfo} from "./e2ee";
-
 const e2e = require('./e2e-encrypt.js')
 const e2ee = require('./e2ee.js')
 const fileDownload = require('js-file-download')
@@ -106,8 +104,8 @@ export const getAllUsers = async function(dbClient,loggedUser){
     }
 }
 
-export const registerDoc = async function(party, fileInfo, title, setSubmitting, signer, notary,
-                                          dbClient, caller){
+export const registerDoc = async function(party, fileInfo, title, setSubmitting, signer, notary, dbClient, caller,
+                                          tx, writeContracts ){
 
     let encryptedKeys=[]
     let userAddress=[]
@@ -133,6 +131,15 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
         userAddress.push(party[i].address)
     }
     console.log("Log:",encryptedKeys)
+
+    if(notary!==null){
+        const res = await tx(writeContracts.Signchain.saveNotarizeDoc(
+          fileHash,
+          notary.address,
+          {value: ethers.utils.parseUnits(notary ? "0.1" : "0", "ether")}
+        ))
+        console.log("result:",res)
+    }
 
     const threadId = ThreadID.fromBytes(threadDbId)
     const docId = await dbClient.create(threadId, 'Document', [{
@@ -213,7 +220,19 @@ export const attachSignature = async function(documentId, signer, caller, fileHa
     return true
 }
 
-export const getAllFile = async function(dbClient, loggedUserKey,address){
+export const notarizeDoc = async function(docId, fileHash, tx, writeContracts , signer, caller, dbClient){
+    const signature = await attachSignature(docId, signer, caller, fileHash, dbClient)
+    console.log("Signature added!!")
+    const result = await tx(writeContracts.Signchain.notarizeDoc(fileHash))
+    console.log("Result:", result)
+    return true
+}
+
+export const getNotaryInfo = async function(fileHash, tx, writeContracts) {
+    return await tx(writeContracts.Signchain.notarizedDocs(fileHash))
+}
+
+export const getAllFile = async function(dbClient, loggedUserKey,address,tx, writeContracts){
     const threadId = ThreadID.fromBytes(threadDbId)
     const query = new Where('publicKey').eq(loggedUserKey)
     const users = await dbClient.find(threadId, 'RegisterUser', query)
@@ -226,10 +245,12 @@ export const getAllFile = async function(dbClient, loggedUserKey,address){
         const document = await dbClient.findByID(threadId, 'Document', users[0].documentInfo[i].documentId)
         const hash = document.documentHash
         const signDetails = await dbClient.findByID(threadId, 'SignatureDetails', users[0].documentInfo[i].signatureId)
+        const notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
         let signStatus = true
         let partySigned = false
         if (signDetails.signers.length !== signDetails.signature.length){
             const array = signDetails.signature.filter((item) => item.signer === address.toString())
+            console.log("Array:",i," :",signDetails, ": address: ",address)
             if (array.length===1){
                 partySigned = true
             }
@@ -249,8 +270,8 @@ export const getAllFile = async function(dbClient, loggedUserKey,address){
             signers: signDetails.signers,
             signatures: signDetails.signature,
             partySigned: partySigned,
-            notary: '0x0000000000000000000000000000000000000000',
-            notarySigned: false
+            notary: notaryInfo.notaryAddress,
+            notarySigned: notaryInfo.notarized
         }
         result.push(value)
     }
