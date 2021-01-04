@@ -8,8 +8,8 @@ import logo from "../../images/logoInverted.png";
 
 const index = require("../../lib/e2ee.js");
 import {authorizeUser, registerNewUser} from "../../lib/threadDb";
-import { profileSchema } from "../../ceramic/schemas";
-import { createDefinition } from "@ceramicstudio/idx-tools";
+// import { profileSchema } from "../../ceramic/schemas";
+// import { createDefinition } from "@ceramicstudio/idx-tools";
 
 import test from "./img/test.png";
 

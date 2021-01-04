@@ -13,8 +13,8 @@ AWS.config.update({
 })
 let s3 = new AWS.S3();
 
-const fleekApiKey = "t8DYhMZ1ztjUtOFC8qEDqg=="
-const fleekApiSecret = "XwZyU7RZ3H2Z1QHhUdFdi4MJx8j1axJm2hEq1olRWeU="
+const fleekApiKey = "U/J0JJhTWcX8bdzzkEaNAw=="
+const fleekApiSecret = "7G3ATZE3xJ4X0PaZ0bRuGfdRbR56/BUYzIEtD9+QJP0="
 
 export const registerUser = async function(name, email, privateKey, userType, tx, writeContracts){
     try {

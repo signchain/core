@@ -199,7 +199,7 @@ export default function Documents(props) {
                                   {signature.signer}
                                   <br />
                                   <span style={{ fontWeight: "bold" }}>Signed On </span> :
-                                  {new Date(parseInt(signature.timestamp) * 1000).toDateString()}
+                                  {signature.timestamp}
                                 </p>
                               </Step.Content>
                             </Step>
