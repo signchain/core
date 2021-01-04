@@ -5,13 +5,13 @@ import "antd/dist/antd.css";
 import 'semantic-ui-css/semantic.min.css'
 import "./App.css";
 import {Row, Col} from "antd";
-import { getDefaultProvider, InfuraProvider, JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
+import { getDefaultProvider, Web3Provider } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useUserAddress } from "eth-hooks";
-import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useBalance, } from "./hooks";
+import { useExchangePrice, useGasPrice, useContractLoader } from "./hooks";
 import { Transactor } from "./helpers";
-import {Account, Faucet} from "./components";
+import {Account} from "./components";
 import {profileSchema, documentSchema} from "./ceramic/schemas"
 import SignUpForm from "./components/auth/SignUpForm";
 import LoginForm from "./components/auth/LoginForm";
@@ -25,17 +25,15 @@ import Verify from './components/Verify/Verify'
 import Database from "./components/database/Database";
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 
-const Ceramic = require('@ceramicnetwork/ceramic-http-client').default;
-const { IDX } = require('@ceramicstudio/idx');
-const { publishSchemas, schemasList } = require('@ceramicstudio/idx-schemas')
+// const Ceramic = require('@ceramicnetwork/ceramic-http-client').default;
+// const { IDX } = require('@ceramicstudio/idx');
+// const { publishSchemas, schemasList } = require('@ceramicstudio/idx-schemas')
 const Wallet = require('identity-wallet').default
-const ceramic = new Ceramic('http://15.207.222.193:7007');
+// const ceramic = new Ceramic('http://15.207.222.193:7007');
+const ceramic = '';
 
 const blockExplorer = "https://etherscan.io/"
 const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 })
-// const localProviderUrl = "http://localhost:8545";
-// const localProviderUrlFromEnv = process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : localProviderUrl;
-// const localProvider = new JsonRpcProvider(localProviderUrlFromEnv);
 
 function App() {
 
@@ -45,11 +43,10 @@ function App() {
     const [schemas, setSchemas] = useState(null)
     const price = useExchangePrice(mainnetProvider);
     const gasPrice = useGasPrice("fast");
-    const userProvider = useUserProvider(injectedProvider);
+    console.log(gasPrice)
+    const userProvider = injectedProvider;
     const address = useUserAddress(userProvider);
     const tx = Transactor(userProvider, gasPrice)
-    const yourLocalBalance = useBalance(userProvider, address);
-    const yourMainnetBalance = useBalance(mainnetProvider, address);
     const readContracts = useContractLoader(userProvider)
     const writeContracts = useContractLoader(userProvider)
     const loadWeb3Modal = useCallback(async () => {
@@ -57,28 +54,28 @@ function App() {
         setInjectedProvider(new Web3Provider(provider));
     }, [setInjectedProvider]);
 
-    const init = async(address) => {
-        const did = await Wallet.create({
-            ceramic,
-            seed: address,
-            getPermission(){
-                return Promise.resolve([])
-            }
-        })
-        console.log("DID",did)
-        await ceramic.setDIDProvider(did.getDidProvider());
-        setDid(did);
+    // const init = async(address) => {
+    //     const did = await Wallet.create({
+    //         ceramic,
+    //         seed: address,
+    //         getPermission(){
+    //             return Promise.resolve([])
+    //         }
+    //     })
+    //     console.log("DID",did)
+    //     await ceramic.setDIDProvider(did.getDidProvider());
+    //     setDid(did);
 
-        const schema = await publishSchemas({ceramic, schemas:schemasList});
-        setSchemas(schema);
+    //     const schema = await publishSchemas({ceramic, schemas:schemasList});
+    //     setSchemas(schema);
 
-        console.log("Schemas",JSON.stringify(schemas, null, 2))
+    //     console.log("Schemas",JSON.stringify(schemas, null, 2))
 
-        const idx = new IDX({ ceramic, schemas });
-        setIdx(idx)
-        localStorage.setItem("userDid", idx.id);
-        console.log(idx.id)
-    }
+    //     const idx = new IDX({ ceramic, schemas });
+    //     setIdx(idx)
+    //     localStorage.setItem("userDid", idx.id);
+    //     console.log(idx.id)
+    // }
 
     useEffect(() => {
         if (web3Modal.cachedProvider) {
@@ -111,14 +108,6 @@ function App() {
               logoutOfWeb3Modal={logoutOfWeb3Modal}
               blockExplorer={blockExplorer}
           />
-        </div>
-
-        <div style={{position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10}}>
-          <Row align="middle" gutter={4}>
-            <Col span={15}>
-              <Faucet localProvider={userProvider} price={price}/>
-            </Col>
-          </Row>
         </div>
 
         <HashRouter>

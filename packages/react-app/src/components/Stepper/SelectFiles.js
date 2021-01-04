@@ -21,7 +21,7 @@ const fileStorage = [{name: "AWS", image: AWS},
 
 const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
   const [selected, setSelected] = useState(false);
-  const [storageType, setStorage] = useState("AWS");
+  const [storageType, setStorage] = useState("Fleek");
 
 
   const props = {
