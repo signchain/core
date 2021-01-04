@@ -1,4 +1,4 @@
-const { ethers } = require("@nomiclabs/buidler");
+const { ethers } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 
@@ -24,7 +24,7 @@ describe("Signchain", function () {
 
       const docHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("docHash"))
       // Don't covers to bytes if it is a hexa string
-      const signers = [account1._address, account2._address]
+      const signers = [account1.address, account2.address]
 
       expect(await contractInstance.connect(account1).addDocument(docHash, "test Doc", signers))
     })
@@ -33,9 +33,9 @@ describe("Signchain", function () {
 
       const docHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("docHash"))
       // Don't covers to bytes if it is a hexa string
-      const signers = [account1._address, account2._address]
+      const signers = [account1.address, account2.address]
 
-      const replayNonce = await contractInstance.connect(account1).replayNonce(account1._address)
+      const replayNonce = await contractInstance.connect(account1).replayNonce(account1.address)
       const params = [
         ["bytes32", "uint"],
         [

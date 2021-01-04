@@ -1,4 +1,4 @@
-const { ethers } = require("@nomiclabs/buidler");
+const { ethers } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 
@@ -48,7 +48,7 @@ it('Should update public key of PartyB', async() => {
 
 //PartyB getting PartyA public key for encryption
 it('Should get partyA public key', async() => {
-  const publicKey = await contractInstance.getPublicKey(account1._address)
+  const publicKey = await contractInstance.getPublicKey(account1.address)
   expect(publicKey).to.equal("publicKeyPartyA")
 });
 
@@ -57,7 +57,7 @@ it('Should share document between PartyA and PartyB', async() => {
       ethers.utils.keccak256(ethers.utils.toUtf8Bytes("doc Hash")),
       "doc location",
       ["AesEncKeyPartyA","AesEncKeyPartyB"],
-      [account1._address,account2._address])
+      [account1.address,account2.address])
   expect(document)
 });
 

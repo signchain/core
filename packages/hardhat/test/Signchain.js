@@ -1,4 +1,4 @@
-const { ethers } = require("@nomiclabs/buidler");
+const { ethers } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 
@@ -25,7 +25,7 @@ describe("Signchain", function () {
     it('Should sign and share a document', async () => {
 
       const docHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("doc Hash"))
-      const replayNonce = await contractInstance.connect(account1).replayNonce(account1._address)
+      const replayNonce = await contractInstance.connect(account1).replayNonce(account1.address)
 
       const params = [
         ["bytes32", "uint"],
@@ -41,7 +41,7 @@ describe("Signchain", function () {
       const document = await contractInstance.connect(account1).signAndShareDocument(
         docHash,
         "test Doc",
-        [account1._address,account2._address],
+        [account1.address,account2.address],
         replayNonce,
         signature,
         '0x0000000000000000000000000000000000000000')
@@ -62,7 +62,7 @@ describe("Signchain", function () {
   it('Should notarize a document', async () => {
 
     const docHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("doc Hash 2"))
-    let replayNonce = await contractInstance.connect(account1).replayNonce(account1._address)
+    let replayNonce = await contractInstance.connect(account1).replayNonce(account1.address)
 
     let params = [
       ["bytes32", "uint"],
@@ -81,19 +81,19 @@ describe("Signchain", function () {
     const document = await contractInstance.connect(account1).signAndShareDocument(
       docHash,
       "test Doc",
-      [account1._address, notary._address],
+      [account1.address, notary.address],
       replayNonce,
       signature,
-      notary._address,
+      notary.address,
       {value: ethers.utils.parseUnits("0.1", "ether")})
   expect(document)
   let notaryInfo = await contractInstance.connect(account1).notarizedDocs(docHash) 
   expect(ethers.utils.formatUnits(notaryInfo.notaryFee, "ether")).is.equal('0.1')
-  expect(notaryInfo.notaryAddress).is.equal(notary._address)
+  expect(notaryInfo.notaryAddress).is.equal(notary.address)
 
   
 
-   replayNonce = await contractInstance.connect(notary).replayNonce(notary._address)
+   replayNonce = await contractInstance.connect(notary).replayNonce(notary.address)
 
      params = [
       ["bytes32", "uint"],

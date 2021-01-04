@@ -1,0 +1,215 @@
+module.exports = [
+  {
+    "inputs": [],
+    "name": "getAllDocument",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "docHash",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllUsers",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "users",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "docHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getCipherKey",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "cipherKey",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "documentHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getDocument",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "documentLocation",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "documentHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "string[]",
+            "name": "key",
+            "type": "string[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "users",
+            "type": "address[]"
+          }
+        ],
+        "internalType": "struct DocumentRegistry.Document",
+        "name": "document",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "userAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getPublicKey",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "publicKey",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "userName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "userEmail",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "publicKey",
+        "type": "string"
+      },
+      {
+        "internalType": "enum DocumentRegistry.UserType",
+        "name": "userType",
+        "type": "uint8"
+      }
+    ],
+    "name": "registerUser",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "storeUser",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "email",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "status",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "publicKey",
+        "type": "string"
+      },
+      {
+        "internalType": "enum DocumentRegistry.UserType",
+        "name": "userType",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "key",
+        "type": "string"
+      }
+    ],
+    "name": "updatePublicKey",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "documentHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "string",
+        "name": "documentLocation",
+        "type": "string"
+      },
+      {
+        "internalType": "string[]",
+        "name": "key",
+        "type": "string[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "users",
+        "type": "address[]"
+      }
+    ],
+    "name": "uploadDocument",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+];
