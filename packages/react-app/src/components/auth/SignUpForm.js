@@ -8,12 +8,12 @@ import logo from "../../images/logoInverted.png";
 
 const index = require("../../lib/e2ee.js");
 import {authorizeUser, registerNewUser} from "../../lib/threadDb";
-// import { profileSchema } from "../../ceramic/schemas";
+import { definitions } from "../../ceramic/config.json";
 // import { createDefinition } from "@ceramicstudio/idx-tools";
 
 import test from "./img/test.png";
 
-function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
+function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup }) {
   let history = useHistory();
 
   const [name, setName] = useState("");
@@ -28,14 +28,14 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
   useEffect(() => {
     async function getUserData() {
       setSignupStatus(SignupStatus.init);
-        /*try{
+        try{
          if(idx) {
            console.log("IDDD")
            setSignupStatus(SignupStatus.init);
          }
         }catch(err){
             console.log(err);
-        }*/
+        }
     }
      getUserData()
  }, [idx] )
@@ -46,20 +46,15 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
 
     if (walletStatus) {
       const accounts = await index.getAllAccounts(password);
-      /*setSignupStatus(SignupStatus.ceramic);
-      const profileId = await createDefinition(ceramic, {
-        name: "Signchain Profile",
-        schema: profileSchema,
-      });
+      setSignupStatus(SignupStatus.ceramic);
+      
 
-      await idx.set(profileId, {
+      await idx.set(definitions.profile, {
         name: name,
         email: email,
         notary: notary,
       });
-
-      localStorage.setItem("profileSchema", profileId);
-      setSignupStatus(SignupStatus.contract);*/
+      setSignupStatus(SignupStatus.contract);
       const dbClient = await authorizeUser(password)
       if (dbClient!==null) {
         console.log("CLIENT:", dbClient)
