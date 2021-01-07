@@ -65,10 +65,6 @@ function App() {
         const idx = new IDX({ ceramic, aliases: definitions })
         console.log(idx);
         setIdx(idx)
-      // Load the existing notes
-        //await idx.set(definitions.profile, test )
-        // const profile = await idx.get(definitions.profile, idx.id)
-        // return profile
     }
 
     useEffect(() => {
