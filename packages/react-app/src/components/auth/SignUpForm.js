@@ -59,7 +59,7 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup }) {
       if (dbClient!==null) {
         console.log("CLIENT:", dbClient)
         const registrationStatus = await registerNewUser(
-          'did',
+          idx.id,
           name,
           email,
           accounts[0],
