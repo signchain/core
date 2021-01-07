@@ -67,8 +67,8 @@ function App() {
         setIdx(idx)
       // Load the existing notes
         //await idx.set(definitions.profile, test )
-        const profile = await idx.get(definitions.profile, idx.id)
-        return profile
+        // const profile = await idx.get(definitions.profile, idx.id)
+        // return profile
     }
 
     useEffect(() => {
@@ -116,7 +116,6 @@ function App() {
                       writeContracts={writeContracts}
                       ceramic={ceramic}
                       idx={idx}
-                      setup = {setup}
                   />}/>
 
               <Route exact path="/login" render={(props) =>
@@ -133,7 +132,6 @@ function App() {
                       writeContracts={writeContracts}
                       ceramic={ceramic}
                       idx={idx}
-                      setup = {setup}
                   />}/>
 
               <Layout
