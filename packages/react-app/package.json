@@ -47,7 +47,9 @@
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^1.2.1",
     "wallet-besu": "^1.0.2",
-    "web3modal": "^1.5.0"
+    "web3modal": "^1.5.0",
+    "bcryptjs": "^2.4.3",
+    "socket.io-client": "^3.0.5"
   },
   "devDependencies": {
     "@testing-library/dom": "^6.12.2",

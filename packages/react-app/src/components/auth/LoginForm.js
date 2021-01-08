@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 const index = require("../../lib/e2ee.js");
-import {getLoginUser, authorizeUser} from "../../lib/threadDb";
+import {getLoginUser, authorizeUser, generateIdentity, loginUserWithChallenge} from "../../lib/threadDb";
 import wallet from 'wallet-besu'
 import test from "./img/test.png";
 import logo from "../../images/logoInverted.png";
@@ -15,8 +15,12 @@ function LoginForm(props) {
   async function loginUser() {
     const accounts = await wallet.login(password);
     if (accounts!==null) {
-      const dbClient = await authorizeUser(password)
-      if (dbClient !== null) {
+      //const dbClient = await authorizeUser(password)
+      const identity = await generateIdentity();
+      const dbClient = await loginUserWithChallenge(identity);
+      console.log('DBClient:', dbClient)
+      console.log("USER Login!!")
+      /*if (dbClient !== null) {
         let userInfo = await getLoginUser(accounts[0], dbClient)
         if (userInfo !== null) {
           console.log("User Info:", userInfo)
@@ -26,7 +30,7 @@ function LoginForm(props) {
         }
       } else {
         console.log("Some error!!!")
-      }
+      }*/
     }else{
       console.log("Wrong password!!")
     }

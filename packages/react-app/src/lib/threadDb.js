@@ -1,9 +1,12 @@
+const {generateMessageForEntropy, getAddressAndSigner} = require("./connectSign");
+const {hashSync} = require("bcryptjs")
 const e2e = require('./e2e-encrypt.js')
 const e2ee = require('./e2ee.js')
 const fileDownload = require('js-file-download')
 const {PrivateKey, createUserAuth, Client, Where, ThreadID} = require('@textile/hub')
 const wallet = require('wallet-besu')
 const ethers = require('ethers')
+const io = require('socket.io-client');
 
 const keyInfo = {
     key:'be645tj5wtjuginby3fwnqhe57y',
@@ -30,6 +33,31 @@ export const authorizeUser = async (password)=>{
     }
 }
 
+export const generateIdentity = async () => {
+    const metamask = await getAddressAndSigner()
+    const secret = hashSync('this.state.secret this.state.secret', 10)
+    console.log("SECRET:",secret)
+    const message = await generateMessageForEntropy(metamask.address, 'textile-demo', secret)
+    const signedText = await metamask.signer.signMessage(message);
+    const hash = ethers.utils.keccak256(signedText);
+    if (hash === null) {
+        throw new Error('No account is provided. Please provide an account to this application.');
+    }
+
+    const array = hash
+      .replace('0x', '')
+      .match(/.{2}/g)
+      .map((hexNoPrefix) => ethers.BigNumber.from('0x' + hexNoPrefix).toNumber())
+
+    if (array.length !== 32) {
+        throw new Error('Hash of signature is not the correct size! Something went wrong!');
+    }
+    const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(array))
+    console.log("identity:",identity.toString())
+
+    return identity
+}
+
 export const registerNewUser = async function(did, name, email, privateKey, userType, address, dbClient){
     try {
         const threadId = ThreadID.fromBytes(threadDbId)
@@ -50,6 +78,63 @@ export const registerNewUser = async function(did, name, email, privateKey, user
     }catch(err){
         throw err
     }
+}
+
+export const loginWithChallenge = (identity) => {
+    return new Promise((resolve, reject) => {
+        console.log("Trying to connect with socket!!")
+
+        const socket = io("http://127.0.0.1:3001");
+
+        socket.on("connect", () => {
+            console.log('Connected to Server22')
+            const publicKey = identity.public.toString();
+
+            // Send public key to server
+            socket.emit('message', JSON.stringify({
+                pubKey: publicKey,
+                type: 'token'
+            }));
+
+            socket.on("message", async (event) => {
+                const data = JSON.parse(event)
+                switch (data.type) {
+                    case 'error': {
+                        reject(data.value);
+                        break;
+                    }
+
+                  //solve the challenge
+                    case 'challenge': {
+                        const buf = Buffer.from(data.value)
+                        const signed = await identity.sign(buf)
+                        socket.emit("challenge", signed);
+                        break;
+                    }
+
+                  //get the token and store it
+                    case 'token': {
+                        console.log("TOKEN:",data.value)
+                        resolve(data.value)
+                        socket.disconnect();
+                        break;
+                    }
+                }
+            })
+        });
+    });
+}
+
+export const loginUserWithChallenge = async function(id){
+    if (!id) {
+        throw Error('No user ID found')
+    }
+
+    /** Use the identity to request a new API token when needed */
+    const loginCallback = await loginWithChallenge(id);
+    const client = await Client.withUserAuth(loginCallback)
+    console.log('Verified on Textile API')
+    return client
 }
 
 export const getLoginUser = async function(privateKey, dbClient){
