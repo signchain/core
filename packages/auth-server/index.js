@@ -16,7 +16,6 @@ const io = require('socket.io')(http,{
   }
 });
 
-console.log('GOING!!!')
 socket(io)
 
 http.listen('3001', ()=>{

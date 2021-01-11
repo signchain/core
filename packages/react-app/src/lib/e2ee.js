@@ -23,7 +23,7 @@ export const registerUser = async function(name, email, privateKey, userType, tx
         const result = await tx(writeContracts.Signchain.registerUser(
             name, email, publicKey, userType
         ))
-    
+
         return true
     }catch(err){
         throw err
@@ -45,7 +45,7 @@ export const loginUser = async function(privateKey, tx, writeContracts){
         const result = await tx(writeContracts.Signchain.updatePublicKey(
             publicKey
         ))
-      
+
         return true
     }catch (err) {
         throw err
@@ -70,7 +70,7 @@ export const getAllUsers = async function(loggedUser, tx, writeContracts){
             }
             if (loggedUser.toLowerCase()===registeredUsers[i].toLowerCase()) {
                 caller =value
-                
+
             }else if (result.userType === userType.notary){
                 notaryArray.push(value)
             }
@@ -352,7 +352,7 @@ export const registerDoc = async function(party, fileHash, cipherKey, title, fil
     )).then((receipt) => {
         setSubmitting(false)
     })
-    
+
 }
 
 export const uploadDoc = async function(file, password, setSubmitting, storageType, setFileInfo){
@@ -384,7 +384,7 @@ export const uploadDoc = async function(file, password, setSubmitting, storageTy
         }else {
             await storeFileAWS(fileKey, encryptedFile)
         }
-        
+
         setSubmitting(false)
         setFileInfo({
             cipherKey: cipherKey,
@@ -417,11 +417,11 @@ export const downloadFile = async function (name, docHash,password, tx, writeCon
     const decryptedKey = await e2e.decryptKey(privateKey[0],encryptedKey)
     const documentHash = document.documentHash
     let documentLocation = document.documentLocation
-    
+
     const fileSplit= documentLocation.split(".")
     const fileFormat = fileSplit[fileSplit.length - 1]
     const storageType = fileSplit[fileSplit.length - 2]
- 
+
 
     return new Promise((resolve)=>{
         if (storageType==="AWS") {
@@ -434,7 +434,7 @@ export const downloadFile = async function (name, docHash,password, tx, writeCon
             })
         }else if (storageType==="Fleek"){
             getFileFleek(documentLocation).then((encryptedFile) => {
-            
+
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
                     const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
                     fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
@@ -443,9 +443,9 @@ export const downloadFile = async function (name, docHash,password, tx, writeCon
             })
         }else {
             documentLocation = documentLocation.slice(0, documentLocation.lastIndexOf("."))
-   
+
             getFileSlate(documentLocation).then((encryptedFile) => {
-          
+
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
                     const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
                     fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
@@ -458,10 +458,10 @@ export const downloadFile = async function (name, docHash,password, tx, writeCon
 
 const signDocument = async function (fileHash, tx, writeContracts , signer){
 
-    
+
     const selfAddress = await signer.getAddress()
     const replayNonce = await tx(writeContracts.Signchain.replayNonce(selfAddress))
-    
+
 
     const params = [
       ["bytes32", "uint"],
@@ -496,15 +496,15 @@ export const notarizeDoc = async function(fileHash, tx, writeContracts , signer)
         signature[0],
         signature[1]
     ))
- 
+
     return true
 }
 
 export const getNotaryInfo = async function(fileHash, tx, writeContracts) {
-   
+
     const notaryDetails = await tx(writeContracts.Signchain.notarizedDocs(
         fileHash))
-    
+
     return notaryDetails
 
 

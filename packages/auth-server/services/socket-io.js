@@ -1,6 +1,9 @@
 const Emittery = require('emittery')
 const {getAPISig, newClientDB} = require("./hub-helpers");
 
+const threadDbId = [1, 85, 2, 162, 50, 48, 209, 242, 140, 224, 92, 53, 163, 197, 239, 228, 119, 247, 83, 123, 70, 224,
+  215, 43, 215, 103, 142, 189, 149, 148, 228, 164, 171, 38]
+
 module.exports = (io) => {
     io.on('connection', (socket) => {
       console.log('New user connected');
@@ -53,7 +56,11 @@ module.exports = (io) => {
               // send token to client
               io.emit('message', JSON.stringify({
                 type: 'token',
-                value: payload,
+                value: {
+                  payload: payload,
+                  threadDbId: threadDbId
+                },
+
               }))
               console.log("DONE!!!")
               break;

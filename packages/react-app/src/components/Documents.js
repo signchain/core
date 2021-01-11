@@ -2,8 +2,15 @@
 import React, { useEffect, useState } from "react";
 import { Button, Icon, Loader, Table, Modal, Step } from "semantic-ui-react";
 import { Badge } from "antd";
-import {authorizeUser, getAllUsers, getAllFile, downloadFiles, attachSignature, notarizeDoc} from "../lib/threadDb";
-
+import {
+  getAllUsers,
+  getAllFile,
+  downloadFiles,
+  attachSignature,
+  notarizeDoc,
+  getCredentials
+} from "../lib/threadDb";
+import {Client} from "@textile/hub"
 const index = require("../lib/e2ee");
 
 import { Collapse } from "antd";
@@ -30,29 +37,25 @@ export default function Documents(props) {
 
   useEffect(() => {
     if (props.writeContracts) {
-
-      authorizeUser(password).then((client)=>{
-        setDBClient(client)
-        props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
-          getAllDoc(client);
-        });
-        props.writeContracts.Signchain.on("DocumentNatarized", (author, oldValue, newValue, event) => {
-          getAllDoc(client);
-        });
-        getAllDoc(client);
-        setSigner(props.userProvider.getSigner());
-        getAllUsers(client, userInfo.publicKey).then(result => {
-          setCaller(result.caller);
-        });
-      })
+      props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
+        getAllDoc();
+      });
+      props.writeContracts.Signchain.on("DocumentNatarized", (author, oldValue, newValue, event) => {
+        getAllDoc();
+      });
+      getAllDoc();
+      setSigner(props.userProvider.getSigner());
+      getAllUsers(userInfo.publicKey).then(result => {
+        setCaller(result.caller);
+      });
     }
   }, [props.writeContracts]);
 
 
-  const getAllDoc = async (client) => {
+  const getAllDoc = async () => {
     setLoading(true);
     const userInfo = JSON.parse(loggedUser)
-    const doc = await getAllFile(client,userInfo.publicKey, props.address, props.tx, props.writeContracts)
+    const doc = await getAllFile(userInfo.publicKey, props.address, props.tx, props.writeContracts)
     if (doc.length > 0) {
       setDocs(doc);
     }
@@ -67,12 +70,11 @@ export default function Documents(props) {
   };
 
   const signDocument = async (docHash, docId) => {
-    const result = await attachSignature(docId, props.userProvider.getSigner(), caller, docHash, dbClient);
+    const result = await attachSignature(docId, props.userProvider.getSigner(), caller, docHash);
   };
 
   const notarizeDocument = async (docId, docHash) => {
-    const result = await notarizeDoc(docId, docHash, props.tx, props.writeContracts, props.userProvider.getSigner(),
-      caller, dbClient);
+    const result = await notarizeDoc(docId, docHash, props.tx, props.writeContracts, props.userProvider.getSigner());
   };
 
   return (

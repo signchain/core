@@ -7,13 +7,13 @@ import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logoInverted.png";
 
 const index = require("../../lib/e2ee.js");
-import {authorizeUser, registerNewUser} from "../../lib/threadDb";
-// import { profileSchema } from "../../ceramic/schemas";
+import { loginUserWithChallenge, registerNewUser} from "../../lib/threadDb";
+import { definitions } from "../../ceramic/config.json";
 // import { createDefinition } from "@ceramicstudio/idx-tools";
 
 import test from "./img/test.png";
 
-function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
+function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup, identity }) {
   let history = useHistory();
 
   const [name, setName] = useState("");
@@ -28,14 +28,14 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
   useEffect(() => {
     async function getUserData() {
       setSignupStatus(SignupStatus.init);
-        /*try{
+        try{
          if(idx) {
            console.log("IDDD")
            setSignupStatus(SignupStatus.init);
          }
         }catch(err){
             console.log(err);
-        }*/
+        }
     }
      getUserData()
  }, [idx] )
@@ -46,31 +46,23 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
 
     if (walletStatus) {
       const accounts = await index.getAllAccounts(password);
-      /*setSignupStatus(SignupStatus.ceramic);
-      const profileId = await createDefinition(ceramic, {
-        name: "Signchain Profile",
-        schema: profileSchema,
-      });
-
-      await idx.set(profileId, {
+      setSignupStatus(SignupStatus.ceramic);
+      await idx.set(definitions.profile, {
         name: name,
         email: email,
         notary: notary,
       });
-
-      localStorage.setItem("profileSchema", profileId);
-      setSignupStatus(SignupStatus.contract);*/
-      const dbClient = await authorizeUser(password)
-      if (dbClient!==null) {
-        console.log("CLIENT:", dbClient)
+      setSignupStatus(SignupStatus.contract);
+      //const dbClient = await authorizeUser(password)
+      const client = await loginUserWithChallenge(identity);
+      if (client!==null) {
         const registrationStatus = await registerNewUser(
-          'did',
+          idx.id,
           name,
           email,
           accounts[0],
           notary ? userType.notary : userType.party,
-          address,
-          dbClient
+          address
         );
         if (registrationStatus) {
           history.push({
@@ -85,7 +77,7 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
 
   return (
     <>
-  
+
         <div className="form-container">
           <div className="form-content-left">
             <div className="logo_inverted">
@@ -155,7 +147,7 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
                 <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
                   Creating profile
                 </Button>
-              ) : 
+              ) :
               <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
                Initiating ...
               </Button>
@@ -169,7 +161,7 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx }) {
             <img src={test} className="form-img" alt="left" srcset="" />
           </div>
         </div>
-  
+
     </>
   );
 }

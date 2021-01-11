@@ -1,27 +1,23 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-const index = require("../../lib/e2ee.js");
-import {getLoginUser, authorizeUser, generateIdentity, loginUserWithChallenge} from "../../lib/threadDb";
+import {getLoginUser, loginUserWithChallenge} from "../../lib/threadDb";
 import wallet from 'wallet-besu'
 import test from "./img/test.png";
 import logo from "../../images/logoInverted.png";
 import "./Form.css";
 
-function LoginForm(props) {
+function LoginForm({identity}) {
   let history = useHistory();
   const [password, setPassword] = useState("");
 
   async function loginUser() {
     const accounts = await wallet.login(password);
     if (accounts!==null) {
-      //const dbClient = await authorizeUser(password)
-      const identity = await generateIdentity();
-      const dbClient = await loginUserWithChallenge(identity);
-      console.log('DBClient:', dbClient)
+      const client = await loginUserWithChallenge(identity);
       console.log("USER Login!!")
-      /*if (dbClient !== null) {
-        let userInfo = await getLoginUser(accounts[0], dbClient)
+      if (client !== null) {
+        let userInfo = await getLoginUser(accounts[0], client)
         if (userInfo !== null) {
           console.log("User Info:", userInfo)
           localStorage.setItem("USER", JSON.stringify(userInfo))
@@ -30,7 +26,7 @@ function LoginForm(props) {
         }
       } else {
         console.log("Some error!!!")
-      }*/
+      }
     }else{
       console.log("Wrong password!!")
     }

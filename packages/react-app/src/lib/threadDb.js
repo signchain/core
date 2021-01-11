@@ -1,66 +1,15 @@
-const {generateMessageForEntropy, getAddressAndSigner} = require("./connectSign");
-const {hashSync} = require("bcryptjs")
 const e2e = require('./e2e-encrypt.js')
 const e2ee = require('./e2ee.js')
 const fileDownload = require('js-file-download')
-const {PrivateKey, createUserAuth, Client, Where, ThreadID} = require('@textile/hub')
+const { Client, Where, ThreadID } = require('@textile/hub')
 const wallet = require('wallet-besu')
 const ethers = require('ethers')
 const io = require('socket.io-client');
 
-const keyInfo = {
-    key:'be645tj5wtjuginby3fwnqhe57y',
-    secret:'bcm7zjaxlipajgsm6qd6big7lv52cihf2whbbaji'
-}
-
-const threadDbId = [1, 85, 125, 191, 215, 114, 237, 51, 20, 250, 73, 167, 140, 79, 44, 163, 178, 32,
-    196, 123, 8, 91, 204, 186, 30, 22, 91, 219, 60, 220, 108, 199, 131, 224]
-
-export const authorizeUser = async (password)=>{
+export const registerNewUser = async function(did, name, email, privateKey, userType, address){
     try {
-        const userAuth = await createUserAuth(keyInfo.key, keyInfo.secret)
-        const seed = e2e.convertPass(password)
-        const seedPhase = new Uint8Array(Buffer.from(seed))
-        const identity = PrivateKey.fromRawEd25519Seed(seedPhase)
-        const privateKey = await PrivateKey.fromString(identity.toString())
-        const dbClient = await Client.withUserAuth(userAuth)
-        const token = await dbClient.getToken(privateKey)
-        console.log("User authorized!!!")
-        return dbClient
-    }catch (err){
-        console.log('ERROR:',err)
-        return null
-    }
-}
-
-export const generateIdentity = async () => {
-    const metamask = await getAddressAndSigner()
-    const secret = hashSync('this.state.secret this.state.secret', 10)
-    console.log("SECRET:",secret)
-    const message = await generateMessageForEntropy(metamask.address, 'textile-demo', secret)
-    const signedText = await metamask.signer.signMessage(message);
-    const hash = ethers.utils.keccak256(signedText);
-    if (hash === null) {
-        throw new Error('No account is provided. Please provide an account to this application.');
-    }
-
-    const array = hash
-      .replace('0x', '')
-      .match(/.{2}/g)
-      .map((hexNoPrefix) => ethers.BigNumber.from('0x' + hexNoPrefix).toNumber())
-
-    if (array.length !== 32) {
-        throw new Error('Hash of signature is not the correct size! Something went wrong!');
-    }
-    const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(array))
-    console.log("identity:",identity.toString())
-
-    return identity
-}
-
-export const registerNewUser = async function(did, name, email, privateKey, userType, address, dbClient){
-    try {
-        const threadId = ThreadID.fromBytes(threadDbId)
+        const {threadDb, client} = await getCredentials()
+        const threadId = ThreadID.fromBytes(threadDb)
         let publicKey = e2e.getPublicKey(privateKey)
         const data = {
             did:did,
@@ -72,7 +21,7 @@ export const registerNewUser = async function(did, name, email, privateKey, user
             nonce: 0,
             documentInfo: [{_id:"-1"}]
         }
-        const status = await dbClient.create(threadId, 'RegisterUser', [data])
+        const status = await client.create(threadId, 'RegisterUser', [data])
         console.log("User registration status:",status)
         return true
     }catch(err){
@@ -80,14 +29,14 @@ export const registerNewUser = async function(did, name, email, privateKey, user
     }
 }
 
-export const loginWithChallenge = (identity) => {
+export const solveChallenge = (identity) => {
     return new Promise((resolve, reject) => {
         console.log("Trying to connect with socket!!")
 
         const socket = io("http://127.0.0.1:3001");
 
         socket.on("connect", () => {
-            console.log('Connected to Server22')
+            console.log('Connected to Server!!!')
             const publicKey = identity.public.toString();
 
             // Send public key to server
@@ -114,7 +63,6 @@ export const loginWithChallenge = (identity) => {
 
                   //get the token and store it
                     case 'token': {
-                        console.log("TOKEN:",data.value)
                         resolve(data.value)
                         socket.disconnect();
                         break;
@@ -131,19 +79,27 @@ export const loginUserWithChallenge = async function(id){
     }
 
     /** Use the identity to request a new API token when needed */
-    const loginCallback = await loginWithChallenge(id);
-    const client = await Client.withUserAuth(loginCallback)
-    console.log('Verified on Textile API')
+    const credentials = await solveChallenge(id);
+    localStorage.setItem('payload',JSON.stringify(credentials))
+    const client = await Client.withUserAuth(credentials.payload)
+    console.log('Verified on Textile API!!')
     return client
 }
 
-export const getLoginUser = async function(privateKey, dbClient){
+export const getCredentials = async function(){
+    const credentials = JSON.parse(localStorage.getItem('payload'))
+    const threadDb = credentials.threadDbId
+    const client = Client.withUserAuth(credentials.payload)
+    return {client, threadDb}
+}
+
+export const getLoginUser = async function(privateKey){
     try {
+        const {threadDb, client} = await getCredentials()
         let publicKey = e2e.getPublicKey(privateKey)
         const query = new Where('publicKey').eq(publicKey.toString("hex"))
-        const threadId = ThreadID.fromBytes(threadDbId)
-        const result = await dbClient.find(threadId, 'RegisterUser', query)
-        console.log("RESULT:",result)
+        const threadId = ThreadID.fromBytes(threadDb)
+        const result = await client.find(threadId, 'RegisterUser', query)
         if (result.length<1){
             console.log("Please register user!")
             return null
@@ -154,10 +110,10 @@ export const getLoginUser = async function(privateKey, dbClient){
     }
 }
 
-export const getAllUsers = async function(dbClient,loggedUser){
-    console.log("Logg:",loggedUser)
-    const threadId = ThreadID.fromBytes(threadDbId)
-    const registeredUsers = await dbClient.find(threadId, 'RegisterUser', {})
+export const getAllUsers = async function(loggedUser){
+    const {threadDb, client} = await getCredentials()
+    const threadId = ThreadID.fromBytes(threadDb)
+    const registeredUsers = await client.find(threadId, 'RegisterUser', {})
     const userType = {party: 0, notary: 1}
     let caller
     let userArray = []
@@ -189,9 +145,9 @@ export const getAllUsers = async function(dbClient,loggedUser){
     }
 }
 
-export const registerDoc = async function(party, fileInfo, title, setSubmitting, signer, notary, dbClient, caller,
+export const registerDoc = async function(party, fileInfo, title, setSubmitting, signer, notary, caller,
                                           tx, writeContracts ){
-
+    const {threadDb, client} = await getCredentials()
     let encryptedKeys=[]
     let userAddress=[]
     const { fileHash, fileLocation, fileName, cipherKey } = fileInfo
@@ -226,8 +182,8 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
         console.log("result:",res)
     }
 
-    const threadId = ThreadID.fromBytes(threadDbId)
-    const docId = await dbClient.create(threadId, 'Document', [{
+    const threadId = ThreadID.fromBytes(threadDb)
+    const docId = await client.create(threadId, 'Document', [{
         title: title,
         documentHash: fileHash.toString("hex"),
         fileLocation: fileLocation,
@@ -238,7 +194,7 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
 
     //call contract and verify signature
     const date = new Date()
-    const signatureID = await dbClient.create(threadId, 'SignatureDetails', [{
+    const signatureID = await client.create(threadId, 'SignatureDetails', [{
         signers: userAddress,
         signature:[{
             signer: caller.address,
@@ -256,7 +212,7 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
 
     for (let i=0; i<party.length; i++){
         const query = new Where('publicKey').eq(party[i].key)
-        const user = await dbClient.find(threadId, 'RegisterUser', query)
+        const user = await client.find(threadId, 'RegisterUser', query)
         console.log("USER222:",user)
         if (user[0].documentInfo.length===1 && user[0].documentInfo[0]._id==="-1"){
             user[0].documentInfo = [info]
@@ -265,7 +221,7 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
             user[0].documentInfo.push(info)
             user[0].nonce = user[0].nonce+1
         }
-        await dbClient.save(threadId,'RegisterUser',[user[0]])
+        await client.save(threadId,'RegisterUser',[user[0]])
         console.log("Updated!!:")
     }
     console.log("File uploaded!!!")
@@ -281,14 +237,15 @@ const signDocument = async function (fileHash, signer, replayNonce){
     return [replayNonce, await signer.signMessage(ethers.utils.arrayify(paramsHash))]
 }
 
-export const attachSignature = async function(documentId, signer, caller, fileHash, dbClient){
+export const attachSignature = async function(documentId, signer, caller, fileHash){
+    const {threadDb, client} = await getCredentials()
     const query = new Where('address').eq(caller.address)
-    const threadId = ThreadID.fromBytes(threadDbId)
-    const user = await dbClient.find(threadId, 'RegisterUser', query)
+    const threadId = ThreadID.fromBytes(threadDb)
+    const user = await client.find(threadId, 'RegisterUser', query)
     const signatureId = user[0].documentInfo.filter((value)=>value.documentId===documentId)
     const signature = await signDocument(fileHash, signer, caller.nonce)
     //verify signature contract call
-    const signStatus = await dbClient.findByID(threadId, 'SignatureDetails', signatureId[0].signatureId)
+    const signStatus = await client.findByID(threadId, 'SignatureDetails', signatureId[0].signatureId)
     const date = new Date()
     signStatus.signature.push({
         signer: caller.address,
@@ -296,17 +253,17 @@ export const attachSignature = async function(documentId, signer, caller, fileHa
         timestamp: date.toDateString(),
         nonce: signature[0]
     })
-    await dbClient.save(threadId,'SignatureDetails',[signStatus])
+    await client.save(threadId,'SignatureDetails',[signStatus])
     console.log("Updated signature!!")
 
     user[0].nonce = user[0].nonce+1
-    await dbClient.save(threadId,'RegisterUser',[user[0]])
+    await client.save(threadId,'RegisterUser',[user[0]])
     console.log("Updated Nonce!!:")
     return true
 }
 
-export const notarizeDoc = async function(docId, fileHash, tx, writeContracts , signer, caller, dbClient){
-    const signature = await attachSignature(docId, signer, caller, fileHash, dbClient)
+export const notarizeDoc = async function(docId, fileHash, tx, writeContracts , signer, caller){
+    const signature = await attachSignature(docId, signer, caller, fileHash)
     console.log("Signature added!!")
     const result = await tx(writeContracts.Signchain.notarizeDoc(fileHash))
     console.log("Result:", result)
@@ -317,19 +274,20 @@ export const getNotaryInfo = async function(fileHash, tx, writeContracts) {
     return await tx(writeContracts.Signchain.notarizedDocs(fileHash))
 }
 
-export const getAllFile = async function(dbClient, loggedUserKey,address,tx, writeContracts){
-    const threadId = ThreadID.fromBytes(threadDbId)
+export const getAllFile = async function( loggedUserKey,address,tx, writeContracts ){
+    const {threadDb, client} = await getCredentials()
+    const threadId = ThreadID.fromBytes(threadDb)
     const query = new Where('publicKey').eq(loggedUserKey)
-    const users = await dbClient.find(threadId, 'RegisterUser', query)
+    const users = await client.find(threadId, 'RegisterUser', query)
     let result = []
     let documents =[]
     for (let i=0;i<users[0].documentInfo.length;i++){
         if (users[0].documentInfo.length===1 && users[0].documentInfo[0]._id==='-1'){
             break;
         }
-        const document = await dbClient.findByID(threadId, 'Document', users[0].documentInfo[i].documentId)
+        const document = await client.findByID(threadId, 'Document', users[0].documentInfo[i].documentId)
         const hash = document.documentHash
-        const signDetails = await dbClient.findByID(threadId, 'SignatureDetails', users[0].documentInfo[i].signatureId)
+        const signDetails = await client.findByID(threadId, 'SignatureDetails', users[0].documentInfo[i].signatureId)
         const notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
         let signStatus = true
         let partySigned = false

@@ -1,6 +1,8 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
 
+import {definitions} from "../ceramic/config.json"
+
 import { Loader, Grid, Card, Icon, Table } from "semantic-ui-react";
 // import { Form, Input, Button, Checkbox } from "antd";
 import "./Profile.css";
@@ -9,7 +11,7 @@ const index = require("../lib/e2ee.js");
 
 export default function Profile({ceramic, idx}) {
 
-    // const [user, setUser] = useState({});
+  //const [user, setUser] = useState({});
 
   // useEffect(() => {
   //   if(props.writeContracts) {
@@ -27,8 +29,7 @@ export default function Profile({ceramic, idx}) {
        async function getUserData() {
            try{
             if(idx) {
-                const profileSchema = localStorage.getItem("profileSchema");
-                const data = await idx.get(profileSchema, idx.id)
+                const data = await idx.get(definitions.profile, idx.id)
                 setUser(data)
                 console.log(data);
             }
