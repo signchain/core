@@ -8,7 +8,7 @@ import { Grid, Image } from 'semantic-ui-react'
 import SelectFiles from './SelectFiles'
 import SelectParties from './SelectParties'
 import Preview from './Preview'
-import {authorizeUser, getAllUsers, registerDoc} from "../../lib/threadDb";
+import {getAllUsers, registerDoc} from "../../lib/threadDb";
 
 const { Step } = Steps;
 
@@ -73,15 +73,12 @@ const stepper = props => {
       props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {});
       setSigner(props.userProvider.getSigner());
       const userInfo = JSON.parse(loggedUser)
-      authorizeUser(password).then(client=>{
-        setDbClient(client)
-        getAllUsers(client, userInfo.publicKey).then(result => {
+        getAllUsers(userInfo.publicKey).then(result => {
           console.log("USERS::",result)
           setUsers(result.userArray);
           setCaller(result.caller);
           setNotaries(result.notaryArray);
         });
-      })
     }
   }, [props.writeContracts]);
 
@@ -144,7 +141,6 @@ const stepper = props => {
                         setSubmitting,
                         signer,
                         docNotary,
-                        dbClient,
                         caller,
                         props.tx,
                         props.writeContracts

@@ -7,13 +7,13 @@ import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logoInverted.png";
 
 const index = require("../../lib/e2ee.js");
-import {authorizeUser, registerNewUser} from "../../lib/threadDb";
+import { loginUserWithChallenge, registerNewUser} from "../../lib/threadDb";
 import { definitions } from "../../ceramic/config.json";
 // import { createDefinition } from "@ceramicstudio/idx-tools";
 
 import test from "./img/test.png";
 
-function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup }) {
+function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup, identity }) {
   let history = useHistory();
 
   const [name, setName] = useState("");
@@ -47,25 +47,22 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup }) {
     if (walletStatus) {
       const accounts = await index.getAllAccounts(password);
       setSignupStatus(SignupStatus.ceramic);
-      
-
       await idx.set(definitions.profile, {
         name: name,
         email: email,
         notary: notary,
       });
       setSignupStatus(SignupStatus.contract);
-      const dbClient = await authorizeUser(password)
-      if (dbClient!==null) {
-        console.log("CLIENT:", dbClient)
+      //const dbClient = await authorizeUser(password)
+      const client = await loginUserWithChallenge(identity);
+      if (client!==null) {
         const registrationStatus = await registerNewUser(
           idx.id,
           name,
           email,
           accounts[0],
           notary ? userType.notary : userType.party,
-          address,
-          dbClient
+          address
         );
         if (registrationStatus) {
           history.push({
@@ -80,7 +77,7 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup }) {
 
   return (
     <>
-  
+
         <div className="form-container">
           <div className="form-content-left">
             <div className="logo_inverted">
@@ -150,7 +147,7 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup }) {
                 <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
                   Creating profile
                 </Button>
-              ) : 
+              ) :
               <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
                Initiating ...
               </Button>
@@ -164,7 +161,7 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup }) {
             <img src={test} className="form-img" alt="left" srcset="" />
           </div>
         </div>
-  
+
     </>
   );
 }

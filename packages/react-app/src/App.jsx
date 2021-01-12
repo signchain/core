@@ -31,8 +31,7 @@ import { IDX } from '@ceramicstudio/idx'
 import { Ed25519Provider } from 'key-did-provider-ed25519'
 import {randomBytes} from 'crypto'
 import {fromString} from 'uint8arrays/from-string'
-
-
+import {PrivateKey} from "@textile/hub";
 
 const blockExplorer = "https://etherscan.io/"
 const CERAMIC_URL = 'https://ceramic-dev.3boxlabs.com'
@@ -43,6 +42,8 @@ function App() {
     const [injectedProvider, setInjectedProvider] = useState();
     const [ceramic, setCeramic] = useState(null);
     const [idx, setIdx] = useState(null);
+    const [identity, setIdentity] = useState(null);
+
     const price = useExchangePrice(mainnetProvider);
     const gasPrice = useGasPrice("fast");
     console.log(gasPrice)
@@ -58,6 +59,8 @@ function App() {
 
     const setup = async () => {
         const seed = await generateSignature();
+        const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(seed))
+        setIdentity(identity)
         const ceramic = new Ceramic(CERAMIC_URL)
         await ceramic.setDIDProvider(new Ed25519Provider(seed))
         setCeramic(ceramic)
@@ -81,7 +84,7 @@ function App() {
     useEffect(() => {
         console.log("SETTING ROUTE",window.location.pathname)
         setRoute(window.location.pathname)
-        
+
     }, [ window.location.pathname ]);
 
   return (
@@ -102,7 +105,7 @@ function App() {
 
         <HashRouter>
           <div className="App">
-             
+
             <Switch>
                 <Route exact path="/db" component={Database} />
               <Route exact path="/" render={(props) =>
@@ -112,6 +115,7 @@ function App() {
                       writeContracts={writeContracts}
                       ceramic={ceramic}
                       idx={idx}
+                      identity = {identity}
                   />}/>
 
               <Route exact path="/login" render={(props) =>
@@ -119,6 +123,7 @@ function App() {
                       address={address}
                       tx={tx}
                       writeContracts={writeContracts}
+                      identity = {identity}
                       {...props}
                   />}/>
               <Route exact path="/signup" render={(props) =>
@@ -128,6 +133,7 @@ function App() {
                       writeContracts={writeContracts}
                       ceramic={ceramic}
                       idx={idx}
+                      identity = {identity}
                   />}/>
 
               <Layout
