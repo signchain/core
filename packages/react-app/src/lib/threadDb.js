@@ -33,19 +33,19 @@ export const solveChallenge = (identity) => {
     return new Promise((resolve, reject) => {
         console.log("Trying to connect with socket!!")
 
-        const socket = io("http://127.0.0.1:3001");
+        const socket = io(process.env.REACT_APP_SOCKET_URL);
 
         socket.on("connect", () => {
             console.log('Connected to Server!!!')
             const publicKey = identity.public.toString();
 
             // Send public key to server
-            socket.emit('message', JSON.stringify({
+            socket.emit('authInit', JSON.stringify({
                 pubKey: publicKey,
                 type: 'token'
             }));
 
-            socket.on("message", async (event) => {
+            socket.on("authMsg", async (event) => {
                 const data = JSON.parse(event)
                 switch (data.type) {
                     case 'error': {
@@ -57,7 +57,7 @@ export const solveChallenge = (identity) => {
                     case 'challenge': {
                         const buf = Buffer.from(data.value)
                         const signed = await identity.sign(buf)
-                        socket.emit("challenge", signed);
+                        socket.emit("challengeResp", signed);
                         break;
                     }
 

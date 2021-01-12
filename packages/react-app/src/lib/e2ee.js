@@ -8,9 +8,10 @@ const ethers = require('ethers')
 
 AWS.config.update({
     region: 'ap-south-1',
-    accessKeyId: '****',
-    secretAccessKey:  '****'
+    accessKeyId: process.env.REACT_APP_ACCESS_KEY,
+    secretAccessKey:  process.env.REACT_APP_SECRET
 })
+
 let s3 = new AWS.S3();
 
 const fleekApiKey = "U/J0JJhTWcX8bdzzkEaNAw=="
