@@ -8,7 +8,7 @@ module.exports = (io) => {
     io.on('connection', (socket) => {
       console.log('New user connected');
 
-      socket.on('message', async (msg) => {
+      socket.on('authInit', async (msg) => {
         const emitter = new Emittery();
         console.log('message: ' + msg);
         try {
@@ -28,13 +28,13 @@ module.exports = (io) => {
                   return new Promise((resolve, reject) => {
 
                     //send challenge to client
-                    io.emit('message', JSON.stringify({
+                    io.emit('authMsg', JSON.stringify({
                       type: 'challenge',
                       value: Buffer.from(challenge).toJSON(),
                     }))
 
                     //wait for challenge to get solved
-                    socket.on('challenge', (sig) => {
+                    socket.on('challengeResp', (sig) => {
                       resolve(Buffer.from(sig))
                     });
 
@@ -54,7 +54,7 @@ module.exports = (io) => {
               };
 
               // send token to client
-              io.emit('message', JSON.stringify({
+              io.emit('authMsg', JSON.stringify({
                 type: 'token',
                 value: {
                   payload: payload,
@@ -70,16 +70,14 @@ module.exports = (io) => {
               if (!data.sig) {
                 throw new Error('missing signature (sig)')
               }
-              console.log("EMIT")
-              await emitter.emit('challenge', data.sig);
-              console.log("EMITTED")
+              await emitter.emit('challengeResp', data.sig);
               break;
             }
           }
         } catch (error) {
           console.error("Error:", error)
           /** Notify our client of any errors */
-          io.emit('message',JSON.stringify({
+          io.emit('authMsg',JSON.stringify({
             type: 'error',
             value: error.message,
           }))
