@@ -44,7 +44,7 @@ module.exports = (io) => {
               console.log("token:", token)
 
               /** Get API authorization for the user */
-              const auth = await getAPISig()
+              const auth = await getAPISig(3600)
 
               /** Include the token in the auth payload */
               const payload = {
