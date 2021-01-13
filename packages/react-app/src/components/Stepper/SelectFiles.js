@@ -51,9 +51,10 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
 
   return (
     <div className="parties__container">
-      <div className="wrapper">
+      <div className="wrapper" >
         <div style={{ marginBottom: "14px" }}>
           <Dropdown
+             style={{ float: "left", marginTop: "18px" }}
             placeholder="Select Storage Provider"
             fluid
             selection
@@ -72,13 +73,15 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
         </div>
 
         <div style={{ marginBottom: "14px" }}>
-          <Dragger {...props} style={{ border: "none" }}>
+          <Dragger {...props} style={{ border: "none" }} >
             <p className="ant-upload-drag-icon">
               <img src={upload} alt="" srcset="" />
             </p>
             <p className="ant-upload-text">Click or drag file to this area to upload</p>
           </Dragger>
-          {selected && !submitting ? (
+          
+        </div>
+        {selected && !submitting ? (
             <Input
               fluid
               style={{ marginTop: "16px" }}
@@ -88,7 +91,6 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
               }}
             />
           ) : null}
-        </div>
       </div>
     </div>
   );

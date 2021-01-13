@@ -6,7 +6,7 @@ import "./Preview.css";
 
 const index = require("../../lib/e2ee.js");
 
-const Preview = ({ parties, fileInfo, title }) => {
+const Preview = ({ parties, fileInfo, title, cc }) => {
   return (
     <div className="preview__container">
       <div className="wrapper">

@@ -147,6 +147,7 @@ export const getAllUsers = async function(loggedUser){
 
 export const registerDoc = async function(party, fileInfo, title, setSubmitting, signer, notary, caller,
                                           tx, writeContracts ){
+                                              console.log(party)
     const {threadDb, client} = await getCredentials()
     let encryptedKeys=[]
     let userAddress=[]
