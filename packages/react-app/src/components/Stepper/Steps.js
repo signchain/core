@@ -9,6 +9,7 @@ import SelectFiles from './SelectFiles'
 import SelectParties from './SelectParties'
 import Preview from './Preview'
 import {getAllUsers, registerDoc} from "../../lib/threadDb";
+import {sendMail} from "../../lib/notifications";
 
 const { Step } = Steps;
 
@@ -35,6 +36,7 @@ const steps = [
           parties={args.parties}
           notaries={args.notaries}
           setParties={args.setParties}
+          setCC={args.setCC}
           setDocNotary={args.setDocNotary}
         />
       );
@@ -43,7 +45,7 @@ const steps = [
   {
     title: "Preview and Sign",
     content: args => {
-      return <Preview parties={args.parties} fileInfo={args.fileInfo} title={args.title} />;
+      return <Preview parties={args.parties} fileInfo={args.fileInfo} title={args.title} cc={args.cc}/>;
     },
   },
 ];
@@ -53,18 +55,16 @@ const stepper = props => {
   const loggedUser = localStorage.getItem("USER");
 
   const [signer, setSigner] = useState({});
-  const fileStorage = ["AWS", "Fleek"];
   const [users, setUsers] = useState([]);
   const [notaries, setNotaries] = useState([]);
   const [docNotary, setDocNotary] = useState(null);
   const [caller, setCaller] = useState(null);
   const [parties, setParties] = useState([]);
+  const [cc, setCC] = useState('');
   const [file, selectFile] = useState({});
   const [submitting, setSubmitting] = useState(false);
-  const [storageType, setStorage] = useState("AWS");
   const [fileInfo, setFileInfo] = useState({});
   const [title, setTitle] = useState(null);
-  const [dbClient, setDbClient] = useState(null);
 
   let fileInputRef = React.createRef();
 
@@ -74,7 +74,6 @@ const stepper = props => {
       setSigner(props.userProvider.getSigner());
       const userInfo = JSON.parse(loggedUser)
         getAllUsers(userInfo.publicKey).then(result => {
-          console.log("USERS::",result)
           setUsers(result.userArray);
           setCaller(result.caller);
           setNotaries(result.notaryArray);
@@ -91,7 +90,6 @@ const stepper = props => {
     setCurrent(current - 1);
   };
 
-  // const { current } = this.state;
   return (
     <>
       <div className="step__container">
@@ -105,10 +103,12 @@ const stepper = props => {
                   submitting,
                   setTitle,
                   setParties,
+                  setCC,
                   setFileInfo,
                   parties,
                   fileInfo,
                   title,
+                  cc,
                   setSubmitting,
                   setDocNotary,
                 })}
@@ -132,10 +132,8 @@ const stepper = props => {
                     type="primary"
                     loading={submitting}
                     onClick={() => {
-                      const allParties = parties;
-                      allParties.push(caller);
                       registerDoc(
-                        allParties,
+                        parties.concat([caller]),
                         fileInfo,
                         title,
                         setSubmitting,
@@ -145,6 +143,8 @@ const stepper = props => {
                         props.tx,
                         props.writeContracts
                       );
+                      sendMail(parties.map((party) => {return (party.email)}).concat([cc]), 
+                      {sender: caller.name, docId: fileInfo.fileHash});
                     }}
                     className="button"
                   >

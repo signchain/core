@@ -33,7 +33,7 @@ export const solveChallenge = (identity) => {
     return new Promise((resolve, reject) => {
         console.log("Trying to connect with socket!!")
 
-        const socket = io(process.env.REACT_APP_SOCKET_URL);
+        const socket = io(process.env.REACT_APP_API_SERVER_URL);
 
         socket.on("connect", () => {
             console.log('Connected to Server!!!')
@@ -147,6 +147,7 @@ export const getAllUsers = async function(loggedUser){
 
 export const registerDoc = async function(party, fileInfo, title, setSubmitting, signer, notary, caller,
                                           tx, writeContracts ){
+                                              console.log(party)
     const {threadDb, client} = await getCredentials()
     let encryptedKeys=[]
     let userAddress=[]

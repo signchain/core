@@ -1,13 +1,16 @@
 /* eslint-disable */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./SlectParties.css";
-import { Dropdown, Checkbox } from "semantic-ui-react";
+import { Dropdown, Checkbox, Input, Icon } from "semantic-ui-react";
 import jenny from "../../images/jenny.jpg";
 
-const SelectParties = ({ users, parties, notaries, setParties, setDocNotary }) => {
+
+const SelectParties = ({ users, parties, notaries, setParties, setCC, setDocNotary }) => {
 
   const [displayNotary, setDisplayNotary] = useState(false);
+  const [displayCC, setDisplayCC] = useState(false);
+
 
   return (
     <div className="parties__container">
@@ -31,8 +34,9 @@ const SelectParties = ({ users, parties, notaries, setParties, setDocNotary }) =
           />
         </div>
 
-        <div>
+        <div style={{ float: "left", marginTop: "18px" }}>
           <Checkbox
+          
             label="Add Notary (optional)"
             checked={displayNotary}
             onChange={() => {
@@ -63,6 +67,26 @@ const SelectParties = ({ users, parties, notaries, setParties, setDocNotary }) =
                 setDocNotary(data.value);
               }}
             />
+          </div>
+        ) : (
+          <div />
+        )}
+        <div style={{ float: "left", marginTop: "18px" }}>
+          <Checkbox
+            label="Add CC (optional)"
+            checked={displayCC}
+            onChange={() => {
+              setDisplayCC(!displayCC);
+            }}
+          />
+        </div>
+
+        {displayCC ? (
+          <div >
+            <Input style={{ float: "left", marginTop: "18px" }} iconPosition='left' placeholder='Email' onChange={(error, data)=>{setCC(data.value)}}>
+          <Icon name='at' />
+             <input />
+          </Input>
           </div>
         ) : (
           <div />
