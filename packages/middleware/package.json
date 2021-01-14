@@ -1,10 +1,10 @@
 {
-  "name": "auth-server",
+  "name": "@signchain/middleware",
   "version": "1.0.0",
   "description": "middleware for textile-hub authentication",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "start": "nodemon index.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.4.1",
