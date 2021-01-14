@@ -15,6 +15,7 @@
     "react-app:eject": "yarn workspace @signchain/react-app eject",
     "react-app:start": "yarn workspace @signchain/react-app start",
     "react-app:test": "yarn workspace @signchain/react-app test",
+    "middleware:start": "yarn workspace @signchain/middleware start",
     "build": "yarn workspace @signchain/react-app build --max-old-space-size=12288",
     "chain": "yarn workspace @signchain/hardhat chain",
     "node": "yarn workspace @signchain/hardhat chain",
