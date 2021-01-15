@@ -33,7 +33,7 @@ export const solveChallenge = (identity) => {
     return new Promise((resolve, reject) => {
         console.log("Trying to connect with socket!!")
 
-        const socket = io(process.env.REACT_APP_API_SERVER_URL);
+        const socket = io(process.env.REACT_APP_SOCKET_URL);
 
         socket.on("connect", () => {
             console.log('Connected to Server!!!')
