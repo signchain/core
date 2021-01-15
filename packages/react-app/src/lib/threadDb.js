@@ -33,7 +33,7 @@ export const solveChallenge = (identity) => {
     return new Promise((resolve, reject) => {
         console.log("Trying to connect with socket!!")
 
-        const socket = io(process.env.REACT_APP_SOCKET_URL);
+        const socket = io(process.env.REACT_APP_API_SERVER_URL);
 
         socket.on("connect", () => {
             console.log('Connected to Server!!!')
@@ -240,7 +240,7 @@ const signDocument = async function (fileHash, signer, replayNonce){
 
 export const attachSignature = async function(documentId, signer, caller, fileHash){
     const {threadDb, client} = await getCredentials()
-    const query = new Where('address').eq(caller.address)
+    const query = new Where('publicKey').eq(caller.key)
     const threadId = ThreadID.fromBytes(threadDb)
     const user = await client.find(threadId, 'RegisterUser', query)
     const signatureId = user[0].documentInfo.filter((value)=>value.documentId===documentId)
@@ -314,8 +314,13 @@ export const getAllFile = async function( loggedUserKey,address,tx, writeContrac
             signers: signDetails.signers,
             signatures: signDetails.signature,
             partySigned: partySigned,
-            notary: notaryInfo.notaryAddress,
-            notarySigned: notaryInfo.notarized
+        }
+        if (notaryInfo === undefined){
+            value.notary = 0
+            value.notarySigned = false
+        }else{
+            value.notary = notaryInfo.notaryAddress
+            value.notarySigned = notaryInfo.notarized
         }
         result.push(value)
     }
