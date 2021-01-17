@@ -10,7 +10,7 @@ const Dashboard = () => (
   <>
     <div className="dashboard__container" style={{ background: "red" }}>
       <div className="inner__wrapper">
-        {/* <Grid container columns={3}>
+        <Grid container columns={3}>
           <Grid.Column>
             <div className="wrapper">
               <Link to="/sign">
@@ -54,7 +54,7 @@ const Dashboard = () => (
             </div>
           </Grid.Column>
         </Grid>
-      </div> */}
+      </div>
     </div>
   </>
 );
