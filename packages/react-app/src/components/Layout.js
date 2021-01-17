@@ -12,17 +12,17 @@ const { Content } = Layout;
 export default function layout(props) {
   //console.log(props);
 
-    let history = useHistory()
+  let history = useHistory();
 
-    return (
-<>
-        {/* ['/documents', '/profile'].includes(history.location.pathname) ?
+  return (
+    <>
+      {/* ['/documents', '/profile'].includes(history.location.pathname) ?
             null : */}
 
       <Layout>
         <MainHeader {...props} />
         <Layout>
-          <SidePannel />
+          {/* <SidePannel /> */}
 
           <Layout>
             <Content className=" main-content">{props.children}</Content>

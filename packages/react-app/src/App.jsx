@@ -33,6 +33,9 @@ import {randomBytes} from 'crypto'
 import {fromString} from 'uint8arrays/from-string'
 import {PrivateKey} from "@textile/hub";
 
+import SignInWarning from './components/warnings/SignInWarning'
+import DocumentDetails from './components/Documents/DocumentDetails'
+
 const blockExplorer = "https://etherscan.io/"
 const CERAMIC_URL = 'https://ceramic-dev.3boxlabs.com'
 const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 })
@@ -147,7 +150,12 @@ function App() {
                   logoutOfWeb3Modal={logoutOfWeb3Modal}
                   blockExplorer={blockExplorer}
               >
-                {/* <Steps/> */}
+                
+                   {/* testing purpose- remove this while merging */}
+                <Route exact path="/warning" render={(props)=><SignInWarning/>}/>
+                <Route exact path="/documentdetails" render={(props)=><DocumentDetails {...props}/>}/>
+
+                {/* *************************** */}
                 <Route exact path="/sign" render={(props) =>
                     <Steps
                         address={address}

@@ -2,15 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { Button, Icon, Loader, Table, Modal, Step } from "semantic-ui-react";
 import { Badge } from "antd";
-import {
-  getAllUsers,
-  getAllFile,
-  downloadFiles,
-  attachSignature,
-  notarizeDoc,
-  getCredentials
-} from "../lib/threadDb";
-import {Client} from "@textile/hub"
+import { getAllUsers, getAllFile, downloadFiles, attachSignature, notarizeDoc, getCredentials } from "../lib/threadDb";
+
+import "./Documents.css";
+import File from "./../images/icons/Files.svg";
+import Sign from "./../images/icons/Sign.svg";
+import Download from "./../images/icons/Download.svg";
+import { Client } from "@textile/hub";
 const index = require("../lib/e2ee");
 
 import { Collapse } from "antd";
@@ -18,11 +16,10 @@ const userType = { party: 0, notary: 1 };
 
 const { Panel } = Collapse;
 
-
 export default function Documents(props) {
   const password = localStorage.getItem("password");
   const loggedUser = localStorage.getItem("USER");
-  const userInfo = JSON.parse(loggedUser)
+  const userInfo = JSON.parse(loggedUser);
 
   const [open, setOpen] = useState(false);
   const [caller, setCaller] = useState({});
@@ -31,9 +28,8 @@ export default function Documents(props) {
   const [docInfo, setDocInfo] = useState({});
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(null);
-  const [dbClient,setDBClient] = useState(null)
-  const [identity, setIdentity] = useState(null)
-
+  const [dbClient, setDBClient] = useState(null);
+  const [identity, setIdentity] = useState(null);
 
   useEffect(() => {
     if (props.writeContracts) {
@@ -51,11 +47,10 @@ export default function Documents(props) {
     }
   }, [props.writeContracts]);
 
-
   const getAllDoc = async () => {
     setLoading(true);
-    const userInfo = JSON.parse(loggedUser)
-    const doc = await getAllFile(userInfo.publicKey, props.address, props.tx, props.writeContracts)
+    const userInfo = JSON.parse(loggedUser);
+    const doc = await getAllFile(userInfo.publicKey, props.address, props.tx, props.writeContracts);
     if (doc.length > 0) {
       setDocs(doc);
     }
@@ -64,9 +59,10 @@ export default function Documents(props) {
 
   const downloadFile = (name, key, location) => {
     setDownloading(name);
-    console.log("docment:",location)
-    downloadFiles(name, key, userInfo.address, location, password)
-        .then(result => {setDownloading(null)});
+    console.log("docment:", location);
+    downloadFiles(name, key, userInfo.address, location, password).then(result => {
+      setDownloading(null);
+    });
   };
 
   const signDocument = async (docHash, docId) => {
@@ -130,14 +126,24 @@ export default function Documents(props) {
 
                   <Table.Cell>
                     {value.notary === caller.address && !value.notarySigned ? (
-                      <Button basic color="blue" icon labelPosition="left" onClick={() => notarizeDocument(value.docId,
-                        value.hash)}>
+                      <Button
+                        basic
+                        color="blue"
+                        icon
+                        labelPosition="left"
+                        onClick={() => notarizeDocument(value.docId, value.hash)}
+                      >
                         <Icon name="signup" />
                         Notarize
                       </Button>
                     ) : !value.partySigned ? (
-                      <Button basic color="blue" icon labelPosition="left" onClick={() => signDocument(value.hash,
-                        value.docId)}>
+                      <Button
+                        basic
+                        color="blue"
+                        icon
+                        labelPosition="left"
+                        onClick={() => signDocument(value.hash, value.docId)}
+                      >
                         <Icon name="signup" />
                         Sign Document
                       </Button>
@@ -149,8 +155,11 @@ export default function Documents(props) {
                     )}
                   </Table.Cell>
                   <Table.Cell collapsing textAlign="right">
-                    <Button loading={downloading === value.hash} icon="download" onClick={() => downloadFile(value.title,
-                        value.key, value.documentLocation)} />
+                    <Button
+                      loading={downloading === value.hash}
+                      icon="download"
+                      onClick={() => downloadFile(value.title, value.key, value.documentLocation)}
+                    />
                   </Table.Cell>
                 </Table.Row>
               );
@@ -200,8 +209,7 @@ export default function Documents(props) {
                                 <p style={{ marginLeft: "14px" }}>
                                   {signature.signer}
                                   <br />
-                                  <span style={{ fontWeight: "bold" }}>Signed On </span> :
-                                  {signature.timestamp}
+                                  <span style={{ fontWeight: "bold" }}>Signed On </span> :{signature.timestamp}
                                 </p>
                               </Step.Content>
                             </Step>
@@ -229,6 +237,109 @@ export default function Documents(props) {
           </Button>
         </Modal.Actions>
       </Modal>
+
+      {/* my code */}
+
+      <h3>My Documents</h3>
+      <div className="documents__container">
+        {!loading ? (
+          docs.map(value => {
+            return (
+              <>
+                <div className="document_card">
+                  <div
+                    className="meta_info"
+                    onClick={() => {
+                      setOpen(true);
+                      setDocInfo(value);
+                    }}
+                  >
+                    <div className="name-content">
+                      <div className="left">
+                        <div>
+                          <img
+                            className="img-container"
+                            src="https://react.semantic-ui.com/images/avatar/large/patrick.png"
+                            alt=""
+                            srcset=""
+                          />
+                        </div>
+                      </div>
+                      <div className="right">
+                        <p className="card__h1"> Shared By</p>
+                        <p className="data">Koushith B.R</p>
+                      </div>
+                    </div>
+
+                    <div className="shared-date">
+                      <p className="card__h1">Shared On</p>
+                      <p className="data">{value.timestamp}</p>
+                    </div>
+                  </div>
+
+                  <div className="document__info">
+                    <div
+                      className="boxes"
+                      onClick={() => {
+                        setOpen(true);
+                        setDocInfo(value);
+                      }}
+                    >
+                      <div className="docs-icon">
+                        <img src={File} alt="" srcset="" />
+                      </div>
+                      <p> {value.title}</p>
+                    </div>
+                    <div
+                      className="boxes"
+                      onClick={() => {
+                        setOpen(true);
+                        setDocInfo(value);
+                      }}
+                    >
+                      <div className="docs-icon">
+                        <img src={Sign} alt="" srcset="" />
+                      </div>
+                      {value.signStatus ? (
+                        <p>
+                          <Icon name="circle" color="green" size="tiny" />
+                          Signed
+                        </p>
+                      ) : (
+                        <p>
+                          <Icon name="circle" color="red" size="small" /> Pending
+                        </p>
+                      )}
+                      {/* <p>
+                        <span className="sign-pending">
+                          {" "}
+                          <Icon name="circle" color="red" size="tiny" />
+                        </span>
+                        Pending
+                      </p> */}
+                    </div>
+                    <div className="boxes hover">
+                      <div
+                        className="docs-icon "
+                        onClick={() => downloadFile(value.title, value.key, value.documentLocation)}
+                      >
+                        <img src={Download} alt="" srcset="" />
+                      </div>
+                      <p>Download</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            );
+          })
+        ) : (
+          <Loader active size="medium">
+            Loading
+          </Loader>
+        )}
+      </div>
+
+      {/* my code end */}
     </div>
   );
 }
