@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { useHistory } from "react-router-dom";
 import MainHeader from "./Navigation/HeaderSem";
 import SidePannel from "./Navigation/SidePannel";
+import TopNav from "./Navigation/TopNav";
 import "antd/dist/antd.css";
 import "./Layout.css";
 import { Layout } from "antd";
@@ -20,7 +21,9 @@ export default function layout(props) {
             null : */}
 
       <Layout>
-        <MainHeader {...props} />
+        {/* <MainHeader {...props} /> */}
+        {/* <TopNav {...props} /> */}
+
         <Layout>
           {/* <SidePannel /> */}
 

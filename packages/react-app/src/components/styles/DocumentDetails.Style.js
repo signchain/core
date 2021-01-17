@@ -38,7 +38,7 @@ export const HeaderContainer = styled.div`
     border-radius: 4px;
   }
   .description {
-    font-size: 12px;
+    font-size: 14px;
     width: 720px;
     font-style: normal;
     font-weight: normal;
@@ -56,8 +56,8 @@ export const TitleHeading = styled.h1`
 
 export const DocumentTable = styled.div`
   background-color: #fff;
-  margin: 60px 60px 100px 60px;
-  padding: 60px 30px 100px 60px;
+  margin: 10px 60px 100px 60px;
+  padding: 22px 30px 100px 60px;
   height: 60vh;
   .name-content {
     display: flex;
@@ -90,7 +90,7 @@ export const DocumentTable = styled.div`
     margin-left: 4px !important;
   }
   .sign-btn {
-    margin-top: 30px;
+    margin-top: 26px;
     display: flex;
     justify-content: flex-end !important;
   }

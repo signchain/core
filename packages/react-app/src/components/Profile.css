@@ -1,9 +1,5 @@
-.profile__container {
-  margin: 18px;
-}
-
 .profile {
-  margin: 120px;
+  margin: 70px 120px 70px 120px;
   background-color: #fff;
   box-shadow: rgba(221, 230, 237, 0.4) !important;
   padding: 100px;
@@ -18,7 +14,7 @@
 .addressSpan {
   background-color: rgb(91, 41, 199, 0.2);
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 10px !important;
   overflow: hidden;
 }
 
@@ -27,5 +23,5 @@ h3 {
 }
 
 .profile-info {
-  margin-top: 48px;
+  /* margin-top: 48px; */
 }

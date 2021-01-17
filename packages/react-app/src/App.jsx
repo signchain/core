@@ -4,7 +4,6 @@ import {HashRouter, Route, Switch} from "react-router-dom";
 import "antd/dist/antd.css";
 import 'semantic-ui-css/semantic.min.css'
 import "./App.css";
-import {Row, Col} from "antd";
 import { getDefaultProvider, Web3Provider } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
@@ -23,6 +22,7 @@ import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
 import Verify from './components/Verify/Verify'
 import Database from "./components/database/Database";
+ import TopNav from './components/Navigation/TopNav'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 import {generateSignature} from "./lib/ceramicConnect"
 
@@ -92,7 +92,7 @@ function App() {
 
   return (
       <div className="App">
-        <div style={{position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10,}}>
+        {/* <div style={{position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10,}}>
           <Account
               address={address}
               localProvider={userProvider}
@@ -104,11 +104,11 @@ function App() {
               logoutOfWeb3Modal={logoutOfWeb3Modal}
               blockExplorer={blockExplorer}
           />
-        </div>
+        </div> */}
 
         <HashRouter>
           <div className="App">
-
+<TopNav/>
             <Switch>
                 <Route exact path="/db" component={Database} />
               <Route exact path="/" render={(props) =>

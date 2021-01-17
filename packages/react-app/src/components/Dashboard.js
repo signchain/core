@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 const Dashboard = () => (
   <>
-    <div className="dashboard__container">
+    <div className="dashboard__container" style={{ background: "red" }}>
       <div className="inner__wrapper">
         <Grid container columns={3}>
           <Grid.Column>
