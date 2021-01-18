@@ -147,11 +147,11 @@ export const getAllUsers = async function(loggedUser){
 
 export const registerDoc = async function(party, fileInfo, title, setSubmitting, signer, notary, caller,
                                           tx, writeContracts ){
-                                              console.log(party)
+    console.log(party)
     const {threadDb, client} = await getCredentials()
     let encryptedKeys=[]
     let userAddress=[]
-    let notaryStatus = false;
+    let notaryStatus = false
 
     const { fileHash, fileLocation, fileName, cipherKey } = fileInfo
     setSubmitting(true)
@@ -212,7 +212,10 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
 
     const info = {
         documentId: docId[0],
-        signatureId: signatureID[0]
+        signatureId: signatureID[0],
+        createdBy: caller.name,
+        date: new Date(Date.now()).toLocaleString().split(',')[0],
+        fileName: fileName
     }
 
     for (let i=0; i<party.length; i++){
@@ -279,62 +282,75 @@ export const getNotaryInfo = async function(fileHash, tx, writeContracts) {
     return await tx(writeContracts.Signchain.getNotarizeDocument(fileHash))
 }
 
-export const getAllFile = async function( loggedUserKey,address,tx, writeContracts ){
+export const getAllFile = async function( loggedUserKey ){
     const {threadDb, client} = await getCredentials()
     const threadId = ThreadID.fromBytes(threadDb)
     const query = new Where('publicKey').eq(loggedUserKey)
     const users = await client.find(threadId, 'RegisterUser', query)
+    console.log("Document:",users[0].documentInfo)
     let result = []
-    let documents =[]
     for (let i=0;i<users[0].documentInfo.length;i++){
         if (users[0].documentInfo.length===1 && users[0].documentInfo[0]._id==='-1'){
             break;
         }
-        const document = await client.findByID(threadId, 'Document', users[0].documentInfo[i].documentId)
-        const hash = document.documentHash
-        const signDetails = await client.findByID(threadId, 'SignatureDetails', users[0].documentInfo[i].signatureId)
-
-        let notaryInfo = null
-        console.log("NotaryStatus:",document.notaryStatus)
-        if (document.notaryStatus) {
-            notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
-            console.log("NotaryInfo:", notaryInfo)
-        }
-        let signStatus = true
-        let partySigned = false
-        if (signDetails.signers.length !== signDetails.signature.length){
-            const array = signDetails.signature.filter((item) => item.signer === address.toString())
-            console.log("Array:",i," :",signDetails, ": address: ",address)
-            if (array.length===1){
-                partySigned = true
-            }
-            signStatus = false;
-        }else{
-            signStatus = true
-            partySigned = true
-        }
-        let value = {
-            docId: document._id,
-            hash: hash,
-            documentLocation:document.fileLocation,
-            key: document.key,
-            title: document.title,
-            timestamp: signDetails.signature[0].timestamp,
-            signStatus: signStatus,
-            signers: signDetails.signers,
-            signatures: signDetails.signature,
-            partySigned: partySigned,
-        }
-        if (notaryInfo === null){
-            value.notary = 0
-            value.notarySigned = false
-        }else{
-            value.notary = notaryInfo.notaryAddress
-            value.notarySigned = notaryInfo.notarized
+        const documentDetails = users[0].documentInfo[i];
+        let value={
+            createdBy: documentDetails.createdBy,
+            date: documentDetails.date,
+            fileName: documentDetails.fileName,
+            documentId: documentDetails.documentId,
+            signatureId: documentDetails.signatureId
         }
         result.push(value)
     }
     return result
+}
+
+export const getSingleDocument = async function(address, tx, writeContracts, documentId, signatureId){
+    const {threadDb, client} = await getCredentials()
+    const threadId = ThreadID.fromBytes(threadDb)
+    const document = await client.findByID(threadId, 'Document', documentId)
+    const hash = document.documentHash
+    const signDetails = await client.findByID(threadId, 'SignatureDetails', signatureId)
+
+    let notaryInfo = null
+    console.log("NotaryStatus:",document.notaryStatus)
+    if (document.notaryStatus) {
+        notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
+        console.log("NotaryInfo:", notaryInfo)
+    }
+    let signStatus
+    let partySigned = false
+    if (signDetails.signers.length !== signDetails.signature.length){
+        const array = signDetails.signature.filter((item) => item.signer === address.toString())
+        if (array.length===1){
+            partySigned = true
+        }
+    signStatus = false;
+    }else{
+        signStatus = true
+        partySigned = true
+    }
+    let value = {
+        docId: document._id,
+        hash: hash,
+        documentLocation:document.fileLocation,
+        key: document.key,
+        title: document.title,
+        timestamp: signDetails.signature[0].timestamp,
+        signStatus: signStatus,
+        signers: signDetails.signers,
+        signatures: signDetails.signature,
+        partySigned: partySigned,
+    }
+    if (notaryInfo === null){
+        value.notary = 0
+        value.notarySigned = false
+    }else{
+        value.notary = notaryInfo.notaryAddress
+        value.notarySigned = notaryInfo.notarized
+    }
+    return value;
 }
 
 export const downloadFiles = async function (name, key, loggedUser,documentLocation, password){

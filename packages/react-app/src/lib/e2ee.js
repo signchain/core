@@ -17,6 +17,7 @@ let s3 = new AWS.S3();
 const fleekApiKey = "U/J0JJhTWcX8bdzzkEaNAw=="
 const fleekApiSecret = "7G3ATZE3xJ4X0PaZ0bRuGfdRbR56/BUYzIEtD9+QJP0="
 
+//Not using
 export const registerUser = async function(name, email, privateKey, userType, tx, writeContracts){
     try {
         let publicKey = e2e.getPublicKey(privateKey)
@@ -39,6 +40,7 @@ export const getAllAccounts = async function(password){
     return await wallet.login(password)
 }
 
+//Not using
 export const loginUser = async function(privateKey, tx, writeContracts){
     try {
         let publicKey = e2e.getPublicKey(privateKey)
@@ -246,6 +248,7 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
     }
 }
 
+// Not using
 export const getAllFile = async function(tx, writeContracts, address){
     const documents = await tx(writeContracts.Signchain.getAllDocument())
     let result = []
@@ -282,6 +285,7 @@ export const getAllFile = async function(tx, writeContracts, address){
     return result
 }
 
+//Change it in verify.js
 export const getFile = async function(tx, writeContracts, address, docHash){
 
         const signDetails = await tx(writeContracts.Signchain.getSignedDocuments(docHash))
@@ -315,6 +319,7 @@ export const getFile = async function(tx, writeContracts, address, docHash){
     return result
 }
 
+//not using
 export const registerDoc = async function(party, fileHash, cipherKey, title, fileKey, setSubmitting, tx,
     writeContracts, signer, notary){
 
@@ -401,6 +406,7 @@ export const uploadDoc = async function(file, password, setSubmitting, storageTy
 }
 
 
+//not using
 export const downloadFile = async function (name, docHash,password, tx, writeContracts){
 
     let cipherKey = await tx(writeContracts.Signchain.getCipherKey(docHash))

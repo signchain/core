@@ -50,9 +50,10 @@ export default function Documents(props) {
   const getAllDoc = async () => {
     setLoading(true);
     const userInfo = JSON.parse(loggedUser);
-    const doc = await getAllFile(userInfo.publicKey, props.address, props.tx, props.writeContracts);
-    if (doc.length > 0) {
-      setDocs(doc);
+    const document = await getAllFile(userInfo.publicKey, props.address, props.tx, props.writeContracts);
+    console.log("Docs:", document)
+    if (document.length > 0) {
+      setDocs(document);
     }
     setLoading(false);
   };
@@ -75,7 +76,7 @@ export default function Documents(props) {
 
   return (
     <div className="main__container">
-      <Table singleLine striped>
+      {/*<Table singleLine striped>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell colSpan="5">Your documents</Table.HeaderCell>
@@ -170,11 +171,11 @@ export default function Documents(props) {
             </Loader>
           )}
         </Table.Body>
-      </Table>
+      </Table>*/}
 
       {/* demo -replace - with actual table data */}
 
-      <Modal onClose={() => setOpen(false)} onOpen={() => setOpen(true)} open={open}>
+      {/*<Modal onClose={() => setOpen(false)} onOpen={() => setOpen(true)} open={open}>
         <Modal.Header>Document Details</Modal.Header>
         <Modal.Content>
           <Table padded="very">
@@ -236,7 +237,7 @@ export default function Documents(props) {
             Close
           </Button>
         </Modal.Actions>
-      </Modal>
+      </Modal>*/}
 
       {/* my code */}
 
@@ -267,13 +268,13 @@ export default function Documents(props) {
                       </div>
                       <div className="right">
                         <p className="card__h1"> Shared By</p>
-                        <p className="data">Koushith B.R</p>
+                        <p className="data">{value.createdBy}</p>
                       </div>
                     </div>
 
                     <div className="shared-date">
                       <p className="card__h1">Shared On</p>
-                      <p className="data">{value.timestamp}</p>
+                      <p className="data">{value.date}</p>
                     </div>
                   </div>
 
@@ -288,7 +289,7 @@ export default function Documents(props) {
                       <div className="docs-icon">
                         <img src={File} alt="" srcset="" />
                       </div>
-                      <p> {value.title}</p>
+                      <p> {value.fileName}</p>
                     </div>
                     <div
                       className="boxes"
@@ -319,12 +320,7 @@ export default function Documents(props) {
                       </p> */}
                     </div>
                     <div className="boxes hover">
-                      <div
-                        className="docs-icon "
-                        onClick={() => downloadFile(value.title, value.key, value.documentLocation)}
-                      >
-                        <img src={Download} alt="" srcset="" />
-                      </div>
+                      <img src={Download} alt="" srcset="" />
                       <p>Download</p>
                     </div>
                   </div>

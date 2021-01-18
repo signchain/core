@@ -1,0 +1,14 @@
+
+.button {
+    height: 40px;
+    min-width: 95px;
+    border-radius: 4px;
+}
+.button__primary {
+    background: #48bb78 !important;
+    color: #fff !important;
+}
+
+.steps-action{
+    background-color: #48bb78 !important;
+}

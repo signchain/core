@@ -16,6 +16,10 @@ const UserRegistration = {
             items: {
                 type: 'object',
                 properties: {
+                    createdBy : {type: 'string'},
+                    sharedTo: {type: 'string'},
+                    date: {type: 'string' },
+                    fileName: {type:'string'},
                     documentId: {type:'string'},
                     signatureId: {type:'string'}
                 }
