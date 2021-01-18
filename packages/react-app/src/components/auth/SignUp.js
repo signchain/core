@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Button, Checkbox, Form, Modal, Header } from "semantic-ui-react";
+import { Button, Checkbox, Form, Modal, Header, Grid, Segment, Message } from "semantic-ui-react";
+import { FormContainer } from "../styles/SignUp.Styles";
 
 function SignUp() {
   const [open, setOpen] = useState(true);
@@ -14,22 +15,29 @@ function SignUp() {
         <Modal.Header>Sign Up</Modal.Header>
         <Modal.Content image>
           <Modal.Description>
-            <div style={{ background: "red", position: "absolute" }}>
-              <Form style={{ position: "relative", top: "0", left: "0" }}>
-                <Form.Field>
-                  <label>First Name</label>
-                  <input placeholder="First Name" />
-                </Form.Field>
-                <Form.Field>
-                  <label>Last Name</label>
-                  <input placeholder="Last Name" />
-                </Form.Field>
-                <Form.Field>
-                  <Checkbox label="I agree to the Terms and Conditions" />
-                </Form.Field>
-                <Button type="submit">Submit</Button>
+            <Header as="h2" color="teal" textAlign="center">
+              {/* <Image src="/logo.png" /> */}
+              Log-in to your account
+            </Header>
+            <FormContainer>
+              <Form size="huge">
+                <div className="Signup-form">
+                  <Form.Input fluid icon="user" iconPosition="left" placeholder="E-mail address" />
+                  <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
+                  <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
+                  <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
+                  <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
+                  <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
+
+                  <Button color="teal" fluid size="large">
+                    Login
+                  </Button>
+                </div>
               </Form>
-            </div>
+            </FormContainer>
+            <Message>
+              New to us? <a href="#">Sign Up</a>
+            </Message>
           </Modal.Description>
         </Modal.Content>
       </Modal>
