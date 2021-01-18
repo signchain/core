@@ -15,6 +15,7 @@ jobs:
           CI=false yarn build
         env:
           REACT_APP_STORAGE: FLEEK
+          REACT_APP_API_SERVER_URL: 'https://api.signchain.xyz'
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
