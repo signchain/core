@@ -272,7 +272,7 @@ export const notarizeDoc = async function(docId, fileHash, tx, writeContracts , 
 }
 
 export const getNotaryInfo = async function(fileHash, tx, writeContracts) {
-    return await tx(writeContracts.Signchain.notarizedDocs(fileHash))
+    return await tx(writeContracts.Signchain.getNotarizeDocument(fileHash))
 }
 
 export const getAllFile = async function( loggedUserKey,address,tx, writeContracts ){
@@ -290,6 +290,7 @@ export const getAllFile = async function( loggedUserKey,address,tx, writeContrac
         const hash = document.documentHash
         const signDetails = await client.findByID(threadId, 'SignatureDetails', users[0].documentInfo[i].signatureId)
         const notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
+        console.log("NotaryInfo:", notaryInfo)
         let signStatus = true
         let partySigned = false
         if (signDetails.signers.length !== signDetails.signature.length){
@@ -317,6 +318,13 @@ export const getAllFile = async function( loggedUserKey,address,tx, writeContrac
             notary: notaryInfo.notaryAddress,
             notarySigned: notaryInfo.notarized
         }
+        // if (notaryInfo === undefined){
+        //     value.notary = 0
+        //     value.notarySigned = false
+        // }else{
+        //     value.notary = notaryInfo.notaryAddress
+        //     value.notarySigned = notaryInfo.notarized
+        // }
         result.push(value)
     }
     return result

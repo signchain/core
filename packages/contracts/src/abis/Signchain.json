@@ -179,6 +179,42 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "documentHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getNotarizeDocument",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "notaryAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "notaryFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "notarized",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct Signchain.Notarize",
+        "name": "document",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "userAddress",
         "type": "address"

@@ -74,7 +74,7 @@ export default function Documents(props) {
   };
 
   const notarizeDocument = async (docId, docHash) => {
-    const result = await notarizeDoc(docId, docHash, props.tx, props.writeContracts, props.userProvider.getSigner());
+    const result = await notarizeDoc(docId, docHash, props.tx, props.writeContracts, props.userProvider.getSigner(), caller);
   };
 
   return (

@@ -72,8 +72,8 @@
       ]
     },
     "/home/shubham/ConsensoLabs/core/packages/hardhat/contracts/Signchain.sol": {
-      "lastModificationDate": 1610080224453,
-      "contentHash": "bf4cd20fbb72bc078f78b8dd5a87bb68",
+      "lastModificationDate": 1610943733269,
+      "contentHash": "3ca1e1620c0807377622b6118281eb2d",
       "sourceName": "contracts/Signchain.sol",
       "solcConfig": {
         "version": "0.6.7",
