@@ -4,7 +4,6 @@ import {HashRouter, Route, Switch} from "react-router-dom";
 import "antd/dist/antd.css";
 import 'semantic-ui-css/semantic.min.css'
 import "./App.css";
-import {Row, Col} from "antd";
 import { getDefaultProvider, Web3Provider } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
@@ -23,6 +22,7 @@ import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
 import Verify from './components/Verify/Verify'
 import Database from "./components/database/Database";
+ import TopNav from './components/Navigation/TopNav'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 import {generateSignature} from "./lib/ceramicConnect"
 
@@ -32,6 +32,9 @@ import { Ed25519Provider } from 'key-did-provider-ed25519'
 import {randomBytes} from 'crypto'
 import {fromString} from 'uint8arrays/from-string'
 import {PrivateKey} from "@textile/hub";
+
+import SignInWarning from './components/warnings/SignInWarning'
+import DocumentDetails from './components/Documents/DocumentDetails'
 
 const blockExplorer = "https://etherscan.io/"
 const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
@@ -89,7 +92,7 @@ function App() {
 
   return (
       <div className="App">
-        <div style={{position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10,}}>
+        {/* <div style={{position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10,}}>
           <Account
               address={address}
               localProvider={userProvider}
@@ -101,11 +104,11 @@ function App() {
               logoutOfWeb3Modal={logoutOfWeb3Modal}
               blockExplorer={blockExplorer}
           />
-        </div>
+        </div> */}
 
         <HashRouter>
           <div className="App">
-
+<TopNav/>
             <Switch>
                 <Route exact path="/db" component={Database} />
               <Route exact path="/" render={(props) =>
@@ -147,7 +150,12 @@ function App() {
                   logoutOfWeb3Modal={logoutOfWeb3Modal}
                   blockExplorer={blockExplorer}
               >
-                {/* <Steps/> */}
+                
+                   {/* testing purpose- remove this while merging */}
+                <Route exact path="/warning" render={(props)=><SignInWarning/>}/>
+                <Route exact path="/documentdetails" render={(props)=><DocumentDetails {...props}/>}/>
+
+                {/* *************************** */}
                 <Route exact path="/sign" render={(props) =>
                     <Steps
                         address={address}
