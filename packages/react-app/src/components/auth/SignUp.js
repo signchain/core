@@ -17,23 +17,19 @@ function SignUp() {
           <Modal.Description>
             <Header as="h2" color="teal" textAlign="center">
               {/* <Image src="/logo.png" /> */}
-              Log-in to your account
+              Create an Account
             </Header>
             <FormContainer>
-              <Form size="huge">
-                <div className="Signup-form">
-                  <Form.Input fluid icon="user" iconPosition="left" placeholder="E-mail address" />
-                  <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
-                  <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
-                  <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
-                  <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
-                  <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
+              <div className="Signup-form">
+                <Form.Input fluid icon="user" iconPosition="left" placeholder="Enter your Full Name" type="text" />
+                <Form.Input fluid icon="user" iconPosition="left" placeholder="Enter your Email  Address" />
+                <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
+                <Checkbox style={{ color: "#718096" }} className="checkbox" label="I'm a Notary" />
 
-                  <Button color="teal" fluid size="large">
-                    Login
-                  </Button>
-                </div>
-              </Form>
+                <Button color="teal" fluid size="large">
+                  Login
+                </Button>
+              </div>
             </FormContainer>
             <Message>
               New to us? <a href="#">Sign Up</a>

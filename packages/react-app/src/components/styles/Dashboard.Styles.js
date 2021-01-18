@@ -20,6 +20,11 @@ export const DashboardContainer = styled.div`
     border-radius: 3px;
     text-align: center;
     justify-content: center;
+    &:hover {
+      box-shadow: 1px 9px 10px rgba(101, 148, 170, 0.1);
+      background: linear-gradient(0deg, #feffff, #feffff);
+      border: 1px solid #4d4cbb;
+    }
   }
 
   .select-actions {

@@ -12,6 +12,7 @@ export const SignInWarningContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 12px;
   }
   .warning-text {
     text-align: center;
