@@ -64,4 +64,8 @@ contract Signchain is DocumentRegistry, SigningModule {
         payable(address(msg.sender)).transfer(notarizedDocs[documentHash].notaryFee);
         emit DocumentNatarized(documentHash, now, msg.sender);
     }
+
+    function getNotarizeDocument(bytes32 documentHash) public view returns(Notarize memory document){
+        return notarizedDocs[documentHash];
+    }
 }

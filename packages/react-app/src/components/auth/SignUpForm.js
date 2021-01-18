@@ -27,7 +27,7 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup, identity 
 
   useEffect(() => {
     async function getUserData() {
-      setSignupStatus(SignupStatus.init);
+      // setSignupStatus(SignupStatus.init);
         try{
          if(idx) {
            console.log("IDDD")
@@ -57,7 +57,7 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup, identity 
       const client = await loginUserWithChallenge(identity);
       if (client!==null) {
         const registrationStatus = await registerNewUser(
-          idx.id,
+          'idx.id',
           name,
           email,
           accounts[0],

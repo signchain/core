@@ -34,7 +34,7 @@ import {fromString} from 'uint8arrays/from-string'
 import {PrivateKey} from "@textile/hub";
 
 const blockExplorer = "https://etherscan.io/"
-const CERAMIC_URL = 'https://ceramic-dev.3boxlabs.com'
+const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
 const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 })
 
 function App() {

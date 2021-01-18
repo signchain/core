@@ -8,8 +8,8 @@ export default function Database(){
     const [dbInfo,setDB] = useState(null)
 
     const keyInfo = {
-        key:'be645tj5wtjuginby3fwnqhe57y',
-        secret:'bcm7zjaxlipajgsm6qd6big7lv52cihf2whbbaji'
+        key:'***',
+        secret:'***'
     }
 
     const registrationSchema = {

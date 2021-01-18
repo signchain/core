@@ -151,6 +151,8 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     const {threadDb, client} = await getCredentials()
     let encryptedKeys=[]
     let userAddress=[]
+    let notaryStatus = false;
+
     const { fileHash, fileLocation, fileName, cipherKey } = fileInfo
     setSubmitting(true)
     console.log("Party:",party)
@@ -175,6 +177,7 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     console.log("Log:",encryptedKeys)
 
     if(notary!==null){
+        notaryStatus = true
         const res = await tx(writeContracts.Signchain.saveNotarizeDoc(
           fileHash,
           notary.address,
@@ -189,7 +192,8 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
         documentHash: fileHash.toString("hex"),
         fileLocation: fileLocation,
         fileName: fileName,
-        key: encryptedKeys
+        key: encryptedKeys,
+        notaryStatus: notaryStatus
     }])
     console.log("Doc ID:",docId)
 
@@ -272,7 +276,7 @@ export const notarizeDoc = async function(docId, fileHash, tx, writeContracts , 
 }
 
 export const getNotaryInfo = async function(fileHash, tx, writeContracts) {
-    return await tx(writeContracts.Signchain.notarizedDocs(fileHash))
+    return await tx(writeContracts.Signchain.getNotarizeDocument(fileHash))
 }
 
 export const getAllFile = async function( loggedUserKey,address,tx, writeContracts ){
@@ -289,7 +293,13 @@ export const getAllFile = async function( loggedUserKey,address,tx, writeContrac
         const document = await client.findByID(threadId, 'Document', users[0].documentInfo[i].documentId)
         const hash = document.documentHash
         const signDetails = await client.findByID(threadId, 'SignatureDetails', users[0].documentInfo[i].signatureId)
-        const notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
+
+        let notaryInfo = null
+        console.log("NotaryStatus:",document.notaryStatus)
+        if (document.notaryStatus) {
+            notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
+            console.log("NotaryInfo:", notaryInfo)
+        }
         let signStatus = true
         let partySigned = false
         if (signDetails.signers.length !== signDetails.signature.length){
@@ -315,7 +325,7 @@ export const getAllFile = async function( loggedUserKey,address,tx, writeContrac
             signatures: signDetails.signature,
             partySigned: partySigned,
         }
-        if (notaryInfo === undefined){
+        if (notaryInfo === null){
             value.notary = 0
             value.notarySigned = false
         }else{
