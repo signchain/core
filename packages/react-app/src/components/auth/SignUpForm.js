@@ -27,15 +27,15 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup, identity 
 
   useEffect(() => {
     async function getUserData() {
-      setSignupStatus(SignupStatus.init);
-        // try{
-        //  if(idx) {
-        //    console.log("IDDD")
-        //    setSignupStatus(SignupStatus.init);
-        //  }
-        // }catch(err){
-        //     console.log(err);
-        // }
+      // setSignupStatus(SignupStatus.init);
+        try{
+         if(idx) {
+           console.log("IDDD")
+           setSignupStatus(SignupStatus.init);
+         }
+        }catch(err){
+            console.log(err);
+        }
     }
      getUserData()
  }, [idx] )
@@ -47,11 +47,11 @@ function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup, identity 
     if (walletStatus) {
       const accounts = await index.getAllAccounts(password);
       setSignupStatus(SignupStatus.ceramic);
-      // await idx.set(definitions.profile, {
-      //   name: name,
-      //   email: email,
-      //   notary: notary,
-      // });
+      await idx.set(definitions.profile, {
+        name: name,
+        email: email,
+        notary: notary,
+      });
       setSignupStatus(SignupStatus.contract);
       //const dbClient = await authorizeUser(password)
       const client = await loginUserWithChallenge(identity);

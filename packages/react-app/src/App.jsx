@@ -34,7 +34,7 @@ import {fromString} from 'uint8arrays/from-string'
 import {PrivateKey} from "@textile/hub";
 
 const blockExplorer = "https://etherscan.io/"
-const CERAMIC_URL = 'https://ceramic-dev.3boxlabs.com'
+const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
 const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 })
 
 function App() {
@@ -61,13 +61,13 @@ function App() {
         const seed = await generateSignature();
         const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(seed))
         setIdentity(identity)
-      //   const ceramic = new Ceramic(CERAMIC_URL)
-      //   await ceramic.setDIDProvider(new Ed25519Provider(seed))
-      //   setCeramic(ceramic)
-      // // Create the IDX instance with the definitions aliases from the config
-      //   const idx = new IDX({ ceramic, aliases: definitions })
-      //   console.log(idx);
-      //   setIdx(idx)
+        const ceramic = new Ceramic(CERAMIC_URL)
+        await ceramic.setDIDProvider(new Ed25519Provider(seed))
+        setCeramic(ceramic)
+      // Create the IDX instance with the definitions aliases from the config
+        const idx = new IDX({ ceramic, aliases: definitions })
+        console.log(idx);
+        setIdx(idx)
     }
 
     useEffect(() => {
