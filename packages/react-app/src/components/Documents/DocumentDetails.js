@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   Container,
@@ -23,32 +23,47 @@ import {
   TitleHeading,
   DocumentTable,
 } from "../styles/DocumentDetails.Style";
-import {attachSignature, downloadFiles, getAllUsers, getSingleDocument, notarizeDoc} from "../../lib/threadDb";
+import { attachSignature, downloadFiles, getAllUsers, getSingleDocument, notarizeDoc } from "../../lib/threadDb";
 
-const DocumentDetails = (props) => {
-
+const DocumentDetails = props => {
   const password = localStorage.getItem("password");
   const loggedUser = localStorage.getItem("USER");
   const userInfo = JSON.parse(loggedUser);
-  const documentId = decodeURIComponent(props.match.params.doc)
-  const signatureId = decodeURIComponent(props.match.params.sig)
-  const [document, setDocument] = useState(null)
-  const [caller, setCaller] = useState({});
+  const documentId = decodeURIComponent(props.match.params.doc);
+  const signatureId = decodeURIComponent(props.match.params.sig);
 
-  useEffect(()=>{
-    async function load(){
-      try{
-        const caller = await getAllUsers(userInfo.publicKey)
-        setCaller(caller)
-        const documentInfo = await getSingleDocument(props.address, props.tx,props.writeContracts, documentId, signatureId)
-        console.log("DocumentInfo:", documentInfo)
-        setDocument(documentInfo)
-      }catch (e) {
-        console.log("Error:",e)
+  const [caller, setCaller] = useState({});
+  const [docsName, setDocsName] = useState("");
+  const [createdAt, setCreatedAt] = useState("");
+  const [partySigned, setPartySigned] = useState(false);
+  const [notarySigned, setNotarySigned] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const caller = await getAllUsers(userInfo.publicKey);
+        setCaller(caller);
+        const documentInfo = await getSingleDocument(
+          props.address,
+          props.tx,
+          props.writeContracts,
+          documentId,
+          signatureId,
+        );
+        console.log("DocumentInfo:", documentInfo);
+        const { title, signStatus, notarySigned, timestamp } = documentInfo;
+        setDocsName(title);
+        setCreatedAt(timestamp);
+        setPartySigned(signStatus);
+        setNotarySigned(notarySigned);
+        //console.log("DocumentInfo-spec:", documentInfo.title);
+        // setDocument(documentInfo);
+      } catch (e) {
+        console.log("Error:", e);
       }
     }
-    load()
-  },[])
+    load();
+  }, []);
 
   const downloadFile = (name, key, location) => {
     //setDownloading(name);
@@ -63,103 +78,119 @@ const DocumentDetails = (props) => {
   };
 
   const notarizeDocument = async (docId, docHash) => {
-    const result = await notarizeDoc(docId, docHash, props.tx, props.writeContracts, props.userProvider.getSigner(), caller);
+    const result = await notarizeDoc(
+      docId,
+      docHash,
+      props.tx,
+      props.writeContracts,
+      props.userProvider.getSigner(),
+      caller,
+    );
   };
 
   return (
-  <>
-    <DocumentContainer>
-      <DocumentHeader>
-        <HeaderContainer>
-          <div className="document-title-section">
-            <TitleHeading>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad, corrupti.</TitleHeading>
+    <>
+      <DocumentContainer>
+        <DocumentHeader>
+          <HeaderContainer>
+            <div className="document-title-section">
+              <TitleHeading>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad, corrupti.</TitleHeading>
 
-            <p className="description">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos exercitationem aspernatur illum aut rerum
-              atque inventore alias provident consequuntur ea quasi ducimus asperiores
-            </p>
+              <p className="description">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos exercitationem aspernatur illum aut rerum
+                atque inventore alias provident consequuntur ea quasi ducimus asperiores
+              </p>
+            </div>
+            <div className="pending-btn">
+              <p>
+                {/* conditional render based on status */}
+                <span className="docs-status-pending">Pending</span>
+                {/* <span className="docs-status-success">Signed</span> */}
+              </p>
+            </div>
+          </HeaderContainer>
+        </DocumentHeader>
+
+        <DocumentTable>
+          <div className="name-content">
+            <div className="icon-img">
+              <img
+                className="img-container"
+                src="https://react.semantic-ui.com/images/avatar/large/patrick.png"
+                alt=""
+                srcset=""
+              />
+            </div>
+            <div className="shared-info">
+              <p className="data">Koushith B.R</p>
+            </div>
           </div>
-          <div className="pending-btn">
-            <p>
-              {/* conditional render based on status */}
-              <span className="docs-status-pending">Pending</span>
-              {/* <span className="docs-status-success">Signed</span> */}
-            </p>
+          <Table singleLine striped>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell className="table-header">Document Name</Table.HeaderCell>
+                <Table.HeaderCell className="table-header"> Status</Table.HeaderCell>
+                <Table.HeaderCell className="table-header">Created On</Table.HeaderCell>
+
+                <Table.HeaderCell className="table-header">Notarized </Table.HeaderCell>
+                <Table.HeaderCell className="table-header">Actions </Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell collapsing>
+                  <span style={{ color: " #0000EE", cursor: "pointer" }}>
+                    <Icon name="file outline" />
+                    {docsName}
+                  </span>
+                </Table.Cell>
+
+                <Table.Cell>
+                  {partySigned ? (
+                    <div className="table-header">
+                      <Icon name="circle" color="green" />
+                      Signed
+                    </div>
+                  ) : (
+                    <div>
+                      <Icon name="circle" color="red" /> Pending
+                    </div>
+                  )}
+                </Table.Cell>
+
+                <Table.Cell className="table-header">{createdAt}</Table.Cell>
+
+                <Table.Cell className="table-header">
+                  {notarySigned ? (
+                    <div>
+                      <Icon name="circle" color="green" /> Notarized
+                    </div>
+                  ) : (
+                    <div>
+                      <Icon name="circle" color="red" /> Not yet Notarized
+                    </div>
+                  )}
+                </Table.Cell>
+                <Table.Cell collapsing textAlign="right">
+                  <Button icon="download" />
+                </Table.Cell>
+              </Table.Row>
+            </Table.Body>
+          </Table>
+          {/* conditional rendering goes here- hide for the one who initiated */}
+          <WarningStatus />
+          {/* <SignSuccess /> */}
+          <div className="sign-btn">
+            {/* Conditional rendering */}
+            <Button primary>Sign Now</Button>
+            {/* <Button primary>Notarize</Button> */}
+            {/* <Button primary>Notarizee</Button> */}
           </div>
-        </HeaderContainer>
-      </DocumentHeader>
-
-      <DocumentTable>
-        <div className="name-content">
-          <div className="icon-img">
-            <img
-              className="img-container"
-              src="https://react.semantic-ui.com/images/avatar/large/patrick.png"
-              alt=""
-              srcset=""
-            />
-          </div>
-          <div className="shared-info">
-            <p className="data">Koushith B.R</p>
-          </div>
-        </div>
-        <Table singleLine striped>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell className="table-header">Document Name</Table.HeaderCell>
-              <Table.HeaderCell className="table-header"> Status</Table.HeaderCell>
-              <Table.HeaderCell className="table-header">Created On</Table.HeaderCell>
-              <Table.HeaderCell className="table-header">Party</Table.HeaderCell>
-              <Table.HeaderCell className="table-header">Notarized </Table.HeaderCell>
-              <Table.HeaderCell className="table-header">Actions </Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-            <Table.Row>
-              <Table.Cell collapsing>
-                <span style={{color: " #0000EE", cursor: "pointer"}}>
-                  <Icon name="file outline"/> hello
-                </span>
-              </Table.Cell>
-
-              <Table.Cell>
-                <div className="table-header">
-                  <Icon name="circle" color="green"/>
-                  Signed
-                </div>
-                {/* conditional render */}
-                {/* <div>
-                          <Icon name="circle" color="red" /> Pending
-                        </div> */}
-              </Table.Cell>
-
-              <Table.Cell className="table-header">Created On date</Table.Cell>
-
-              <Table.Cell className="table-header">Party Name</Table.Cell>
-              <Table.Cell className="table-header">
-                <div>
-                  <Icon name="circle" color="red"/> Pending
-                </div>
-              </Table.Cell>
-              <Table.Cell collapsing textAlign="right">
-                <Button icon="download"/>
-              </Table.Cell>
-            </Table.Row>
-          </Table.Body>
-        </Table>
-        {/* conditional rendering goes here */}
-        <WarningStatus/>
-        {/* <SignSuccess /> */}
-        <div className="sign-btn">
-          {/* Conditional rendering */}
-          <Button primary>Sign Now</Button>
-          {/* <Button primary>Notarizee</Button> */}
-        </div>
-      </DocumentTable>
-    </DocumentContainer>
-  </>
-  )
+        </DocumentTable>
+      </DocumentContainer>
+    </>
+  );
 };
 
 export default DocumentDetails;

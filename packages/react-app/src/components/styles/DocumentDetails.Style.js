@@ -4,6 +4,7 @@ export const DocumentContainer = styled.div`
   background-color: #fff;
   /* margin: 60px; */
   width: 100%;
+  height: 86vh;
 `;
 
 export const DocumentHeader = styled.div`
