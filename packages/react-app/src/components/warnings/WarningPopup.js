@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Icon, Image, Modal } from "semantic-ui-react";
 import { SignInWarningContainer } from "../styles/WarningPopup.Styles";
 import Lock from "../../images/Lock.svg";
 import { Link } from "react-router-dom";
-function WarningPopup({ open, setOpen }) {
+function WarningPopup() {
+  const [open, setOpen] = useState(true);
   return (
     <Modal
       open={open}
-      onClose={() => setOpen(false)}
+      onClose={() => setOpen(true)}
       onOpen={() => setOpen(true)}
       size="small"
       style={{ width: "512px" }}

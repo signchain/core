@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Button, Checkbox, Form, Modal, Header } from "semantic-ui-react";
+import { Button, Checkbox, Form, Modal, Header, Grid, Segment, Message } from "semantic-ui-react";
+import { FormContainer } from "../styles/SignUp.Styles";
 
 function SignUp() {
   const [open, setOpen] = useState(true);
@@ -14,22 +15,25 @@ function SignUp() {
         <Modal.Header>Sign Up</Modal.Header>
         <Modal.Content image>
           <Modal.Description>
-            <div style={{ background: "red", position: "absolute" }}>
-              <Form style={{ position: "relative", top: "0", left: "0" }}>
-                <Form.Field>
-                  <label>First Name</label>
-                  <input placeholder="First Name" />
-                </Form.Field>
-                <Form.Field>
-                  <label>Last Name</label>
-                  <input placeholder="Last Name" />
-                </Form.Field>
-                <Form.Field>
-                  <Checkbox label="I agree to the Terms and Conditions" />
-                </Form.Field>
-                <Button type="submit">Submit</Button>
-              </Form>
-            </div>
+            <Header as="h2" color="teal" textAlign="center">
+              {/* <Image src="/logo.png" /> */}
+              Create an Account
+            </Header>
+            <FormContainer>
+              <div className="Signup-form">
+                <Form.Input fluid icon="user" iconPosition="left" placeholder="Enter your Full Name" type="text" />
+                <Form.Input fluid icon="user" iconPosition="left" placeholder="Enter your Email  Address" />
+                <Form.Input fluid icon="lock" iconPosition="left" placeholder="Password" type="password" />
+                <Checkbox style={{ color: "#718096" }} className="checkbox" label="I'm a Notary" />
+
+                <Button color="teal" fluid size="large">
+                  Login
+                </Button>
+              </div>
+            </FormContainer>
+            <Message>
+              New to us? <a href="#">Sign Up</a>
+            </Message>
           </Modal.Description>
         </Modal.Content>
       </Modal>

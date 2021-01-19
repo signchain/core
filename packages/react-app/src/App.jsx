@@ -23,6 +23,7 @@ import Steps from './components/Stepper/Steps'
 import Verify from './components/Verify/Verify'
 import Database from "./components/database/Database";
  import TopNav from './components/Navigation/TopNav'
+ import SignUp from './components/auth/SignUp'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 import {generateSignature} from "./lib/ceramicConnect"
 
@@ -33,7 +34,7 @@ import {randomBytes} from 'crypto'
 import {fromString} from 'uint8arrays/from-string'
 import {PrivateKey} from "@textile/hub";
 
-import SignInWarning from './components/warnings/SignInWarning'
+import WarningPopup from './components/warnings/WarningPopup'
 import DocumentDetails from './components/Documents/DocumentDetails'
 
 const blockExplorer = "https://etherscan.io/"
@@ -152,8 +153,9 @@ function App() {
               >
                 
                    {/* testing purpose- remove this while merging */}
-                <Route exact path="/warning" render={(props)=><SignInWarning/>}/>
+                <Route exact path="/warning" render={(props)=><WarningPopup/>}/>
                 <Route exact path="/documentdetails" render={(props)=><DocumentDetails {...props}/>}/>
+                <Route exact path='/signuptest' render={(props)=><SignUp/>}/>
 
                 {/* *************************** */}
                 <Route exact path="/sign" render={(props) =>
