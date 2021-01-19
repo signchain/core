@@ -11,10 +11,7 @@ import { FormContainer } from "../styles/SignUp.Styles";
 function SignUp() {
   const [open, setOpen] = useState(true);
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [notary, setNotary] = useState(false);
 
   const SignupStatus = { preInit: 0, init: 1, wallet: 2, ceramic: 3, contract: 4 };
   const [signupStatus, setSignupStatus] = useState(SignupStatus.preInit);
@@ -29,28 +26,14 @@ function SignUp() {
         size="small"
         style={{ width: "450px" }}
       >
-        <Modal.Header>Sign Up</Modal.Header>
+        <Modal.Header>Log In</Modal.Header>
         <Modal.Content image>
           <Modal.Description>
             <FormContainer>
               <div className="logo-container">
                 <img src={logo} alt="" srcset="" />
               </div>
-              <Form.Input
-                fluid
-                icon="user"
-                iconPosition="left"
-                placeholder="Enter your Full Name"
-                type="text"
-                className="form-input"
-              />
-              <Form.Input
-                fluid
-                icon="user"
-                iconPosition="left"
-                placeholder="Enter your Email  Address"
-                className="form-input"
-              />
+
               <Form.Input
                 fluid
                 icon="lock"
@@ -59,9 +42,8 @@ function SignUp() {
                 type="password"
                 className="form-input"
               />
-              <Checkbox style={{ color: "#718096" }} className="checkbox" label="I'm a Notary" className="form-input" />
 
-              <Button color="teal" fluid size="large">
+              <Button fluid size="large" className="btn-primary">
                 Login
               </Button>
             </FormContainer>

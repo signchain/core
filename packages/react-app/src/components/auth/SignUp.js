@@ -61,9 +61,7 @@ function SignUp() {
               />
               <Checkbox style={{ color: "#718096" }} className="checkbox" label="I'm a Notary" className="form-input" />
 
-              <Button color="teal" fluid size="large">
-                Login
-              </Button>
+              <Button className="btn-primary">Login</Button>
             </FormContainer>
             <Message>
               New to us? <a href="#">Sign Up</a>
