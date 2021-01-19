@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   Table,
   Container,
@@ -23,8 +23,50 @@ import {
   TitleHeading,
   DocumentTable,
 } from "../styles/DocumentDetails.Style";
+import {attachSignature, downloadFiles, getAllUsers, getSingleDocument, notarizeDoc} from "../../lib/threadDb";
 
-const DocumentDetails = () => (
+const DocumentDetails = (props) => {
+
+  const password = localStorage.getItem("password");
+  const loggedUser = localStorage.getItem("USER");
+  const userInfo = JSON.parse(loggedUser);
+  const documentId = decodeURIComponent(props.match.params.doc)
+  const signatureId = decodeURIComponent(props.match.params.sig)
+  const [document, setDocument] = useState(null)
+  const [caller, setCaller] = useState({});
+
+  useEffect(()=>{
+    async function load(){
+      try{
+        const caller = await getAllUsers(userInfo.publicKey)
+        setCaller(caller)
+        const documentInfo = await getSingleDocument(props.address, props.tx,props.writeContracts, documentId, signatureId)
+        console.log("DocumentInfo:", documentInfo)
+        setDocument(documentInfo)
+      }catch (e) {
+        console.log("Error:",e)
+      }
+    }
+    load()
+  },[])
+
+  const downloadFile = (name, key, location) => {
+    //setDownloading(name);
+    console.log("docment:", location);
+    downloadFiles(name, key, userInfo.address, location, password).then(result => {
+      //setDownloading(null);
+    });
+  };
+
+  const signDocument = async (docHash, docId) => {
+    const result = await attachSignature(docId, props.userProvider.getSigner(), caller, docHash);
+  };
+
+  const notarizeDocument = async (docId, docHash) => {
+    const result = await notarizeDoc(docId, docHash, props.tx, props.writeContracts, props.userProvider.getSigner(), caller);
+  };
+
+  return (
   <>
     <DocumentContainer>
       <DocumentHeader>
@@ -76,14 +118,14 @@ const DocumentDetails = () => (
           <Table.Body>
             <Table.Row>
               <Table.Cell collapsing>
-                <span style={{ color: " #0000EE", cursor: "pointer" }}>
-                  <Icon name="file outline" /> hello
+                <span style={{color: " #0000EE", cursor: "pointer"}}>
+                  <Icon name="file outline"/> hello
                 </span>
               </Table.Cell>
 
               <Table.Cell>
                 <div className="table-header">
-                  <Icon name="circle" color="green" />
+                  <Icon name="circle" color="green"/>
                   Signed
                 </div>
                 {/* conditional render */}
@@ -97,17 +139,17 @@ const DocumentDetails = () => (
               <Table.Cell className="table-header">Party Name</Table.Cell>
               <Table.Cell className="table-header">
                 <div>
-                  <Icon name="circle" color="red" /> Pending
+                  <Icon name="circle" color="red"/> Pending
                 </div>
               </Table.Cell>
               <Table.Cell collapsing textAlign="right">
-                <Button icon="download" />
+                <Button icon="download"/>
               </Table.Cell>
             </Table.Row>
           </Table.Body>
         </Table>
         {/* conditional rendering goes here */}
-        <WarningStatus />
+        <WarningStatus/>
         {/* <SignSuccess /> */}
         <div className="sign-btn">
           {/* Conditional rendering */}
@@ -117,6 +159,7 @@ const DocumentDetails = () => (
       </DocumentTable>
     </DocumentContainer>
   </>
-);
+  )
+};
 
 export default DocumentDetails;

@@ -155,7 +155,13 @@ function App() {
                 
                    {/* testing purpose- remove this while merging */}
                 <Route exact path="/warning" render={(props)=><WarningPopup/>}/>
-                <Route exact path="/documentdetails" render={(props)=><DocumentDetails {...props}/>}/>
+                <Route exact path="/documents/:doc/:sig" render={(props)=>
+                  <DocumentDetails
+                    {...props}
+                    address={address}
+                    tx={tx}
+                    writeContracts={writeContracts}
+                  />}/>
                 <Route exact path='/signuptest' render={(props)=><SignUp/>}/>
                  <Route exact path='/signintest' render={(props)=><SignIn/>}/>
 

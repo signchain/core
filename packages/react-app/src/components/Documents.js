@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Icon, Loader, Table, Modal, Step } from "semantic-ui-react";
 import { Badge } from "antd";
 import { getAllUsers, getAllFile, downloadFiles, attachSignature, notarizeDoc, getCredentials } from "../lib/threadDb";
-
+import {Link} from 'react-router-dom'
 import "./Documents.css";
 import File from "./../images/icons/Files.svg";
 import Sign from "./../images/icons/Sign.svg";
@@ -17,7 +17,7 @@ const userType = { party: 0, notary: 1 };
 const { Panel } = Collapse;
 
 export default function Documents(props) {
-  const password = localStorage.getItem("password");
+
   const loggedUser = localStorage.getItem("USER");
   const userInfo = JSON.parse(loggedUser);
 
@@ -58,21 +58,6 @@ export default function Documents(props) {
     setLoading(false);
   };
 
-  const downloadFile = (name, key, location) => {
-    setDownloading(name);
-    console.log("docment:", location);
-    downloadFiles(name, key, userInfo.address, location, password).then(result => {
-      setDownloading(null);
-    });
-  };
-
-  const signDocument = async (docHash, docId) => {
-    const result = await attachSignature(docId, props.userProvider.getSigner(), caller, docHash);
-  };
-
-  const notarizeDocument = async (docId, docHash) => {
-    const result = await notarizeDoc(docId, docHash, props.tx, props.writeContracts, props.userProvider.getSigner(), caller);
-  };
 
   return (
     <div className="main__container">
@@ -245,8 +230,11 @@ export default function Documents(props) {
       <div className="documents__container">
         {!loading ? (
           docs.map(value => {
+
             return (
               <>
+
+                <Link to={`/documents/${encodeURIComponent(value.documentId)}/${encodeURIComponent(value.signatureId)}`}>
                 <div className="document_card">
                   <div
                     className="meta_info"
@@ -325,6 +313,7 @@ export default function Documents(props) {
                     </div>
                   </div>
                 </div>
+                </Link>
               </>
             );
           })
