@@ -120,6 +120,148 @@ export const Success = styled.div`
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
+  grid-template-rows: 100vh;
   align-items: center;
-  justify-content: center;
+  justify-items: center;
+`;
+
+export const DetailsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  cursor: pointer;
+
+  .Details-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 6px 7px 7px -3px rgba(0, 0, 0, 0.25);
+    display: flex;
+    max-width: 100%;
+    margin: 20px;
+    overflow: hidden;
+    width: 700px;
+  }
+
+  .Details-card-preview h6 {
+    margin: 0;
+    color: #fff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .Details-card-preview h2 {
+    color: #fff;
+    letter-spacing: 1px;
+    margin: 10px 0;
+  }
+
+  .Details-card-preview {
+    background-color: #4c51bf;
+    color: #fff;
+    padding: 30px;
+    max-width: 250px;
+  }
+  .meta-text {
+    color: #717171;
+    margin-top: 4px;
+  }
+  .course-preview a {
+    color: #fff;
+    display: inline-block;
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: 30px;
+    text-decoration: none;
+  }
+
+  .heading {
+    font-size: 12px;
+    color: #717171;
+  }
+
+  .Details-card-info {
+    padding: 30px;
+    position: relative;
+    width: 100%;
+    height: 210px;
+  }
+
+  .progress-container {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    text-align: right;
+    width: 150px;
+  }
+
+  .progress {
+    background-color: #ddd;
+    border-radius: 3px;
+    height: 5px;
+    width: 100%;
+  }
+
+  .progress::after {
+    border-radius: 3px;
+    background-color: #2a265f;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 5px;
+    width: 66%;
+  }
+
+  .progress-text {
+    font-size: 12px;
+
+    letter-spacing: 1px;
+  }
+
+  .read-more {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+  }
+
+  .docs-icon {
+    margin-bottom: 1px;
+  }
+  .btn {
+    background-color: #4c51bf;
+    border: 0;
+    border-radius: 5px;
+
+    color: #fff;
+    font-size: 16px;
+    padding: 12px 25px;
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    letter-spacing: 1px;
+  }
+
+  @media screen and (max-width: 480px) {
+    .social-panel-container.visible {
+      transform: translateX(0px);
+    }
+
+    .floating-btn {
+      right: 10px;
+    }
+  }
+`;
+
+export const DetailsCard = styled.div`
+  background-color: #fff;
+  padding-left: 72px;
+  padding-right: 72px;
+
+  align-items: center;
+  justify-items: center;
+
+  h2 {
+    color: #717171;
+    margin: 0 0 18px 12px;
+    padding-top: 18px;
+  }
 `;

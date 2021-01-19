@@ -1,10 +1,11 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
 import { Button, Icon, Loader, Table, Modal, Step, Card, Image, Header } from "semantic-ui-react";
-import { Badge } from "antd";
+
 import { getAllUsers, getAllFile, downloadFiles, attachSignature, notarizeDoc, getCredentials } from "../lib/threadDb";
 import { Link } from "react-router-dom";
-import "./Documents.css";
+//import "./Documents.css";
+import { DetailsContainer, DetailsCard } from "./styles/DocumentDetails.Style";
 import File from "./../images/icons/Files.svg";
 import Sign from "./../images/icons/Sign.svg";
 import Download from "./../images/icons/Download.svg";
@@ -59,134 +60,66 @@ export default function Documents(props) {
 
   return (
     <>
-      <div class="courses-container">
-        <div class="course">
-          <div class="course-preview">
-            <h6>Title</h6>
-            <h2>Rental Agreement</h2>
-          </div>
-          <div class="course-info">
-            <div class="progress-container">
-              <span class="progress-text">20-01-2020</span>
-            </div>
-            <h6>Shared By</h6>
-            <h2>Koushith</h2>
-            <div className="read-more">
-              <div className="boxes">
-                <div className="docs-icon">
-                  <img src={File} alt="" srcset="" />
-                </div>
-                <p> test</p>
-              </div>
-              <button class="btn">Read More</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="main__container">
-        {/* my code */}
-
-        <h3>My Documents</h3>
-        <div className="documents__container">
-          {!loading ? (
-            docs.map(value => {
-              return (
-                <>
-                  <Link
-                    to={`/documents/${encodeURIComponent(value.documentId)}/${encodeURIComponent(value.signatureId)}`}
-                  >
-                    <div className="document_card">
-                      <div
-                        className="meta_info"
-                        onClick={() => {
-                          setOpen(true);
-                          setDocInfo(value);
-                        }}
-                      >
-                        <div className="name-content">
-                          <div className="left">
-                            <div>
-                              <img
-                                className="img-container"
-                                src="https://react.semantic-ui.com/images/avatar/large/patrick.png"
-                                alt=""
-                                srcset=""
-                              />
-                            </div>
-                          </div>
-                          <div className="right">
-                            <p className="card__h1"> Shared By</p>
-                            <p className="data">{value.createdBy}</p>
-                          </div>
-                        </div>
-
-                        <div className="shared-date">
-                          <p className="card__h1">Shared On</p>
-                          <p className="data">{value.date}</p>
-                        </div>
+      <DetailsCard>
+        <h2>My Documents</h2>
+        {!loading ? (
+          docs.map(value => {
+            return (
+              <>
+                <DetailsContainer>
+                  <div class="Details-card">
+                    <div class="Details-card-preview">
+                      <h6>Title</h6>
+                      <h2>Rental Agreement</h2>
+                    </div>
+                    <div class="Details-card-info">
+                      <div class="progress-container">
+                        <span class="heading">{value.date}</span>
                       </div>
-
-                      <div className="document__info">
-                        <div
-                          className="boxes"
-                          onClick={() => {
-                            setOpen(true);
-                            setDocInfo(value);
-                          }}
-                        >
+                      <h6 className="heading">Shared By</h6>
+                      <h2 className="meta-text">Koushith</h2>
+                      <div className="read-more">
+                        <div className="status">
                           <div className="docs-icon">
                             <img src={File} alt="" srcset="" />
+                            <h6 className="heading">{value.fileName}</h6>
                           </div>
-                          <p> {value.fileName}</p>
                         </div>
-                        <div
-                          className="boxes"
-                          onClick={() => {
-                            setOpen(true);
-                            setDocInfo(value);
-                          }}
-                        >
+                        <div className="status">
                           <div className="docs-icon">
                             <img src={Sign} alt="" srcset="" />
+                            {value.signStatus ? (
+                              <h6 className="heading">
+                                <Icon name="circle" color="green" size="tiny" />
+                                Signed
+                              </h6>
+                            ) : (
+                              <h6 className="heading">
+                                <Icon name="circle" color="red" size="small" /> Pending
+                              </h6>
+                            )}
                           </div>
-                          {value.signStatus ? (
-                            <p>
-                              <Icon name="circle" color="green" size="tiny" />
-                              Signed
-                            </p>
-                          ) : (
-                            <p>
-                              <Icon name="circle" color="red" size="small" /> Pending
-                            </p>
-                          )}
-                          {/* <p>
-                        <span className="sign-pending">
-                          {" "}
-                          <Icon name="circle" color="red" size="tiny" />
-                        </span>
-                        Pending
-                      </p> */}
                         </div>
-                        <div className="boxes hover">
-                          <img src={Download} alt="" srcset="" />
-                          <p>Download</p>
-                        </div>
+                        <Link
+                          to={`/documents/${encodeURIComponent(value.documentId)}/${encodeURIComponent(
+                            value.signatureId,
+                          )}`}
+                        >
+                          <Button class="btn">Read More</Button>
+                        </Link>
                       </div>
                     </div>
-                  </Link>
-                </>
-              );
-            })
-          ) : (
-            <Loader active size="medium">
-              Loading
-            </Loader>
-          )}
-        </div>
-
-        {/* my code end */}
-      </div>
+                  </div>
+                </DetailsContainer>
+              </>
+            );
+          })
+        ) : (
+          <Loader active size="medium">
+            Loading
+          </Loader>
+        )}
+      </DetailsCard>
     </>
   );
 }

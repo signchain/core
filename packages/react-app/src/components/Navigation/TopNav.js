@@ -7,7 +7,7 @@ function TopNav() {
   return (
     <>
       <Nav>
-        <NavLink to="/">
+        <NavLink to="/home">
           <img src={logo} alt="logo" />
         </NavLink>
         <Bars />
