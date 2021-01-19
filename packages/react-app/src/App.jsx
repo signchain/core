@@ -24,6 +24,7 @@ import Verify from './components/Verify/Verify'
 import Database from "./components/database/Database";
  import TopNav from './components/Navigation/TopNav'
  import SignUp from './components/auth/SignUp'
+ import SignIn from './components/auth/SignIn'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 import {generateSignature} from "./lib/ceramicConnect"
 
@@ -156,6 +157,7 @@ function App() {
                 <Route exact path="/warning" render={(props)=><WarningPopup/>}/>
                 <Route exact path="/documentdetails" render={(props)=><DocumentDetails {...props}/>}/>
                 <Route exact path='/signuptest' render={(props)=><SignUp/>}/>
+                 <Route exact path='/signintest' render={(props)=><SignIn/>}/>
 
                 {/* *************************** */}
                 <Route exact path="/sign" render={(props) =>
