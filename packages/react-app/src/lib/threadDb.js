@@ -248,6 +248,7 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     }
     console.log("File uploaded!!!")
     setSubmitting(false)
+    return {docId, signatureID}
 }
 
 const signDocument = async function (fileHash, signer, replayNonce){

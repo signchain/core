@@ -90,6 +90,25 @@ const stepper = props => {
     setCurrent(current - 1);
   };
 
+  const submitDocument = async ()=>{
+
+    const {docId, signatureID} = await registerDoc(
+      parties.concat([caller]),
+      fileInfo,
+      title,
+      setSubmitting,
+      signer,
+      docNotary,
+      caller,
+      props.tx,
+      props.writeContracts
+    );
+    console.log("Register:", docId[0], signatureID[0])
+    const urlParams = `${docId[0]}/${signatureID[0]}`
+    await sendMail(parties.map((party) => {return (party.email)}).concat([cc]),
+      {sender: caller.name, docId: urlParams});
+  }
+
   return (
     <>
       <div className="step__container">
@@ -131,21 +150,7 @@ const stepper = props => {
                   <Button
                     type="primary"
                     loading={submitting}
-                    onClick={() => {
-                      registerDoc(
-                        parties.concat([caller]),
-                        fileInfo,
-                        title,
-                        setSubmitting,
-                        signer,
-                        docNotary,
-                        caller,
-                        props.tx,
-                        props.writeContracts
-                      );
-                      sendMail(parties.map((party) => {return (party.email)}).concat([cc]), 
-                      {sender: caller.name, docId: fileInfo.fileHash});
-                    }}
+                    onClick={() => submitDocument()}
                     className="button"
                   >
                     Sign & Share
