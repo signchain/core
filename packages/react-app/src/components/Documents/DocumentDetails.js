@@ -12,7 +12,7 @@ import {
   Segment,
   Item,
   Icon,
-  Button,
+  Button, Loader,
 } from "semantic-ui-react";
 
 import { WarningStatus, SignSuccess } from "./WarningNote";
@@ -26,23 +26,21 @@ import {
 import { attachSignature, downloadFiles, getAllUsers, getSingleDocument, notarizeDoc } from "../../lib/threadDb";
 
 const DocumentDetails = props => {
-  const password = localStorage.getItem("password");
   const loggedUser = localStorage.getItem("USER");
   const userInfo = JSON.parse(loggedUser);
   const documentId = decodeURIComponent(props.match.params.doc);
   const signatureId = decodeURIComponent(props.match.params.sig);
 
   const [caller, setCaller] = useState({});
-  const [docsName, setDocsName] = useState("");
-  const [createdAt, setCreatedAt] = useState("");
-  const [partySigned, setPartySigned] = useState(false);
-  const [notarySigned, setNotarySigned] = useState(false);
+  const [document, setDocument] = useState(null);
+  const [downloading, setDownloading] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
         const caller = await getAllUsers(userInfo.publicKey);
-        setCaller(caller);
+        setCaller(caller.caller);
         const documentInfo = await getSingleDocument(
           props.address,
           props.tx,
@@ -51,13 +49,8 @@ const DocumentDetails = props => {
           signatureId,
         );
         console.log("DocumentInfo:", documentInfo);
-        const { title, signStatus, notarySigned, timestamp } = documentInfo;
-        setDocsName(title);
-        setCreatedAt(timestamp);
-        setPartySigned(signStatus);
-        setNotarySigned(notarySigned);
-        //console.log("DocumentInfo-spec:", documentInfo.title);
-        // setDocument(documentInfo);
+        setDocument(documentInfo)
+        setLoading(false);
       } catch (e) {
         console.log("Error:", e);
       }
@@ -66,10 +59,11 @@ const DocumentDetails = props => {
   }, []);
 
   const downloadFile = (name, key, location) => {
-    //setDownloading(name);
+    setDownloading(name);
     console.log("docment:", location);
+    const password = Buffer.from(new Uint8Array(props.seed)).toString("hex")
     downloadFiles(name, key, userInfo.address, location, password).then(result => {
-      //setDownloading(null);
+      setDownloading(null);
     });
   };
 
@@ -111,6 +105,7 @@ const DocumentDetails = props => {
           </HeaderContainer>
         </DocumentHeader>
 
+        {!loading ? (
         <DocumentTable>
           <div className="name-content">
             <div className="icon-img">
@@ -122,7 +117,7 @@ const DocumentDetails = props => {
               />
             </div>
             <div className="shared-info">
-              <p className="data">Koushith B.R</p>
+              <p className="data">{document.createdBy}</p>
             </div>
           </div>
           <Table singleLine striped>
@@ -132,7 +127,10 @@ const DocumentDetails = props => {
                 <Table.HeaderCell className="table-header"> Status</Table.HeaderCell>
                 <Table.HeaderCell className="table-header">Created On</Table.HeaderCell>
 
-                <Table.HeaderCell className="table-header">Notarized </Table.HeaderCell>
+                {
+                  document.notary ? <Table.HeaderCell className="table-header">Notarized </Table.HeaderCell>
+                    : null
+                }
                 <Table.HeaderCell className="table-header">Actions </Table.HeaderCell>
               </Table.Row>
             </Table.Header>
@@ -142,12 +140,12 @@ const DocumentDetails = props => {
                 <Table.Cell collapsing>
                   <span style={{ color: " #0000EE", cursor: "pointer" }}>
                     <Icon name="file outline" />
-                    {docsName}
+                    {document.title}
                   </span>
                 </Table.Cell>
 
                 <Table.Cell>
-                  {partySigned ? (
+                  {document.partySigned ? (
                     <div className="table-header">
                       <Icon name="circle" color="green" />
                       Signed
@@ -159,21 +157,28 @@ const DocumentDetails = props => {
                   )}
                 </Table.Cell>
 
-                <Table.Cell className="table-header">{createdAt}</Table.Cell>
+                <Table.Cell className="table-header">{document.timestamp}</Table.Cell>
 
-                <Table.Cell className="table-header">
-                  {notarySigned ? (
-                    <div>
-                      <Icon name="circle" color="green" /> Notarized
-                    </div>
-                  ) : (
-                    <div>
-                      <Icon name="circle" color="red" /> Not yet Notarized
-                    </div>
-                  )}
-                </Table.Cell>
+                {
+                  document.notary ? (
+                    <Table.Cell className="table-header">
+                      {document.notarySigned ? (
+                        <div>
+                          <Icon name="circle" color="green" /> Notarized
+                        </div>
+                      ) : (
+                        <div>
+                          <Icon name="circle" color="red" /> Not yet Notarized
+                        </div>
+                      )}
+                    </Table.Cell>
+                  ) : null
+                }
+
                 <Table.Cell collapsing textAlign="right">
-                  <Button icon="download" />
+                  {/*<Button icon="download" />*/}
+                  <Button loading={downloading === document.hash} icon="download" onClick={() => downloadFile(document.title,
+                    document.key, document.documentLocation)} />
                 </Table.Cell>
               </Table.Row>
             </Table.Body>
@@ -182,12 +187,31 @@ const DocumentDetails = props => {
           <WarningStatus />
           {/* <SignSuccess /> */}
           <div className="sign-btn">
-            {/* Conditional rendering */}
-            <Button primary>Sign Now</Button>
-            {/* <Button primary>Notarize</Button> */}
-            {/* <Button primary>Notarizee</Button> */}
+            {document.notary === caller.address && !document.notarySigned ? (
+              <Button basic color="blue" icon labelPosition="left" onClick={() => notarizeDocument(document.docId,
+                document.hash)}>
+                <Icon name="signup" />
+                Notarize
+              </Button>
+            ) : !document.partySigned ? (
+              <Button basic color="blue" icon labelPosition="left" onClick={() => signDocument(document.hash,
+                document.docId)}>
+                <Icon name="signup" />
+                Sign Document
+              </Button>
+            ) : (
+              <Button disabled basic color="blue" icon labelPosition="left">
+                <Icon name="signup" />
+                Sign Document
+              </Button>
+            )}
           </div>
         </DocumentTable>
+        ):(
+          <Loader active size="medium">
+            Loading
+          </Loader>
+        )}
       </DocumentContainer>
     </>
   );

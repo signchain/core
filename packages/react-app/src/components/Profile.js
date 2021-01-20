@@ -34,7 +34,7 @@ export default function Profile({ ceramic, idx }) {
           <div className="profileContainer">
             <div className="profile">
               <img src="https://react.semantic-ui.com/images/avatar/large/patrick.png" alt="" />
-              <h2>Koushith B.R</h2>
+              <h2>{user.name}</h2>
               <h3>
                 <span className="addressSpan">{idx.id}</span>{" "}
               </h3>

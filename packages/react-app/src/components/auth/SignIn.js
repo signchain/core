@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Button, Checkbox, Form, Modal, Header, Grid, Segment, Message } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logoInverted.png";
-
-const index = require("../../lib/e2ee.js");
 import { loginUserWithChallenge, registerNewUser } from "../../lib/threadDb";
 import { definitions } from "../../ceramic/config.json";
 import { FormContainer } from "../styles/SignUp.Styles";
+
+const index = require("../../lib/e2ee.js");
+
 
 function SignUp() {
   const [open, setOpen] = useState(true);

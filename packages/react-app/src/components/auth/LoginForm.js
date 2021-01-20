@@ -13,6 +13,7 @@ function LoginForm({identity}) {
 
   async function loginUser() {
     const accounts = await wallet.login(password);
+    console.log(accounts)
     if (accounts!==null) {
       const client = await loginUserWithChallenge(identity);
       console.log("USER Login!!")

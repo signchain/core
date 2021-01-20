@@ -19,6 +19,7 @@ const UserRegistration = {
                     createdBy : {type: 'string'},
                     sharedTo: {type: 'string'},
                     date: {type: 'string' },
+                    title: {type: 'string'},
                     fileName: {type:'string'},
                     documentId: {type:'string'},
                     signatureId: {type:'string'}

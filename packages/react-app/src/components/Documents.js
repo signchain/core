@@ -70,14 +70,14 @@ export default function Documents(props) {
                   <div class="Details-card">
                     <div class="Details-card-preview">
                       <h6>Title</h6>
-                      <h2>Rental Agreement</h2>
+                      <h2>{value.title}</h2>
                     </div>
                     <div class="Details-card-info">
                       <div class="progress-container">
                         <span class="heading">{value.date}</span>
                       </div>
                       <h6 className="heading">Shared By</h6>
-                      <h2 className="meta-text">Koushith</h2>
+                      <h2 className="meta-text">{value.createdBy}</h2>
                       <div className="read-more">
                         <div className="status">
                           <div className="docs-icon">

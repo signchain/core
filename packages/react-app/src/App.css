@@ -1,14 +1,18 @@
-
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 .button {
-    height: 40px;
-    min-width: 95px;
-    border-radius: 4px;
+  height: 40px;
+  min-width: 95px;
+  border-radius: 4px;
 }
 .button__primary {
-    background: #48bb78 !important;
-    color: #fff !important;
+  background: #48bb78 !important;
+  color: #fff !important;
 }
 
-.steps-action{
-    background-color: #48bb78 !important;
+.steps-action {
+  background-color: #48bb78 !important;
 }
