@@ -10,6 +10,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useUserAddress } from "eth-hooks";
 import { useExchangePrice, useGasPrice, useContractLoader } from "./hooks";
 import { Transactor } from "./helpers";
+import wallet from 'wallet-besu'
 import {Account} from "./components";
 import {definitions} from "./ceramic/config.json"
 import SignUpForm from "./components/auth/SignUpForm";
@@ -27,6 +28,8 @@ import Database from "./components/database/Database";
  import SignIn from './components/auth/SignIn'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 import {generateSignature} from "./lib/ceramicConnect"
+import {getLoginUser, loginUserWithChallenge} from "./lib/threadDb"
+import { BigNumber, providers, utils } from 'ethers'
 
 import Ceramic from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
@@ -48,7 +51,14 @@ function App() {
     const [ceramic, setCeramic] = useState(null);
     const [idx, setIdx] = useState(null);
     const [identity, setIdentity] = useState(null);
+    const [userStatus, setUserStatus] = useState(0);
 
+    const authStatus = {
+        "disconnected" : 0,
+        "connected" : 1,
+        "loggedIn" : 2
+
+    }
     const price = useExchangePrice(mainnetProvider);
     const gasPrice = useGasPrice("fast");
     console.log(gasPrice)
@@ -57,30 +67,69 @@ function App() {
     const tx = Transactor(userProvider, gasPrice)
     const readContracts = useContractLoader(userProvider)
     const writeContracts = useContractLoader(userProvider)
+
     const loadWeb3Modal = useCallback(async () => {
         const provider = await web3Modal.connect();
         setInjectedProvider(new Web3Provider(provider));
     }, [setInjectedProvider]);
 
-    const setup = async () => {
+    async function loginUser(identity, idx) {
+          const accounts = await wallet.login("12345");
+          console.log("Accounts", accounts)
+          const client = await loginUserWithChallenge(identity);
+          console.log("USER Login!!")
+          let userInfo
+          if (client !== null) {
+            userInfo = await getLoginUser(accounts[0], idx)
+            if (userInfo !== null) {
+              console.log("User Info:", userInfo)
+              localStorage.setItem("USER", JSON.stringify(userInfo))
+              localStorage.setItem("password", "12345");
+              return userInfo
+            }
+            else {
+            console.log("Some error!!!")
+            return false
+          }
+        // }else{
+        //   console.log("Wrong password!!")
+        // }
+      }
+    }
+
+
+
+    const connectUser = async () => {
         const seed = await generateSignature();
+        console.log("Seed", seed)
         const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(seed))
         setIdentity(identity)
-      //   const ceramic = new Ceramic(CERAMIC_URL)
-      //   await ceramic.setDIDProvider(new Ed25519Provider(seed))
-      //   setCeramic(ceramic)
-      // // Create the IDX instance with the definitions aliases from the config
-      //   const idx = new IDX({ ceramic, aliases: definitions })
-      //   console.log(idx);
-      //   setIdx(idx)
+        const ceramic = new Ceramic(CERAMIC_URL)
+        await ceramic.setDIDProvider(new Ed25519Provider(seed))
+        setCeramic(ceramic)
+      // Create the IDX instance with the definitions aliases from the config
+        const idx = new IDX({ ceramic, aliases: definitions })
+        console.log(idx);
+        setIdx(idx)
+        const res = await loginUser(identity, idx);
+        console.log(res)
+        if(res !== undefined){
+            setUserStatus(authStatus.loggedIn)
+        }
+        else(
+            setUserStatus(authStatus.connected)
+        )
+
     }
+
+
 
     useEffect(() => {
         if (web3Modal.cachedProvider) {
             loadWeb3Modal();
         }
-        if(address){
-            setup().then(data => console.log(idx))
+        if(!address){
+            setUserStatus(authStatus.disconnected)
         }
     }, [loadWeb3Modal, address]);
 
@@ -94,7 +143,7 @@ function App() {
 
   return (
       <div className="App">
-        {/* <div style={{position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10,}}>
+        {/* <div style={{position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10, zIndex: 1000}}>
           <Account
               address={address}
               localProvider={userProvider}
@@ -110,37 +159,31 @@ function App() {
 
         <HashRouter>
           <div className="App">
-<TopNav/>
+            <TopNav
+              address={address}
+              localProvider={userProvider}
+              userProvider={userProvider}
+              mainnetProvider={mainnetProvider}
+              price={price}
+              web3Modal={web3Modal}
+              loadWeb3Modal={loadWeb3Modal}
+              logoutOfWeb3Modal={logoutOfWeb3Modal}
+              blockExplorer={blockExplorer}
+            />
             <Switch>
-                <Route exact path="/db" component={Database} />
-              <Route exact path="/" render={(props) =>
-                  <SignUpForm
-                      address={address}
-                      tx={tx}
-                      writeContracts={writeContracts}
-                      ceramic={ceramic}
-                      idx={idx}
-                      identity = {identity}
-                  />}/>
-
-              <Route exact path="/login" render={(props) =>
-                  <LoginForm
-                      address={address}
-                      tx={tx}
-                      writeContracts={writeContracts}
-                      identity = {identity}
-                      {...props}
-                  />}/>
-              <Route exact path="/signup" render={(props) =>
-                  <SignUpForm
-                      address={address}
-                      tx={tx}
-                      writeContracts={writeContracts}
-                      ceramic={ceramic}
-                      idx={idx}
-                      identity = {identity}
-                  />}/>
-
+                {
+                    userStatus !== authStatus.loggedIn  ? 
+                    (<WarningPopup 
+                        userStatus={userStatus} 
+                        connectUser = {connectUser} 
+                        authStatus={authStatus}
+                        setInjectedProvider={setInjectedProvider}
+                        setUserStatus={setUserStatus}
+                        identity={identity}
+                        address={address}
+                        idx={idx}
+                        />) : 
+                    ( 
               <Layout
                   address={address}
                   localProvider={userProvider}
@@ -175,7 +218,16 @@ function App() {
                         userProvider={userProvider}
                         {...props}
                     />}/>
-               <Route exact path="/dashboard" render={(props) => <Dashboard/>}/>
+               <Route exact path="/home" render={(props) => 
+               <Dashboard
+                    address={address}
+                    tx={tx}
+                    writeContracts={writeContracts}
+                    userStatus={userStatus}
+                    authStatus={authStatus}
+                    idx={idx}
+                    identity = {identity}
+               />}/>
                <Route exact path="/verify" render={(props) =>
                    <Verify
                        address={address}
@@ -203,6 +255,7 @@ function App() {
                       idx={idx}
                    />}/>
               </Layout>
+                    )}
             </Switch>
           </div>
         </HashRouter>

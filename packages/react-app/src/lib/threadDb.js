@@ -1,3 +1,4 @@
+import {definitions} from "../ceramic/config.json"
 const e2e = require('./e2e-encrypt.js')
 const e2ee = require('./e2ee.js')
 const fileDownload = require('js-file-download')
@@ -6,9 +7,11 @@ const wallet = require('wallet-besu')
 const ethers = require('ethers')
 const io = require('socket.io-client');
 
-export const registerNewUser = async function(did, name, email, privateKey, userType, address){
+
+export const registerNewUser = async function(did, name, email, privateKey, userType, address, password){
     try {
         const {threadDb, client} = await getCredentials()
+        console.log("GET CREDNTIALS FUNCTION",client)
         const threadId = ThreadID.fromBytes(threadDb)
         let publicKey = e2e.getPublicKey(privateKey)
         const data = {
@@ -22,6 +25,8 @@ export const registerNewUser = async function(did, name, email, privateKey, user
             documentInfo: [{_id:"-1"}]
         }
         const status = await client.create(threadId, 'RegisterUser', [data])
+        localStorage.setItem("USER", JSON.stringify(data))
+        localStorage.setItem("password", "12345");
         console.log("User registration status:",status)
         return true
     }catch(err){
@@ -93,14 +98,15 @@ export const getCredentials = async function(){
     return {client, threadDb}
 }
 
-export const getLoginUser = async function(privateKey){
+export const getLoginUser = async function(privateKey, idx){
     try {
         const {threadDb, client} = await getCredentials()
         let publicKey = e2e.getPublicKey(privateKey)
         const query = new Where('publicKey').eq(publicKey.toString("hex"))
         const threadId = ThreadID.fromBytes(threadDb)
         const result = await client.find(threadId, 'RegisterUser', query)
-        if (result.length<1){
+        const ceramicResult = await idx.get(definitions.profile, idx.id)
+        if (result.length<1 && ceramicResult === null){
             console.log("Please register user!")
             return null
         }

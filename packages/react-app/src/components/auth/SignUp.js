@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Button, Checkbox, Form, Modal, Header, Grid, Segment, Message } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logoInverted.png";
-
-const index = require("../../lib/e2ee.js");
-import { loginUserWithChallenge, registerNewUser } from "../../lib/threadDb";
 import { definitions } from "../../ceramic/config.json";
 import { FormContainer } from "../styles/SignUp.Styles";
 
-function SignUp() {
+import { loginUserWithChallenge, registerNewUser} from "../../lib/threadDb";
+const index = require("../../lib/e2ee.js");
+
+
+function SignUp({userStatus, authStatus, setUserStatus, identity, address, idx}) {
   const [open, setOpen] = useState(true);
 
   const [name, setName] = useState("");
@@ -20,6 +21,58 @@ function SignUp() {
   const [signupStatus, setSignupStatus] = useState(SignupStatus.preInit);
   const userType = { party: 0, notary: 1 };
   let history = useHistory();
+
+
+  useEffect(() => {
+    async function getUserData() {
+       setSignupStatus(SignupStatus.init);
+        try{
+         if(idx) {
+           console.log("IDDD")
+           setSignupStatus(SignupStatus.init);
+         }
+        }catch(err){
+            console.log(err);
+        }
+    }
+     getUserData()
+ }, [] )
+
+  const registerUser = async () => {
+    setSignupStatus(SignupStatus.wallet);
+    const walletStatus = await index.createWallet(password);
+
+    if (walletStatus) {
+      const accounts = await index.getAllAccounts(password);
+      setSignupStatus(SignupStatus.ceramic);
+      await idx.set(definitions.profile, {
+        name: name,
+        email: email,
+        notary: notary,
+      });
+      setSignupStatus(SignupStatus.contract);
+      //const dbClient = await authorizeUser(password)
+      const client = await loginUserWithChallenge(identity);
+      if (client!==null) {
+        const registrationStatus = await registerNewUser(
+          idx.id,
+          name,
+          email,
+          accounts[0],
+          notary ? userType.notary : userType.party,
+          address,
+          password
+        );
+        if (registrationStatus) {
+         setUserStatus(authStatus.loggedIn)
+      }else{
+        console.log("Some error occurred!!!")
+      }
+    }
+  };
+}
+
+
   return (
     <>
       <Modal
@@ -43,6 +96,8 @@ function SignUp() {
                 placeholder="Enter your Full Name"
                 type="text"
                 className="form-input"
+                onChange={e => setName(e.target.value)}
+
               />
               <Form.Input
                 fluid
@@ -50,6 +105,8 @@ function SignUp() {
                 iconPosition="left"
                 placeholder="Enter your Email  Address"
                 className="form-input"
+                onChange={e => setEmail(e.target.value)}
+
               />
               <Form.Input
                 fluid
@@ -58,10 +115,36 @@ function SignUp() {
                 placeholder="Password"
                 type="password"
                 className="form-input"
-              />
-              <Checkbox style={{ color: "#718096" }} className="checkbox" label="I'm a Notary" className="form-input" />
+                onChange={e => setPassword(e.target.value)}
 
-              <Button className="btn-primary">Login</Button>
+              />
+              <Checkbox style={{ color: "#718096" }} className="checkbox" label="I'm a Notary" className="form-input" 
+              checked={notary}
+              onChange={() => {
+                setNotary(!notary);
+              }}/>
+
+               {signupStatus == SignupStatus.init ? (
+                <Button type="primary" className="form-input-btn" onClick={registerUser}>
+                  Sign Up
+                </Button>
+              ) : signupStatus == SignupStatus.wallet ? (
+                <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
+                  Creating wallet
+                </Button>
+              ) : signupStatus == SignupStatus.ceramic ? (
+                <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
+                  Creating IDX account
+                </Button>
+              ) : signupStatus == SignupStatus.contract ? (
+                <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
+                  Creating profile
+                </Button>
+              ) :
+              <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
+               Initiating ...
+              </Button>
+            }
             </FormContainer>
             <Message>
               New to us? <a href="#">Sign Up</a>
@@ -72,5 +155,6 @@ function SignUp() {
     </>
   );
 }
+
 
 export default SignUp;

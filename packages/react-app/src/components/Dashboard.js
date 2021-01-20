@@ -7,39 +7,44 @@ import Verify from "../images/icons/VerifyDocs.svg";
 import { Link } from "react-router-dom";
 import { DashboardContainer } from "./styles/Dashboard.Styles";
 
-const Dashboard = () => (
-  <>
-    <DashboardContainer>
-      <h1 className="welcome-heading">Welcome to Signchain</h1>
+const Dashboard = (props) => {
 
-      <div className="select-actions">
-        <Link to="/sign">
-          <div className="box-1">
-            <div className="icon">
-              <img src={Sign} alt="" srcset="" />
-            </div>
-            <p>Sign & Share</p>
+
+  
+  return (
+    <>
+        <DashboardContainer>
+          <h1 className="welcome-heading">Welcome to Signchain</h1>
+
+          <div className="select-actions">
+            <Link to="/sign">
+              <div className="box-1">
+                <div className="icon">
+                  <img src={Sign} alt="" srcset="" />
+                </div>
+                <p>Sign & Share</p>
+              </div>
+            </Link>
+            <Link to="/sign">
+              <div className="box-1">
+                <div className="icon">
+                  <img src={Secure} alt="" srcset="" />
+                </div>
+                <p>Secure & Share</p>
+              </div>
+            </Link>
+            <Link to="/verify">
+              <div className="box-1">
+                <div className="icon">
+                  <img src={Verify} alt="" srcset="" />
+                </div>
+                <p>Verify</p>
+              </div>
+            </Link>
           </div>
-        </Link>
-        <Link to="/sign">
-          <div className="box-1">
-            <div className="icon">
-              <img src={Secure} alt="" srcset="" />
-            </div>
-            <p>Secure & Share</p>
-          </div>
-        </Link>
-        <Link to="/verify">
-          <div className="box-1">
-            <div className="icon">
-              <img src={Verify} alt="" srcset="" />
-            </div>
-            <p>Verify</p>
-          </div>
-        </Link>
-      </div>
-    </DashboardContainer>
-  </>
-);
+        </DashboardContainer>
+      </>
+  )
+}
 
 export default Dashboard;
