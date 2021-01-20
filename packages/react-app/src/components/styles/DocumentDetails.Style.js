@@ -126,9 +126,12 @@ export const Success = styled.div`
 `;
 
 export const DetailsContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* display: grid;
+  grid-template-columns: repeat(2, 1fr); */
+  display: flex;
+  justify-content: center;
   cursor: pointer;
+  overflow: hidden;
 
   .Details-card {
     background-color: #fff;
@@ -162,7 +165,7 @@ export const DetailsContainer = styled.div`
   }
   .meta-text {
     color: #717171;
-    margin-top: 4px;
+    /* margin-top: 4px; */
   }
   .course-preview a {
     color: #fff;
@@ -259,9 +262,10 @@ export const DetailsCard = styled.div`
   align-items: center;
   justify-items: center;
 
-  h2 {
+  .docs-heading {
     color: #717171;
-    margin: 0 0 18px 12px;
-    padding-top: 18px;
+    margin: 0 0 18px 0;
+    padding-top: 8px;
+    text-align: center;
   }
 `;

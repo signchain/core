@@ -61,7 +61,7 @@ export default function Documents(props) {
   return (
     <>
       <DetailsCard>
-        <h2>My Documents</h2>
+        <h2 className="docs-heading">My Documents</h2>
         {!loading ? (
           docs.map(value => {
             return (
@@ -87,17 +87,8 @@ export default function Documents(props) {
                         </div>
                         <div className="status">
                           <div className="docs-icon">
-                            <img src={Sign} alt="" srcset="" />
-                            {value.signStatus ? (
-                              <h6 className="heading">
-                                <Icon name="circle" color="green" size="tiny" />
-                                Signed
-                              </h6>
-                            ) : (
-                              <h6 className="heading">
-                                <Icon name="circle" color="red" size="small" /> Pending
-                              </h6>
-                            )}
+                            <img src={Download} alt="" srcset="" />
+                            <h6 className="heading">Download</h6>
                           </div>
                         </div>
                         <Link
