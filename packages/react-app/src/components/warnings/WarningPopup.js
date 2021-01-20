@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import SignUp from "../auth/SignUp"
 
 
-function WarningPopup({userStatus, connectUser, authStatus, setUserStatus, identity, address, idx}) {
+function WarningPopup({userStatus, connectUser, authStatus, setUserStatus, identity, address, idx, seed}) {
   const [open, setOpen] = useState(true);
 
   return (
@@ -14,7 +14,15 @@ function WarningPopup({userStatus, connectUser, authStatus, setUserStatus, ident
     {
       userStatus === authStatus.connected ? 
       (
-        <SignUp userStatus={userStatus} authStatus={authStatus} setUserStatus={setUserStatus} identity={identity} address={address} idx={idx}/>
+        <SignUp
+          userStatus={userStatus}
+          authStatus={authStatus}
+          setUserStatus={setUserStatus}
+          identity={identity}
+          address={address}
+          idx={idx}
+          seed={seed}
+        />
       ) : 
       (
         <Modal

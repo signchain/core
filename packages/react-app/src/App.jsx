@@ -52,6 +52,7 @@ function App() {
     const [idx, setIdx] = useState(null);
     const [identity, setIdentity] = useState(null);
     const [userStatus, setUserStatus] = useState(0);
+    const [seed, setSeed] = useState([])
 
     const authStatus = {
         "disconnected" : 0,
@@ -73,35 +74,38 @@ function App() {
         setInjectedProvider(new Web3Provider(provider));
     }, [setInjectedProvider]);
 
-    async function loginUser(identity, idx) {
-          const accounts = await wallet.login("12345");
-          console.log("Accounts", accounts)
-          const client = await loginUserWithChallenge(identity);
-          console.log("USER Login!!")
-          let userInfo
-          if (client !== null) {
-            userInfo = await getLoginUser(accounts[0], idx)
-            if (userInfo !== null) {
-              console.log("User Info:", userInfo)
-              localStorage.setItem("USER", JSON.stringify(userInfo))
-              localStorage.setItem("password", "12345");
-              return userInfo
-            }
-            else {
-            console.log("Some error!!!")
-            return false
+    async function loginUser(seed, identity, idx) {
+      const pass = Buffer.from(new Uint8Array(seed)).toString("hex")
+      console.log("Welcomee!!!", pass)
+      const accounts = await wallet.login(pass);
+      console.log("Accounts", accounts)
+      if (accounts) {
+        const client = await loginUserWithChallenge(identity);
+        console.log("USER Login!!")
+        let userInfo
+        if (client !== null) {
+          userInfo = await getLoginUser(accounts[0], idx)
+          if (userInfo !== null) {
+            console.log("User Info:", userInfo)
+            localStorage.setItem("USER", JSON.stringify(userInfo))
+            localStorage.setItem("password", "12345");
+            return userInfo
           }
-        // }else{
-        //   console.log("Wrong password!!")
-        // }
+          console.log("Some error!!!")
+          return false
+        }
+      }
+      else{
+        console.log("Cannot login account!!")
+        setUserStatus(authStatus.connected)
       }
     }
-
 
 
     const connectUser = async () => {
         const seed = await generateSignature();
         console.log("Seed", seed)
+      setSeed(seed)
         const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(seed))
         setIdentity(identity)
         const ceramic = new Ceramic(CERAMIC_URL)
@@ -111,7 +115,7 @@ function App() {
         const idx = new IDX({ ceramic, aliases: definitions })
         console.log(idx);
         setIdx(idx)
-        const res = await loginUser(identity, idx);
+        const res = await loginUser(seed, identity, idx);
         console.log(res)
         if(res !== undefined){
             setUserStatus(authStatus.loggedIn)
@@ -143,7 +147,7 @@ function App() {
 
   return (
       <div className="App">
-        {/* <div style={{position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10, zIndex: 1000}}>
+         <div style={{position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10, zIndex: 1000}}>
           <Account
               address={address}
               localProvider={userProvider}
@@ -155,7 +159,7 @@ function App() {
               logoutOfWeb3Modal={logoutOfWeb3Modal}
               blockExplorer={blockExplorer}
           />
-        </div> */}
+        </div>
 
         <HashRouter>
           <div className="App">
@@ -182,6 +186,7 @@ function App() {
                         identity={identity}
                         address={address}
                         idx={idx}
+                        seed = {seed}
                         />) : 
                     ( 
               <Layout
@@ -204,6 +209,8 @@ function App() {
                     address={address}
                     tx={tx}
                     writeContracts={writeContracts}
+                    userProvider={userProvider}
+                    seed={seed}
                   />}/>
                 <Route exact path='/signuptest' render={(props)=><SignUp/>}/>
                  <Route exact path='/signintest' render={(props)=><SignIn/>}/>

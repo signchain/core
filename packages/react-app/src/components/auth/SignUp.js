@@ -9,7 +9,7 @@ import { loginUserWithChallenge, registerNewUser} from "../../lib/threadDb";
 const index = require("../../lib/e2ee.js");
 
 
-function SignUp({userStatus, authStatus, setUserStatus, identity, address, idx}) {
+function SignUp({userStatus, authStatus, setUserStatus, identity, address, idx, seed}) {
   const [open, setOpen] = useState(true);
 
   const [name, setName] = useState("");
@@ -40,10 +40,11 @@ function SignUp({userStatus, authStatus, setUserStatus, identity, address, idx})
 
   const registerUser = async () => {
     setSignupStatus(SignupStatus.wallet);
-    const walletStatus = await index.createWallet(password);
+    const pass = Buffer.from(new Uint8Array(seed)).toString("hex")
+    const walletStatus = await index.createWallet(pass);
 
     if (walletStatus) {
-      const accounts = await index.getAllAccounts(password);
+      const accounts = await index.getAllAccounts(pass);
       setSignupStatus(SignupStatus.ceramic);
       await idx.set(definitions.profile, {
         name: name,
@@ -65,13 +66,12 @@ function SignUp({userStatus, authStatus, setUserStatus, identity, address, idx})
         );
         if (registrationStatus) {
          setUserStatus(authStatus.loggedIn)
-      }else{
-        console.log("Some error occurred!!!")
+        }else{
+          console.log("Some error occurred!!!")
+        }
       }
     }
-  };
-}
-
+  }
 
   return (
     <>
