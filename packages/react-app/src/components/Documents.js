@@ -77,7 +77,7 @@ export default function Documents(props) {
                         <span class="heading">{value.date}</span>
                       </div>
                       <h6 className="heading">Shared By</h6>
-                      <h2 className="meta-text">{value.createdBy}</h2>
+                      <h2 className="meta-text">{value.createdBy.name}</h2>
                       <div className="read-more">
                         <div className="status">
                           <div className="docs-icon">

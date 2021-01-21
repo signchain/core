@@ -42,7 +42,7 @@ function WarningPopup({userStatus, connectUser, authStatus, setUserStatus, ident
                   <h3>Sign in to use Signchain Application</h3>
 
                   <p>
-                    In order for you to use certain features of the Signchain like Signing and Verifing Documents, please
+                    In order for you to use certain features of the Signchain like Signing and Verifying Documents, please
                     sign in using your secure wallet.
                   </p>
                   <p>If you don't wish to sign in but want to explore, feel free to Browse around.</p>

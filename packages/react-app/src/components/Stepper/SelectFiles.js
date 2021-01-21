@@ -21,7 +21,7 @@ const fileStorage = [{name: "AWS", image: AWS},
 
 const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
   const [selected, setSelected] = useState(false);
-  const [storageType, setStorage] = useState("Fleek");
+  const [storageType, setStorage] = useState(process.env.REACT_APP_STORAGE);
 
 
   const props = {
@@ -52,7 +52,7 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
   return (
     <div className="parties__container">
       <div className="wrapper" >
-        <div style={{ marginBottom: "14px" }}>
+        {/*<div style={{ marginBottom: "14px" }}>
           <Dropdown
              style={{ float: "left", marginTop: "18px" }}
             placeholder="Select Storage Provider"
@@ -70,7 +70,7 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
               setStorage(data.value);
             }}
           />
-        </div>
+        </div>*/}
 
         <div style={{ marginBottom: "14px" }}>
           <Dragger {...props} style={{ border: "none" }} >
