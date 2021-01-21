@@ -29,6 +29,16 @@ const Profile = {
         title: "notary",
         maxLength: 150,
       },
+      joindate: {
+        type: "string",
+        title: "joindate",
+        maxLength: 150,
+      },
+      userAddress: {
+        type: "string",
+        title: "userAddress",
+        maxLength: 150,
+      }
     },
   },
 };

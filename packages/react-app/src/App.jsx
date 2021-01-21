@@ -26,6 +26,7 @@ import Database from "./components/database/Database";
  import SignUp from './components/auth/SignUp'
  import SignIn from './components/auth/SignIn'
  import SignDocs from './components/Verify/SignDocument'
+ import UserProfiles from "./components/UserProfile";
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 import {generateSignature, getProvider} from "./lib/ceramicConnect"
 import {getLoginUser, loginUserWithChallenge} from "./lib/threadDb"
@@ -253,6 +254,11 @@ function App() {
                        writeContracts={writeContracts}
                        {...props}
                        ceramic={ceramic}
+                      idx={idx}
+                   />}/>
+                 <Route exact path="/profile/:did" render={(props) =>
+                   <UserProfiles
+                      {...props}
                       idx={idx}
                    />}/>
               </Layout>

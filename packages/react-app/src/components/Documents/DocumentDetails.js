@@ -24,13 +24,14 @@ import {
   DocumentTable,
 } from "../styles/DocumentDetails.Style";
 import { attachSignature, downloadFiles, getAllUsers, getSingleDocument, notarizeDoc } from "../../lib/threadDb";
+import { Link } from "react-router-dom";
 
 const DocumentDetails = props => {
   const loggedUser = localStorage.getItem("USER");
   const userInfo = JSON.parse(loggedUser);
   const documentId = decodeURIComponent(props.match.params.doc);
   const signatureId = decodeURIComponent(props.match.params.sig);
-
+  const did = encodeURIComponent(userInfo.did)
   const [caller, setCaller] = useState({});
   const [document, setDocument] = useState(null);
   const [downloading, setDownloading] = useState(null);
@@ -107,6 +108,7 @@ const DocumentDetails = props => {
 
         {!loading ? (
         <DocumentTable>
+          <Link to={`/profile/${did}`}>
           <div className="name-content">
             <div className="icon-img">
               <img
@@ -120,6 +122,7 @@ const DocumentDetails = props => {
               <p className="data">{document.createdBy}</p>
             </div>
           </div>
+          </Link>
           <Table singleLine striped>
             <Table.Header>
               <Table.Row>

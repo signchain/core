@@ -7,6 +7,7 @@ import { FormContainer } from "../styles/SignUp.Styles";
 
 import { loginUserWithChallenge, registerNewUser } from "../../lib/threadDb";
 const index = require("../../lib/e2ee.js");
+const moment = require("moment")
 
 function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx, seed }) {
   const [open, setOpen] = useState(true);
@@ -48,6 +49,8 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
         name: name,
         email: email,
         notary: notary,
+        joindate : moment(new Date()).format("ll"),
+        userAddress: address
       });
       setSignupStatus(SignupStatus.contract);
       //const dbClient = await authorizeUser(password)
