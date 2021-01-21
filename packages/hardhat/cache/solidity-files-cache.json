@@ -1,9 +1,9 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/home/shubham/ConsensoLabs/core/packages/hardhat/contracts/DocumentRegistry.sol": {
-      "lastModificationDate": 1610685410601,
-      "contentHash": "97139bae10efdf8535b7d1692bff8b2e",
+    "D:\\signchain-core\\packages\\hardhat\\contracts\\DocumentRegistry.sol": {
+      "lastModificationDate": 1610695057468,
+      "contentHash": "efcce48353b134c7c36222a558c45605",
       "sourceName": "contracts/DocumentRegistry.sol",
       "solcConfig": {
         "version": "0.6.7",
@@ -37,8 +37,8 @@
         "DocumentRegistry"
       ]
     },
-    "/home/shubham/ConsensoLabs/core/node_modules/hardhat/console.sol": {
-      "lastModificationDate": 1610690257493,
+    "D:\\signchain-core\\packages\\hardhat\\node_modules\\hardhat\\console.sol": {
+      "lastModificationDate": 1611129302536,
       "contentHash": "cc4777addd464ea56fa35b1c45df0591",
       "sourceName": "hardhat/console.sol",
       "solcConfig": {
@@ -71,9 +71,9 @@
         "console"
       ]
     },
-    "/home/shubham/ConsensoLabs/core/packages/hardhat/contracts/Signchain.sol": {
-      "lastModificationDate": 1610972505140,
-      "contentHash": "3ca1e1620c0807377622b6118281eb2d",
+    "D:\\signchain-core\\packages\\hardhat\\contracts\\Signchain.sol": {
+      "lastModificationDate": 1610972846933,
+      "contentHash": "c117f649b273674f877e356782ff0fc8",
       "sourceName": "contracts/Signchain.sol",
       "solcConfig": {
         "version": "0.6.7",
@@ -109,9 +109,9 @@
         "Signchain"
       ]
     },
-    "/home/shubham/ConsensoLabs/core/packages/hardhat/contracts/SigningModule.sol": {
-      "lastModificationDate": 1610685410601,
-      "contentHash": "5bbcc0ad01290c8ec87e010210eb2bd1",
+    "D:\\signchain-core\\packages\\hardhat\\contracts\\SigningModule.sol": {
+      "lastModificationDate": 1610695057468,
+      "contentHash": "66e3d01b650b965ec987018cca34e3ac",
       "sourceName": "contracts/SigningModule.sol",
       "solcConfig": {
         "version": "0.6.7",
@@ -143,40 +143,6 @@
       ],
       "artifacts": [
         "SigningModule"
-      ]
-    },
-    "/home/shubham/ConsensoLabs/core/packages/hardhat/node_modules/hardhat/console.sol": {
-      "lastModificationDate": 1611135674728,
-      "contentHash": "cc4777addd464ea56fa35b1c45df0591",
-      "sourceName": "hardhat/console.sol",
-      "solcConfig": {
-        "version": "0.6.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.4.22 <0.9.0"
-      ],
-      "artifacts": [
-        "console"
       ]
     }
   }

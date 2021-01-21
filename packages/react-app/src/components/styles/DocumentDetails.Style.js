@@ -133,28 +133,27 @@ export const DetailsContainer = styled.div`
   cursor: pointer;
   overflow: hidden;
 
+  .created-by {
+    margin: 0;
+    color: #717171;
+  }
+
   .Details-card {
     background-color: #fff;
     border-radius: 10px;
-    box-shadow: 6px 7px 7px -3px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(209, 209, 209, 0.5);
     display: flex;
     max-width: 100%;
     margin: 20px;
     overflow: hidden;
     width: 700px;
-  }
-
-  .Details-card-preview h6 {
-    margin: 0;
-    color: #fff;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .Details-card-preview h2 {
-    color: #fff;
-    letter-spacing: 1px;
-    margin: 10px 0;
+    height: auto;
+    &:hover {
+      background: linear-gradient(0deg, #feffff, #feffff);
+      border: 1px solid #4d4cbb;
+      box-sizing: border-box;
+      box-shadow: 0px 9px 10px rgba(101, 148, 170, 0.1);
+    }
   }
 
   .Details-card-preview {
@@ -179,20 +178,20 @@ export const DetailsContainer = styled.div`
   .heading {
     font-size: 12px;
     color: #717171;
+    margin-top: 2px;
   }
 
   .Details-card-info {
     padding: 30px;
     position: relative;
     width: 100%;
-    height: 210px;
   }
 
   .progress-container {
     position: absolute;
     top: 30px;
     right: 30px;
-    text-align: right;
+    text-align: left;
     width: 150px;
   }
 
@@ -223,7 +222,7 @@ export const DetailsContainer = styled.div`
   .read-more {
     display: flex;
     justify-content: space-between;
-    margin-top: 40px;
+    margin-top: 30px;
   }
 
   .docs-icon {
@@ -268,4 +267,8 @@ export const DetailsCard = styled.div`
     padding-top: 8px;
     text-align: center;
   }
+`;
+
+export const DocsTitle = styled.div`
+  margin-top: 16px;
 `;

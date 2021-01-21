@@ -1,15 +1,15 @@
 /* eslint-disable */
 
-import React, {useEffect, useState} from 'react';
-import 'antd/dist/antd.css';
-import './stepper.css';
-import { Steps, Button, message } from 'antd';
-import { Grid, Image } from 'semantic-ui-react'
-import SelectFiles from './SelectFiles'
-import SelectParties from './SelectParties'
-import Preview from './Preview'
-import {getAllUsers, registerDoc} from "../../lib/threadDb";
-import {sendMail} from "../../lib/notifications";
+import React, { useEffect, useState } from "react";
+import "antd/dist/antd.css";
+import "./stepper.css";
+import { Steps, message } from "antd";
+import { Grid, Image, Button } from "semantic-ui-react";
+import SelectFiles from "./SelectFiles";
+import SelectParties from "./SelectParties";
+import Preview from "./Preview";
+import { getAllUsers, registerDoc } from "../../lib/threadDb";
+import { sendMail } from "../../lib/notifications";
 
 const { Step } = Steps;
 
@@ -45,7 +45,7 @@ const steps = [
   {
     title: "Preview and Sign",
     content: args => {
-      return <Preview parties={args.parties} fileInfo={args.fileInfo} title={args.title} cc={args.cc}/>;
+      return <Preview parties={args.parties} fileInfo={args.fileInfo} title={args.title} cc={args.cc} />;
     },
   },
 ];
@@ -60,7 +60,7 @@ const stepper = props => {
   const [docNotary, setDocNotary] = useState(null);
   const [caller, setCaller] = useState(null);
   const [parties, setParties] = useState([]);
-  const [cc, setCC] = useState('');
+  const [cc, setCC] = useState("");
   const [file, selectFile] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [fileInfo, setFileInfo] = useState({});
@@ -72,12 +72,12 @@ const stepper = props => {
     if (props.writeContracts) {
       props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {});
       setSigner(props.userProvider.getSigner());
-      const userInfo = JSON.parse(loggedUser)
-        getAllUsers(userInfo.publicKey).then(result => {
-          setUsers(result.userArray);
-          setCaller(result.caller);
-          setNotaries(result.notaryArray);
-        });
+      const userInfo = JSON.parse(loggedUser);
+      getAllUsers(userInfo.publicKey).then(result => {
+        setUsers(result.userArray);
+        setCaller(result.caller);
+        setNotaries(result.notaryArray);
+      });
     }
   }, [props.writeContracts]);
 
@@ -90,9 +90,8 @@ const stepper = props => {
     setCurrent(current - 1);
   };
 
-  const submitDocument = async ()=>{
-
-    const {docId, signatureID} = await registerDoc(
+  const submitDocument = async () => {
+    const { docId, signatureID } = await registerDoc(
       parties.concat([caller]),
       fileInfo,
       title,
@@ -101,13 +100,19 @@ const stepper = props => {
       docNotary,
       caller,
       props.tx,
-      props.writeContracts
+      props.writeContracts,
     );
-    console.log("Register:", docId[0], signatureID[0])
-    const urlParams = `${docId[0]}/${signatureID[0]}`
-    await sendMail(parties.map((party) => {return (party.email)}).concat([cc]),
-      {sender: caller.name, docId: urlParams});
-  }
+    console.log("Register:", docId[0], signatureID[0]);
+    const urlParams = `${docId[0]}/${signatureID[0]}`;
+    await sendMail(
+      parties
+        .map(party => {
+          return party.email;
+        })
+        .concat([cc]),
+      { sender: caller.name, docId: urlParams },
+    );
+  };
 
   return (
     <>
@@ -141,7 +146,13 @@ const stepper = props => {
                 )}
 
                 {current < steps.length - 1 && (
-                  <Button type="primary" loading={submitting} onClick={() => next()} className="button">
+                  <Button
+                    type="primary"
+                    loading={submitting}
+                    onClick={() => next()}
+                    className="next-btn"
+                    style={{ background: "#4C51BF", color: "#fff" }}
+                  >
                     Next
                   </Button>
                 )}
@@ -149,9 +160,10 @@ const stepper = props => {
                 {current === steps.length - 1 && (
                   <Button
                     type="primary"
+                    style={{ background: "#4C51BF", color: "#fff" }}
                     loading={submitting}
                     onClick={() => submitDocument()}
-                    className="button"
+                    className="next-btn"
                   >
                     Sign & Share
                   </Button>
@@ -180,4 +192,3 @@ const stepper = props => {
 };
 
 export default stepper;
-
