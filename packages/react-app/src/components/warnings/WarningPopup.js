@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import SignUp from "../auth/SignUp"
 
 
-function WarningPopup({userStatus, connectUser, authStatus, setUserStatus, identity, address, idx, seed}) {
+function WarningPopup({userStatus, connectUser, authStatus, setUserStatus, identity, address, idx, seed, connectLoading}) {
   const [open, setOpen] = useState(true);
 
   return (
@@ -48,7 +48,7 @@ function WarningPopup({userStatus, connectUser, authStatus, setUserStatus, ident
                   <p>If you don't wish to sign in but want to explore, feel free to Browse around.</p>
                 </div>
                 <div className="warning-btn">
-                  <Button size="large" primary className="SignIn-btn" onClick={() => connectUser()}>
+                  <Button loading={connectLoading} size="large" primary className="SignIn-btn" onClick={() => connectUser()}>
                       Sign In
                   </Button>
                 </div>

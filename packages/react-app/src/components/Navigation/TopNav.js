@@ -24,7 +24,7 @@ address,
         </NavLink>
         <Bars />
         <NavMenu>
-          <NavLink to="/dashboard" activeStyle>
+          <NavLink to="/home" activeStyle>
             Home
           </NavLink>
           <NavLink to="/documents" activeStyle>

@@ -27,7 +27,7 @@ import Database from "./components/database/Database";
  import SignIn from './components/auth/SignIn'
  import SignDocs from './components/Verify/SignDocument'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
-import {generateSignature} from "./lib/ceramicConnect"
+import {generateSignature, getProvider} from "./lib/ceramicConnect"
 import {getLoginUser, loginUserWithChallenge} from "./lib/threadDb"
 import { BigNumber, providers, utils } from 'ethers'
 
@@ -53,6 +53,7 @@ function App() {
     const [identity, setIdentity] = useState(null);
     const [userStatus, setUserStatus] = useState(0);
     const [seed, setSeed] = useState([])
+    const [connectLoading, setConnectLoading] = useState(false)
 
     const authStatus = {
         "disconnected" : 0,
@@ -70,7 +71,8 @@ function App() {
     const writeContracts = useContractLoader(userProvider)
 
     const loadWeb3Modal = useCallback(async () => {
-        const provider = await web3Modal.connect();
+        // Alternatively, this can also be used: await getProvider()).provider
+        const provider = await web3Modal.connectTo("injected");
         setInjectedProvider(new Web3Provider(provider));
     }, [setInjectedProvider]);
 
@@ -103,9 +105,11 @@ function App() {
 
 
     const connectUser = async () => {
+        
+        setConnectLoading(true)
+        await loadWeb3Modal()
         const seed = await generateSignature();
-        console.log("Seed", seed)
-      setSeed(seed)
+        setSeed(seed)
         const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(seed))
         setIdentity(identity)
         const ceramic = new Ceramic(CERAMIC_URL)
@@ -116,22 +120,23 @@ function App() {
         console.log(idx);
         setIdx(idx)
         const res = await loginUser(seed, identity, idx);
-        console.log(res)
         if(res !== undefined){
             setUserStatus(authStatus.loggedIn)
         }
-        else(
+        else {
             setUserStatus(authStatus.connected)
-        )
+        }
+        setConnectLoading(true)
 
     }
 
 
 
     useEffect(() => {
-        if (web3Modal.cachedProvider) {
-            loadWeb3Modal();
-        }
+        // Metamask should pop up only on connect request
+        // if (web3Modal.cachedProvider) {
+        //     loadWeb3Modal();
+        // }
         if(!address){
             setUserStatus(authStatus.disconnected)
         }
@@ -147,19 +152,6 @@ function App() {
 
   return (
       <div className="App">
-         <div style={{position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10, zIndex: 1000}}>
-          <Account
-              address={address}
-              localProvider={userProvider}
-              userProvider={userProvider}
-              mainnetProvider={mainnetProvider}
-              price={price}
-              web3Modal={web3Modal}
-              loadWeb3Modal={loadWeb3Modal}
-              logoutOfWeb3Modal={logoutOfWeb3Modal}
-              blockExplorer={blockExplorer}
-          />
-        </div>
 
         <HashRouter>
           <div className="App">
@@ -187,6 +179,7 @@ function App() {
                         address={address}
                         idx={idx}
                         seed = {seed}
+                        connectLoading = {connectLoading}
                         />) : 
                     ( 
               <Layout
