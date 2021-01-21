@@ -10,22 +10,28 @@ import { Loader, Grid, Card, Icon, Table } from "semantic-ui-react";
 import "./Profile.css";
 const index = require("../lib/e2ee.js");
 
-export default function Profile({ ceramic, idx }) {
+const UserProfiles = props => {
   const [user, setUser] = useState(null);
+  console.log(props)
+  const id = decodeURIComponent(props.match.params.did);
+
   useEffect(() => {
     async function getUserData() {
       try {
-        if (idx) {
-          const data = await idx.get(definitions.profile, idx.id);
+        if (props.idx) {
+          const data = await props.idx.get(definitions.profile, id);
           setUser(data);
-          console.log(data);
+          console.log("IDX data", data);
+        }else {
+            const data = JSON.parse(localStorage.getItem("USER"))
+            console.log(data)
         }
       } catch (err) {
         console.log(err);
       }
     }
     getUserData();
-  }, [idx]);
+  }, [props.idx]);
 
   return user ? (
     <>
@@ -36,7 +42,7 @@ export default function Profile({ ceramic, idx }) {
               <img src="https://react.semantic-ui.com/images/avatar/large/patrick.png" alt="" />
               <h2>{user.name}</h2>
               <h3>
-                <span className="addressSpan">{idx.id}</span>{" "}
+                <span className="addressSpan">{id}</span>{" "}
               </h3>
               <h3>
                 <span className="addressSpan">{user.userAddress}</span>{" "}
@@ -67,3 +73,5 @@ export default function Profile({ ceramic, idx }) {
     </Loader>
   );
 }
+
+export default UserProfiles;

@@ -51,6 +51,19 @@ const generateMessageForEntropy = (ethereum_address, application_name) => {
     return signer
   }
 
+  export const getProvider = async () => {
+    if (!window.ethereum) {
+      throw new Error(
+        'Ethereum is not connected. Please download Metamask from https://metamask.io/download.html'
+      );
+    }
+
+    console.debug('Initializing web3 provider...');
+    window.ethereum.enable()
+    const provider = new providers.Web3Provider(window.ethereum);
+    return provider
+  }
+
   const getAddressAndSigner = async() => {
     const signer = await getSigner()
     // @ts-ignore

@@ -1,0 +1,77 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.document_card {
+  max-width: 500px;
+  height: 250px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 6px 7px 7px -3px rgba(0, 0, 0, 0.25);
+  padding: 22px;
+}
+
+.document_card p {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+
+  /* identical to box height, or 18px */
+  align-items: center;
+  /* gray-600 */
+  color: #718096;
+}
+
+.document__info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.meta_info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 35px;
+  border-bottom: 1px solid #f2f4f8;
+}
+
+.left {
+  margin-right: 8px;
+  text-align: left !important;
+}
+.right {
+  margin-right: 8px;
+  text-align: left !important;
+}
+
+.shared-date {
+  text-align: left !important;
+}
+
+.card__h1 {
+  text-transform: uppercase;
+}
+
+.data {
+  font-weight: 500;
+  font-size: 16px !important;
+  color: #718096;
+}
+.name-content {
+  display: flex;
+  margin-bottom: 48px;
+}
+
+.img-container {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+}
+
+.docs-icon {
+  margin-bottom: 8px;
+}
+
+.hover {
+  cursor: pointer;
+}

@@ -1,3 +1,4 @@
+import {definitions} from "../ceramic/config.json"
 const e2e = require('./e2e-encrypt.js')
 const e2ee = require('./e2ee.js')
 const fileDownload = require('js-file-download')
@@ -6,9 +7,11 @@ const wallet = require('wallet-besu')
 const ethers = require('ethers')
 const io = require('socket.io-client');
 
-export const registerNewUser = async function(did, name, email, privateKey, userType, address){
+
+export const registerNewUser = async function(did, name, email, privateKey, userType, address, password){
     try {
         const {threadDb, client} = await getCredentials()
+        console.log("GET CREDNTIALS FUNCTION",client)
         const threadId = ThreadID.fromBytes(threadDb)
         let publicKey = e2e.getPublicKey(privateKey)
         const data = {
@@ -22,6 +25,8 @@ export const registerNewUser = async function(did, name, email, privateKey, user
             documentInfo: [{_id:"-1"}]
         }
         const status = await client.create(threadId, 'RegisterUser', [data])
+        localStorage.setItem("USER", JSON.stringify(data))
+        localStorage.setItem("password", "12345");
         console.log("User registration status:",status)
         return true
     }catch(err){
@@ -93,14 +98,15 @@ export const getCredentials = async function(){
     return {client, threadDb}
 }
 
-export const getLoginUser = async function(privateKey){
+export const getLoginUser = async function(privateKey, idx){
     try {
         const {threadDb, client} = await getCredentials()
         let publicKey = e2e.getPublicKey(privateKey)
         const query = new Where('publicKey').eq(publicKey.toString("hex"))
         const threadId = ThreadID.fromBytes(threadDb)
         const result = await client.find(threadId, 'RegisterUser', query)
-        if (result.length<1){
+        const ceramicResult = await idx.get(definitions.profile, idx.id)
+        if (result.length<1 && ceramicResult === null){
             console.log("Please register user!")
             return null
         }
@@ -147,17 +153,19 @@ export const getAllUsers = async function(loggedUser){
 
 export const registerDoc = async function(party, fileInfo, title, setSubmitting, signer, notary, caller,
                                           tx, writeContracts ){
-                                              console.log(party)
+    console.log(party)
     const {threadDb, client} = await getCredentials()
     let encryptedKeys=[]
     let userAddress=[]
-    let notaryStatus = false;
+    let notaryStatus = false
 
     const { fileHash, fileLocation, fileName, cipherKey } = fileInfo
     setSubmitting(true)
     console.log("Party:",party)
     const signature = await signDocument(fileHash, signer, caller.nonce)
     console.log("sign:",signature)
+
+    //prepare encrypted aes key for every user
     for (let i=0;i<party.length;i++){
         let aesEncKey = await e2e.encryptKey(Buffer.from(party[i].key,"hex"), cipherKey)
         let userKey = {
@@ -176,6 +184,7 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     }
     console.log("Log:",encryptedKeys)
 
+    //get notary
     if(notary!==null){
         notaryStatus = true
         const res = await tx(writeContracts.Signchain.saveNotarizeDoc(
@@ -186,9 +195,11 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
         console.log("result:",res)
     }
 
+    //store document
     const threadId = ThreadID.fromBytes(threadDb)
     const docId = await client.create(threadId, 'Document', [{
         title: title,
+        createdBy: caller.name,
         documentHash: fileHash.toString("hex"),
         fileLocation: fileLocation,
         fileName: fileName,
@@ -197,7 +208,7 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     }])
     console.log("Doc ID:",docId)
 
-    //call contract and verify signature
+    //store signature
     const date = new Date()
     const signatureID = await client.create(threadId, 'SignatureDetails', [{
         signers: userAddress,
@@ -210,11 +221,17 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     }])
     console.log("Signature ID:",signatureID)
 
+    //metadata
     const info = {
         documentId: docId[0],
-        signatureId: signatureID[0]
+        signatureId: signatureID[0],
+        title: title,
+        createdBy: caller.name,
+        date: date.toDateString(),
+        fileName: fileName
     }
 
+    //add document to users profile
     for (let i=0; i<party.length; i++){
         const query = new Where('publicKey').eq(party[i].key)
         const user = await client.find(threadId, 'RegisterUser', query)
@@ -231,6 +248,7 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     }
     console.log("File uploaded!!!")
     setSubmitting(false)
+    return {docId, signatureID}
 }
 
 const signDocument = async function (fileHash, signer, replayNonce){
@@ -243,6 +261,7 @@ const signDocument = async function (fileHash, signer, replayNonce){
 }
 
 export const attachSignature = async function(documentId, signer, caller, fileHash){
+    console.log("Caller Doc:",caller)
     const {threadDb, client} = await getCredentials()
     const query = new Where('publicKey').eq(caller.key)
     const threadId = ThreadID.fromBytes(threadDb)
@@ -279,62 +298,78 @@ export const getNotaryInfo = async function(fileHash, tx, writeContracts) {
     return await tx(writeContracts.Signchain.getNotarizeDocument(fileHash))
 }
 
-export const getAllFile = async function( loggedUserKey,address,tx, writeContracts ){
+export const getAllFile = async function( loggedUserKey ){
     const {threadDb, client} = await getCredentials()
     const threadId = ThreadID.fromBytes(threadDb)
     const query = new Where('publicKey').eq(loggedUserKey)
     const users = await client.find(threadId, 'RegisterUser', query)
+    console.log("Document:",users[0].documentInfo)
     let result = []
-    let documents =[]
     for (let i=0;i<users[0].documentInfo.length;i++){
         if (users[0].documentInfo.length===1 && users[0].documentInfo[0]._id==='-1'){
             break;
         }
-        const document = await client.findByID(threadId, 'Document', users[0].documentInfo[i].documentId)
-        const hash = document.documentHash
-        const signDetails = await client.findByID(threadId, 'SignatureDetails', users[0].documentInfo[i].signatureId)
-
-        let notaryInfo = null
-        console.log("NotaryStatus:",document.notaryStatus)
-        if (document.notaryStatus) {
-            notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
-            console.log("NotaryInfo:", notaryInfo)
-        }
-        let signStatus = true
-        let partySigned = false
-        if (signDetails.signers.length !== signDetails.signature.length){
-            const array = signDetails.signature.filter((item) => item.signer === address.toString())
-            console.log("Array:",i," :",signDetails, ": address: ",address)
-            if (array.length===1){
-                partySigned = true
-            }
-            signStatus = false;
-        }else{
-            signStatus = true
-            partySigned = true
-        }
-        let value = {
-            docId: document._id,
-            hash: hash,
-            documentLocation:document.fileLocation,
-            key: document.key,
-            title: document.title,
-            timestamp: signDetails.signature[0].timestamp,
-            signStatus: signStatus,
-            signers: signDetails.signers,
-            signatures: signDetails.signature,
-            partySigned: partySigned,
-        }
-        if (notaryInfo === null){
-            value.notary = 0
-            value.notarySigned = false
-        }else{
-            value.notary = notaryInfo.notaryAddress
-            value.notarySigned = notaryInfo.notarized
+        const documentDetails = users[0].documentInfo[i];
+        let value={
+            createdBy: documentDetails.createdBy,
+            date: documentDetails.date,
+            title: documentDetails.title,
+            fileName: documentDetails.fileName,
+            documentId: documentDetails.documentId,
+            signatureId: documentDetails.signatureId
         }
         result.push(value)
     }
     return result
+}
+
+export const getSingleDocument = async function(address, tx, writeContracts, documentId, signatureId){
+    const {threadDb, client} = await getCredentials()
+    const threadId = ThreadID.fromBytes(threadDb)
+    const document = await client.findByID(threadId, 'Document', documentId)
+    const hash = document.documentHash
+    const signDetails = await client.findByID(threadId, 'SignatureDetails', signatureId)
+
+    let notaryInfo = null
+    console.log("NotaryStatus:",document.notaryStatus)
+    if (document.notaryStatus) {
+        notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
+        console.log("NotaryInfo:", notaryInfo)
+    }
+    let signStatus
+    let partySigned = false
+    if (signDetails.signers.length !== signDetails.signature.length){
+        const array = signDetails.signature.filter((item) => item.signer === address.toString())
+        if (array.length===1){
+            partySigned = true
+        }
+    signStatus = false;
+    }else{
+        signStatus = true
+        partySigned = true
+    }
+    let value = {
+        createdBy: document.createdBy,
+        docId: document._id,
+        hash: hash,
+        documentLocation:document.fileLocation,
+        key: document.key,
+        title: document.title,
+        timestamp: signDetails.signature[0].timestamp,
+        signStatus: signStatus,
+        signers: signDetails.signers,
+        signatures: signDetails.signature,
+        partySigned: partySigned,
+        notaryStatus: document.notaryStatus
+    }
+    if (notaryInfo === null){
+        value.notary = 0
+        value.notarySigned = false
+    }else{
+        value.notary = notaryInfo.notaryAddress
+        value.notarySigned = notaryInfo.notarized
+    }
+    return value;
 }
 
 export const downloadFiles = async function (name, key, loggedUser,documentLocation, password){

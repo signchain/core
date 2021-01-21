@@ -36,5 +36,6 @@
     "packages": [
       "packages/*"
     ]
-  }
+  },
+  "dependencies": {}
 }
