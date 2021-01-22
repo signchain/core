@@ -94,7 +94,7 @@ const DocumentDetails = props => {
                 </div>
                 <h6 className="heading">Shared By</h6>
                 <Link to={`/profile/${did}`}>
-                  <h3 className="created-by">{document.createdBy}</h3>
+                  <h3 className="created-by">{document.createdBy.name}</h3>
                 </Link>
                 <DocsTitle>
                   <span class="heading">Title</span>
