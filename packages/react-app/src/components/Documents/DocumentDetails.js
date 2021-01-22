@@ -125,8 +125,7 @@ const DocumentDetails = props => {
                       Sign Document
                     </Button>
                   ) : (
-                    <Button disabled basic color="green" icon labelPosition="left">
-                      <Icon name="signup" />
+                    <Button disabled color="green">
                       Sign Document
                     </Button>
                   )}
@@ -167,31 +166,36 @@ const DocumentDetails = props => {
                   </div>
 
                   <div className="status">
-                    <div className="docs-icon" onClick={()=>downloadFile(document.title, document.key,document.documentLocation)}>
+                    <div
+                      className="docs-icon"
+                      onClick={() => downloadFile(document.title, document.key, document.documentLocation)}
+                    >
                       <img src={Download} alt="" srcset="" />
                     </div>
                     <h6 className="heading">Download</h6>
                   </div>
 
-                  {
-                    document.notary ?
-                      document.notarySigned ?
-                        <div className="status">
-                          <div className="docs-icon">
-                            <img src={Sign} alt="" srcSet=""/>
-                          </div>
-                          <h6 className="heading"><Icon name="circle" color="green" /> Notarized </h6>
+                  {document.notary ? (
+                    document.notarySigned ? (
+                      <div className="status">
+                        <div className="docs-icon">
+                          <img src={Sign} alt="" srcSet="" />
                         </div>
-                        :
-                        <div className="status">
-                          <div className="docs-icon">
-                            <img src={Sign} alt="" srcSet=""/>
-                          </div>
-                          <h6 className="heading"><Icon name="circle" color="red" /> Not Notarized </h6>
+                        <h6 className="heading">
+                          <Icon name="circle" color="green" /> Notarized{" "}
+                        </h6>
+                      </div>
+                    ) : (
+                      <div className="status">
+                        <div className="docs-icon">
+                          <img src={Sign} alt="" srcSet="" />
                         </div>
-                      :null
-                  }
-
+                        <h6 className="heading">
+                          <Icon name="circle" color="red" /> Not Notarized{" "}
+                        </h6>
+                      </div>
+                    )
+                  ) : null}
                 </div>
 
                 {/* table */}
@@ -212,15 +216,15 @@ const DocumentDetails = props => {
                       </Link>
                       <Table.Cell>
                         <div>
-                          {
-                            document.partySigned ?
-                              <>
-                                <Icon name="circle" color="green" /> Signed
-                              </>:
-                              <>
-                                <Icon name="circle" color="red" /> Pending
-                              </>
-                          }
+                          {document.partySigned ? (
+                            <>
+                              <Icon name="circle" color="green" /> Signed
+                            </>
+                          ) : (
+                            <>
+                              <Icon name="circle" color="red" /> Pending
+                            </>
+                          )}
                         </div>
                       </Table.Cell>
 
@@ -248,11 +252,10 @@ const DocumentDetails = props => {
                               </div>
                             </Table.Cell>
 
-                            <Table.Cell className="table-header">{value.timestamp}</Table.Cell>
-                          </Table.Row>
-                        )
-                      })
-                    }
+                          <Table.Cell className="table-header">{value.timestamp}</Table.Cell>
+                        </Table.Row>
+                      );
+                    })}
                   </Table.Body>
                 </Table>
 

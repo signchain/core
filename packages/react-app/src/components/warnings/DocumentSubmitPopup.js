@@ -22,7 +22,7 @@ function DocumentSubmitPopup({ setCurrent, setSubmitStatus }) {
               <div className="lock-image">
                 <img src={Success} alt="" />
               </div>
-              <div className="warning-text">
+              <div className="warning-text" style={{ marginTop: "8px" }}>
                 <h3>Document Shared Successfully!!</h3>
 
                 <p>
@@ -31,13 +31,12 @@ function DocumentSubmitPopup({ setCurrent, setSubmitStatus }) {
               </div>
               <div className="warning-btn">
                 <Link to="/documents">
-                  <Button size="large" primary className="SignIn-btn">
+                  <Button style={{ backgroundColor: "#4C51BF", color: "#fff" }} className="SignIn-btn">
                     VIEW
                   </Button>
                 </Link>
                 <Button
-                  size="large"
-                  style={{ marginLeft: "10px" }}
+                  style={{ marginLeft: "10px", backgroundColor: "#4C51BF", color: "#fff" }}
                   primary
                   className="SignIn-btn"
                   onClick={() => {

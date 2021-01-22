@@ -472,4 +472,3 @@ export const downloadFiles = async function (name, key, loggedUser,documentLocat
 }
 
 
-

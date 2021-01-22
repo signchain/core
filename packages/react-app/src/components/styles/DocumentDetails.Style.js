@@ -16,6 +16,7 @@ export const DocumentHeader = styled.div`
 export const HeaderContainer = styled.div`
   .header-container {
     display: flex;
+    background-color: #4143b6;
   }
 `;
 
@@ -301,7 +302,7 @@ export const DetailsInfo = styled.div`
     padding: 30px;
     position: relative;
     width: 100%;
-    background: linear-gradient(89.72deg, #4c51bf 0.19%, #3a3ab0 28.58%, #4c51bf 99.07%);
+    background: #4143b6;
   }
 
   .progress-container {
