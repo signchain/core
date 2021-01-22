@@ -4,7 +4,7 @@ const DocumentStorage = {
     type: 'object',
     properties: {
         _id: {type:'string'},
-        createdBy: { type:'string'},
+        createdBy: { type:'object'},
         title: {type:'string'},
         documentHash : {type: 'string'},
         fileLocation: {type: 'string'},

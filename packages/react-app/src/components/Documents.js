@@ -1,35 +1,19 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
 import { Button, Icon, Loader, Table, Modal, Step, Card, Image, Header } from "semantic-ui-react";
-
-import { getAllUsers, getAllFile, downloadFiles, attachSignature, notarizeDoc, getCredentials } from "../lib/threadDb";
+import { getAllFile} from "../lib/threadDb";
 import { Link } from "react-router-dom";
-//import "./Documents.css";
 import { DetailsContainer, DetailsCard, DocsTitle } from "./styles/DocumentDetails.Style";
 import File from "./../images/icons/Files.svg";
-import Sign from "./../images/icons/Sign.svg";
 import Download from "./../images/icons/Download.svg";
-import { Client } from "@textile/hub";
-const index = require("../lib/e2ee");
 
 import { Collapse } from "antd";
-const userType = { party: 0, notary: 1 };
-
 const { Panel } = Collapse;
 
 export default function Documents(props) {
   const loggedUser = localStorage.getItem("USER");
-  const userInfo = JSON.parse(loggedUser);
-
-  const [open, setOpen] = useState(false);
-  const [caller, setCaller] = useState({});
-  const [signer, setSigner] = useState({});
   const [docs, setDocs] = useState([]);
-  const [docInfo, setDocInfo] = useState({});
   const [loading, setLoading] = useState(false);
-  const [downloading, setDownloading] = useState(null);
-  const [dbClient, setDBClient] = useState(null);
-  const [identity, setIdentity] = useState(null);
 
   console.log("DOCS", docs);
 
@@ -42,10 +26,6 @@ export default function Documents(props) {
         getAllDoc();
       });
       getAllDoc();
-      setSigner(props.userProvider.getSigner());
-      getAllUsers(userInfo.publicKey).then(result => {
-        setCaller(result.caller);
-      });
     }
   }, [props.writeContracts]);
 
