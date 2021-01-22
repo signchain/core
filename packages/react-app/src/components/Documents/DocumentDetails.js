@@ -207,8 +207,9 @@ const DocumentDetails = props => {
 
                   <Table.Body>
                     <Table.Row>
+                      <Link to={`/profile/${encodeURIComponent(document.createdByDid)}`}>
                       <Table.Cell className="table-header">{document.createdBy}</Table.Cell>
-
+                      </Link>
                       <Table.Cell>
                         <div>
                           {
@@ -230,8 +231,9 @@ const DocumentDetails = props => {
                       document.sharedTo.map((value) => {
                         return(
                           <Table.Row>
+                            <Link to={`/profile/${encodeURIComponent(value.did)}`}>
                             <Table.Cell className="table-header">{value.name}</Table.Cell>
-
+                            </Link>
                             <Table.Cell>
                               <div>
                                 {

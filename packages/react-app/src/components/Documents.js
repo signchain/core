@@ -36,6 +36,7 @@ export default function Documents(props) {
     console.log("Docs:", document);
     if (document.length > 0) {
       setDocs(document);
+      console.log(document.sharedWith)
     }
     setLoading(false);
   };
@@ -56,7 +57,12 @@ export default function Documents(props) {
                       <div class="Details-card-info">
                         <div class="progress-container">
                           <span class="heading">Shared with</span>
-                          <h3 className="created-by">Dummy</h3>
+                          {
+                            value.sharedWith.length === 0 ? 
+                            (<h3 className="created-by">NA</h3>) : 
+                            (<h3 className="created-by">{value.sharedWith[0].name}</h3>)
+                          }
+                          
                         </div>
                         <h6 className="heading">Shared By</h6>
                         <h3 className="created-by">{value.createdBy.name}</h3>

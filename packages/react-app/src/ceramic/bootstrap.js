@@ -77,6 +77,8 @@ async function run() {
     schema: profileSchema.commitId.toUrl(),
   });
 
+  await ceramic.pin.add(profileDefinition.id.toString());
+  
   // Write config to JSON file
   const config = {
     definitions: {

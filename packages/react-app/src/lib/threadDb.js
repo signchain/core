@@ -346,7 +346,8 @@ export const getAllFile = async function( loggedUserKey ){
             title: documentDetails.title,
             fileName: documentDetails.fileName,
             documentId: documentDetails.documentId,
-            signatureId: documentDetails.signatureId
+            signatureId: documentDetails.signatureId,
+            sharedWith: documentDetails.sharedWith
         }
         result.push(value)
     }
