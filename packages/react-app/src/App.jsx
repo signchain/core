@@ -122,7 +122,7 @@ function App() {
         await loadWeb3Modal()
         const {seed, metamask} = await generateSignature();
         setSeed(seed)
-      console.log("Seed:",seed, "metamsk:",metamask)
+        console.log("Seed:",seed, "metamsk:",metamask)
         const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(seed))
         setIdentity(identity)
         const ceramic = new Ceramic(CERAMIC_URL)
