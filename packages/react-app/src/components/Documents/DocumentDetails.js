@@ -87,7 +87,7 @@ const DocumentDetails = props => {
             <div class=" header-wrapper">
               <div class="Details-card-info header-container">
                 <div class="title-left">
-                  <h3 className=" header-title">#Rental Agreement</h3>
+                  <h3 className=" header-title">#{document.title}</h3>
                 </div>
 
                 <div class="progress-container ">
@@ -152,7 +152,7 @@ const DocumentDetails = props => {
               <div class="Details-card-info">
                 <div class="title-left">
                   <img src={LogoAvatar} alt="" srcset="" />
-                  <h3 className="title-message">#Rental Agreement</h3>
+                  <h3 className="title-message">#{document.title}</h3>
                 </div>
 
                 <div class="progress-container ">
@@ -181,6 +181,7 @@ const DocumentDetails = props => {
                 <Table singleLine striped>
                   <Table.Header>
                     <Table.Row>
+                      <Table.HeaderCell className="table-header">Shared By</Table.HeaderCell>
                       <Table.HeaderCell className="table-header">Shared With</Table.HeaderCell>
                       <Table.HeaderCell className="table-header"> Type</Table.HeaderCell>
                       <Table.HeaderCell className="table-header">Signed On</Table.HeaderCell>
@@ -191,6 +192,7 @@ const DocumentDetails = props => {
 
                   <Table.Body>
                     <Table.Row>
+                      <Table.Cell className="table-header">Yathish</Table.Cell>
                       <Table.Cell className="table-header">Yathish</Table.Cell>
 
                       <Table.Cell>
