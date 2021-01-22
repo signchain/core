@@ -8,95 +8,14 @@ export const DocumentContainer = styled.div`
 `;
 
 export const DocumentHeader = styled.div`
-  background: -webkit-linear-gradient(45deg, #754dcb, #4d94ff);
-  background: -o-linear-gradient(45deg, #754dcb, #4d94ff);
-  background: linear-gradient(45deg, #754dcb, #4d94ff);
+  background: linear-gradient(89.72deg, #4c51bf 0.19%, #3a3ab0 28.58%, #4c51bf 99.07%);
 
   align-items: center;
 `;
 
 export const HeaderContainer = styled.div`
-  justify-content: space-between;
-  display: flex;
-  align-items: flex-start;
-  margin-left: 50px;
-  margin-right: 50px;
-  padding: 60px 60px 100px 60px;
-  color: #fff;
-  /* padding: 30px; */
-  text-align: left;
-  .docs-status-pending {
-    background: rgba(255, 255, 255, 0.3);
-    padding: 11px 14px;
-    border-radius: 4px;
-  }
-  .document-title-section {
-    width: 720px;
-  }
-  .docs-status-success {
-    background: rgba(72, 187, 120, 0.7);
-    padding: 11px 14px;
-    border-radius: 4px;
-  }
-  .description {
-    font-size: 14px;
-    width: 720px;
-    font-style: normal;
-    font-weight: normal;
-    text-align: left;
-  }
-`;
-
-export const TitleHeading = styled.h1`
-  font-weight: 600;
-  font-size: 25px;
-  color: #fff;
-  text-align: left;
-  width: 720px;
-`;
-
-export const DocumentTable = styled.div`
-  background-color: #fff;
-  margin: 10px 60px 100px 60px;
-  padding: 22px 30px 100px 60px;
-  height: 60vh;
-  .name-content {
+  .header-container {
     display: flex;
-    margin-bottom: 48px;
-  }
-  .img-container {
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
-  }
-
-  .img-container {
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
-  }
-
-  .card__h1 {
-    text-transform: uppercase;
-  }
-  p {
-    justify-content: center;
-    text-align: center;
-  }
-
-  .shared-info {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: 4px !important;
-  }
-  .sign-btn {
-    margin-top: 26px;
-    display: flex;
-    justify-content: flex-end !important;
-  }
-  .table-header {
-    color: #718096 !important;
   }
 `;
 
@@ -273,10 +192,13 @@ export const DocsTitle = styled.div`
   margin-top: 16px;
 `;
 
+// ******************************* details page
+
 export const DetailsInfo = styled.div`
   /* display: grid;
   grid-template-columns: repeat(2, 1fr); */
   display: flex;
+
   justify-content: center;
   cursor: pointer;
   overflow: hidden;
@@ -289,15 +211,58 @@ export const DetailsInfo = styled.div`
     }
   }
 
+  .title-left {
+    display: flex;
+    display: flex;
+    align-items: center;
+    .title-message {
+      margin-left: 8px;
+      align-items: center;
+      justify-content: center;
+      color: royalblue;
+      margin-top: 0;
+    }
+  }
+
+  .sign-button {
+    float: right;
+  }
+  .title-heading {
+    align-items: center;
+    justify-content: center;
+    color: royalblue;
+    margin-top: 0;
+  }
+  .header-title {
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    margin-top: 0;
+  }
+  /* .title-message {
+    margin-left: 8px;
+    color: #717171;
+  } */
   .Details-card {
     background-color: #fff;
     border-radius: 4px;
     border: 1px solid rgba(209, 209, 209, 0.5);
     display: flex;
-    max-width: 100%;
+    justify-content: center;
     margin: 20px;
     overflow: hidden;
-    width: 700px;
+    width: 900px;
+    height: auto;
+  }
+
+  .header-wrapper {
+    border-radius: 4px;
+
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+    overflow: hidden;
+    width: 900px;
     height: auto;
   }
 
@@ -332,6 +297,13 @@ export const DetailsInfo = styled.div`
     width: 100%;
   }
 
+  .header-container {
+    padding: 30px;
+    position: relative;
+    width: 100%;
+    background: linear-gradient(89.72deg, #4c51bf 0.19%, #3a3ab0 28.58%, #4c51bf 99.07%);
+  }
+
   .progress-container {
     position: absolute;
     top: 30px;
@@ -339,7 +311,9 @@ export const DetailsInfo = styled.div`
     text-align: left;
     /* width: 150px; */
   }
-
+  p {
+    color: #fff;
+  }
   .progress {
     background-color: #ddd;
     border-radius: 3px;
@@ -366,9 +340,22 @@ export const DetailsInfo = styled.div`
 
   .actions {
     display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
+
+    margin-top: 48px;
+    margin-bottom: 48px;
     text-align: center;
+    width: 263px;
+    justify-content: space-between;
+  }
+
+  .note {
+    display: flex;
+
+    margin-top: 48px;
+    margin-bottom: 48px;
+    text-align: center;
+
+    justify-content: space-between;
   }
 
   .docs-icon {
@@ -377,6 +364,7 @@ export const DetailsInfo = styled.div`
   .timpestamp {
     margin-top: 20px;
   }
+
   @media screen and (max-width: 480px) {
     .social-panel-container.visible {
       transform: translateX(0px);

@@ -17,7 +17,8 @@ import { Link } from "react-router-dom";
 import Sign from "../../images/icons/Sign.svg";
 import Download from "../../images/icons/Download.svg";
 import Notarize from "../../images/icons/notarize.svg";
-import File from "../../images/icons/Files.svg";
+import Attachments from "../../images/icons/attachments.svg";
+import LogoAvatar from "../../images/icons/logoavatar.svg";
 
 import stepper from "../Stepper/Steps";
 
@@ -80,94 +81,61 @@ const DocumentDetails = props => {
 
   return (
     <>
-      <DocumentContainer>
-        {/* *********************** */}
-        <h3 style={{ textAlign: "center", paddingTop: "14px", color: "#718096" }}>Document Details</h3>
-
+      <DocumentHeader>
         {!loading ? (
           <DetailsInfo>
-            <div class="Details-card">
-              <div class="Details-card-info">
+            <div class=" header-wrapper">
+              <div class="Details-card-info header-container">
+                <div class="title-left">
+                  <h3 className=" header-title">#Rental Agreement</h3>
+                </div>
+
                 <div class="progress-container ">
-                  <span class="heading">Shared With</span>
-                  <h3 className="created-by">Koushith</h3>
+                  {/* conditional rendering */}
+                  <Button>Pending</Button>
+                  {/* <Button color="green">Signed</Button> */}
                 </div>
-                <h6 className="heading">Shared By</h6>
-                <Link to={`/profile/${did}`}>
-                  <h3 className="created-by">{document.createdBy}</h3>
-                </Link>
-                <DocsTitle>
-                  <span class="heading">Title</span>
-                  <h3 className="created-by"> {document.title}</h3>
-                </DocsTitle>
 
-                <div className="actions">
+                <div className="note">
                   <div className="status">
-                    <div className="docs-icon">
-                      <img src={File} alt="" srcset="" />
-                    </div>
-                    <h6 className="heading">{document.title}</h6>
+                    <p>Please Download the Attachments and read it before signing.</p>
                   </div>
-                  <div className="status">
-                    <div className="docs-icon">
-                      <img src={Sign} alt="" srcset="" />
-                    </div>
-                    {document.partySigned ? (
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Icon name="circle" color="green" size="tiny" />
-                        <h6 className="heading">Signed</h6>
-                      </div>
-                    ) : (
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Icon name="circle" color="red" size="tiny" /> <h6 className="heading"> Pending</h6>
-                      </div>
-                    )}
-                  </div>
+                </div>
 
-                  <div className="status">
-                    <div className="docs-icon">
-                      <img src={Notarize} alt="" srcset="" />
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <Icon name="circle" color="red" size="tiny" /> <h6 className="heading"> Not Notirized</h6>
-                    </div>
-                  </div>
-
-                  <div className="status">
+                {/* table */}
+                <div className="sign-button">
+                  {document.notary === caller.address && !document.notarySigned ? (
                     <Button
-                      loading={downloading === document.hash}
-                      icon="download"
-                      onClick={() => downloadFile(document.title, document.key, document.documentLocation)}
-                    />
-                  </div>
+                      basic
+                      color="green"
+                      icon
+                      labelPosition="left"
+                      onClick={() => notarizeDocument(document.docId, document.hash)}
+                    >
+                      <Icon name="signup" />
+                      Notarize
+                    </Button>
+                  ) : !document.partySigned ? (
+                    <Button
+                      basic
+                      color="green"
+                      icon
+                      labelPosition="left"
+                      onClick={() => signDocument(document.hash, document.docId)}
+                    >
+                      <Icon name="signup" />
+                      Sign Document
+                    </Button>
+                  ) : (
+                    <Button disabled basic color="green" icon labelPosition="left">
+                      <Icon name="signup" />
+                      Sign Document
+                    </Button>
+                  )}
                 </div>
+
+                {/* ********* */}
               </div>
-            </div>
-
-            <div className="timpestamp">
-              <Step.Group vertical>
-                <Step>
-                  <Icon name="clock outline " />
-                  <Step.Content>
-                    <Step.Description>Shared On</Step.Description>
-                    <p>21-01-2020</p>
-                  </Step.Content>
-                </Step>
-
-                <Step>
-                  <Icon name="clock outline " />
-                  <Step.Content>
-                    <Step.Description>Signed at</Step.Description>
-                  </Step.Content>
-                </Step>
-
-                <Step>
-                  <Icon name="clock outline" />
-                  <Step.Content>
-                    <Step.Description>Notarized at</Step.Description>
-                  </Step.Content>
-                </Step>
-              </Step.Group>
             </div>
           </DetailsInfo>
         ) : (
@@ -175,105 +143,77 @@ const DocumentDetails = props => {
             Loading
           </Loader>
         )}
+      </DocumentHeader>
 
-        {/* ******************* delete this snip */}
+      <DocumentContainer>
         {!loading ? (
-          <DocumentTable>
-            <Table singleLine striped>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell className="table-header">Document Name</Table.HeaderCell>
-                  <Table.HeaderCell className="table-header"> Status</Table.HeaderCell>
-                  <Table.HeaderCell className="table-header">Created On</Table.HeaderCell>
+          <DetailsInfo>
+            <div class="Details-card">
+              <div class="Details-card-info">
+                <div class="title-left">
+                  <img src={LogoAvatar} alt="" srcset="" />
+                  <h3 className="title-message">#Rental Agreement</h3>
+                </div>
 
-                  {document.notary ? <Table.HeaderCell className="table-header">Notarized </Table.HeaderCell> : null}
-                  <Table.HeaderCell className="table-header">Actions </Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
+                <div class="progress-container ">
+                  <span class="heading">Shared Date</span>
+                  <h3 className="created-by">22-01-2020</h3>
+                </div>
 
-              <Table.Body>
-                <Table.Row>
-                  <Table.Cell collapsing>
-                    <span style={{ color: " #0000EE", cursor: "pointer" }}>
-                      <Icon name="file outline" />
-                      {document.title}
-                    </span>
-                  </Table.Cell>
+                <div className="actions">
+                  <div className="status">
+                    <div className="docs-icon">
+                      <img src={Attachments} alt="" srcset="" />
+                    </div>
+                    <h6 className="heading">{document.title}</h6>
+                  </div>
 
-                  <Table.Cell>
-                    {document.partySigned ? (
-                      <div className="table-header">
-                        <Icon name="circle" color="green" />
-                        Signed
-                      </div>
-                    ) : (
-                      <div>
-                        <Icon name="circle" color="red" /> Pending
-                      </div>
-                    )}
-                  </Table.Cell>
+                  <div className="status">
+                    <div className="docs-icon">
+                      <img src={Download} alt="" srcset="" />
+                    </div>
+                    <h6 className="heading">Download</h6>
+                  </div>
+                </div>
 
-                  <Table.Cell className="table-header">{document.timestamp}</Table.Cell>
+                {/* table */}
 
-                  {document.notary ? (
-                    <Table.Cell className="table-header">
-                      {document.notarySigned ? (
+                <Table singleLine striped>
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.HeaderCell className="table-header">Shared With</Table.HeaderCell>
+                      <Table.HeaderCell className="table-header"> Type</Table.HeaderCell>
+                      <Table.HeaderCell className="table-header">Signed On</Table.HeaderCell>
+
+                      <Table.HeaderCell className="table-header">Signature Status </Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Header>
+
+                  <Table.Body>
+                    <Table.Row>
+                      <Table.Cell className="table-header">Yathish</Table.Cell>
+
+                      <Table.Cell>
+                        <div>
+                          <Icon name="circle" color="red" /> Pending
+                        </div>
+                      </Table.Cell>
+
+                      <Table.Cell className="table-header">ghsfgsfd</Table.Cell>
+
+                      <Table.Cell className="table-header">
                         <div>
                           <Icon name="circle" color="green" /> Notarized
                         </div>
-                      ) : (
-                        <div>
-                          <Icon name="circle" color="red" /> Not yet Notarized
-                        </div>
-                      )}
-                    </Table.Cell>
-                  ) : null}
+                      </Table.Cell>
+                    </Table.Row>
+                  </Table.Body>
+                </Table>
 
-                  <Table.Cell collapsing textAlign="right">
-                    {/*<Button icon="download" />*/}
-                    <Button
-                      loading={downloading === document.hash}
-                      icon="download"
-                      onClick={() => downloadFile(document.title, document.key, document.documentLocation)}
-                    />
-                  </Table.Cell>
-                </Table.Row>
-              </Table.Body>
-            </Table>
-            {/* conditional rendering goes here- hide for the one who initiated */}
-            <WarningStatus />
-            {/* <SignSuccess /> */}
-            <div className="sign-btn">
-              {document.notary === caller.address && !document.notarySigned ? (
-                <Button
-                  basic
-                  color="blue"
-                  icon
-                  labelPosition="left"
-                  onClick={() => notarizeDocument(document.docId, document.hash)}
-                >
-                  <Icon name="signup" />
-                  Notarize
-                </Button>
-              ) : !document.partySigned ? (
-                <Button
-                  basic
-                  color="blue"
-                  icon
-                  labelPosition="left"
-                  onClick={() => signDocument(document.hash, document.docId)}
-                >
-                  <Icon name="signup" />
-                  Sign Document
-                </Button>
-              ) : (
-                <Button disabled basic color="blue" icon labelPosition="left">
-                  <Icon name="signup" />
-                  Sign Document
-                </Button>
-              )}
+                {/* ********* */}
+              </div>
             </div>
-          </DocumentTable>
+          </DetailsInfo>
         ) : (
           <Loader active size="medium">
             Loading

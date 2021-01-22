@@ -76,10 +76,10 @@ export default function Documents(props) {
                       <div class="Details-card-info">
                         <div class="progress-container">
                           <span class="heading">Shared with</span>
-                          <h3 className="created-by">{value.createdBy}</h3>
+                          <h3 className="created-by">name</h3>
                         </div>
                         <h6 className="heading">Shared By</h6>
-                        <h3 className="created-by">{value.createdBy}</h3>
+                        <h3 className="created-by">name</h3>
 
                         <DocsTitle>
                           <span class="heading">Title</span>
