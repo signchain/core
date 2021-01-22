@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Button, Icon, Image, Modal } from "semantic-ui-react";
 import { SignInWarningContainer } from "../styles/WarningPopup.Styles";
-import Lock from "../../images/Lock.svg";
+import Success from "../../images/icons/success.svg";
 import { Link } from "react-router-dom";
 
-function DocumentSubmitPopup({setCurrent, setSubmitStatus}) {
+function DocumentSubmitPopup({ setCurrent, setSubmitStatus }) {
   const [open, setOpen] = useState(true);
 
   return (
@@ -20,26 +20,31 @@ function DocumentSubmitPopup({setCurrent, setSubmitStatus}) {
           <Modal.Description>
             <SignInWarningContainer>
               <div className="lock-image">
-                <img src={Lock} alt="" />
+                <img src={Success} alt="" />
               </div>
               <div className="warning-text">
                 <h3>Document Shared Successfully!!</h3>
 
                 <p>
-                  In order to view shared documents click on VIEW button or click on SHARE MORE to
-                  share more documents.
+                  In order to view shared documents click on VIEW button or click on SHARE MORE to share more documents.
                 </p>
               </div>
               <div className="warning-btn">
-                <Link to='/documents'>
-                <Button size="large" primary className="SignIn-btn">
-                  VIEW
-                </Button>
+                <Link to="/documents">
+                  <Button size="large" primary className="SignIn-btn">
+                    VIEW
+                  </Button>
                 </Link>
-                <Button size="large" style={{marginLeft:'10px'}} primary className="SignIn-btn" onClick={()=> {
-                  setCurrent(0)
-                  setSubmitStatus(false)
-                }}>
+                <Button
+                  size="large"
+                  style={{ marginLeft: "10px" }}
+                  primary
+                  className="SignIn-btn"
+                  onClick={() => {
+                    setCurrent(0);
+                    setSubmitStatus(false);
+                  }}
+                >
                   SHARE MORE
                 </Button>
               </div>

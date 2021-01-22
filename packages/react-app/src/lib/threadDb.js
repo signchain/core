@@ -375,6 +375,18 @@ export const getSingleDocument = async function(address, tx, writeContracts, doc
         partySigned = true
     }
 
+    let counterParty = document.sharedTo
+
+    for (let i=0;i<counterParty.length;i++){
+        if (signDetails.signature[i].signer===counterParty[i].address){
+            counterParty[i].partySigned = true
+            counterParty[i].timestamp = signDetails.signature[i].timestamp
+        }else{
+            counterParty[i].partySigned = false
+            counterParty[i].timestamp = 'NA'
+        }
+    }
+
     let value = {
         createdBy: document.createdBy.name,
         createdByDid: document.createdBy.did,
@@ -389,7 +401,7 @@ export const getSingleDocument = async function(address, tx, writeContracts, doc
         signatures: signDetails.signature,
         partySigned: partySigned,
         notaryStatus: document.notaryStatus,
-        sharedTo: document.sharedTo,
+        sharedTo: counterParty,
         notary: 0,
         notarySigned: false
     }
@@ -427,6 +439,7 @@ export const downloadFiles = async function (name, key, loggedUser,documentLocat
     const fileFormat = fileSplit[fileSplit.length - 1]
     const storageType = fileSplit[fileSplit.length - 2]
 
+    console.log("Strorage typr:", storageType)
     return new Promise((resolve)=>{
         if (storageType==="AWS") {
             e2ee.getFileAWS(documentLocation).then((encryptedFile) => {
@@ -436,7 +449,7 @@ export const downloadFiles = async function (name, key, loggedUser,documentLocat
                     resolve(true)
                 })
             })
-        }else if (storageType==="Fleek"){
+        }else if (storageType==="FLEEK"){
             e2ee.getFileFleek(documentLocation).then((encryptedFile) => {
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
                     const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")

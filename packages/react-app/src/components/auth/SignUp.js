@@ -7,7 +7,7 @@ import { FormContainer } from "../styles/SignUp.Styles";
 
 import { loginUserWithChallenge, registerNewUser } from "../../lib/threadDb";
 const index = require("../../lib/e2ee.js");
-const moment = require("moment")
+const moment = require("moment");
 
 function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx, seed }) {
   const [open, setOpen] = useState(true);
@@ -68,9 +68,9 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
         if (registrationStatus) {
           setUserStatus(authStatus.loggedIn);
         } else {
-          localStorage.clear()
+          localStorage.clear();
           console.log("Some error occurred!!!");
-          alert("Account already present!!")
+          alert("Account already present!!");
         }
       }
     }
