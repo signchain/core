@@ -114,8 +114,8 @@ export const getLoginUser = async function (address, idx) {
     const query = new Where("address").eq(address);
     const threadId = ThreadID.fromBytes(threadDb);
     const result = await client.find(threadId, "RegisterUser", query);
-    //const ceramicResult = await idx.get(definitions.profile, idx.id)
-    if (result.length < 1) {
+    const ceramicResult = await idx.get(definitions.profile, idx.id);
+    if (result.length < 1 || ceramicResult === null) {
       console.log("Please register user!");
       return null;
     }
@@ -143,6 +143,7 @@ export const getAllUsers = async function (loggedUser) {
       key: result.publicKey,
       userType: result.userType,
       nonce: result.nonce,
+      did: result.did,
     };
     if (loggedUser === result.publicKey) {
       caller = value;
@@ -204,6 +205,7 @@ export const registerDoc = async function (
         name: party[i].name,
         address: party[i].address,
         email: party[i].email,
+        did: party[i].did,
       };
       sharedParty.push(counterParty);
     }
@@ -231,6 +233,7 @@ export const registerDoc = async function (
       createdBy: {
         name: caller.name,
         address: caller.address,
+        did: caller.did,
       },
       documentHash: fileHash.toString("hex"),
       fileLocation: fileLocation,
@@ -269,6 +272,7 @@ export const registerDoc = async function (
       address: caller.address,
       _id: caller._id,
     },
+    sharedWith: sharedParty,
     date: date.toDateString(),
     fileName: fileName,
   };
@@ -387,8 +391,21 @@ export const getSingleDocument = async function (address, tx, writeContracts, do
     partySigned = true;
   }
 
+  let counterParty = document.sharedTo;
+
+  for (let i = 0; i < counterParty.length; i++) {
+    if (signDetails.signature[i].signer === counterParty[i].address) {
+      counterParty[i].partySigned = true;
+      counterParty[i].timestamp = signDetails.signature[i].timestamp;
+    } else {
+      counterParty[i].partySigned = false;
+      counterParty[i].timestamp = "Waiting to be Signed";
+    }
+  }
+
   let value = {
     createdBy: document.createdBy.name,
+    createdByDid: document.createdBy.did,
     docId: document._id,
     hash: hash,
     documentLocation: document.fileLocation,
@@ -400,7 +417,7 @@ export const getSingleDocument = async function (address, tx, writeContracts, do
     signatures: signDetails.signature,
     partySigned: partySigned,
     notaryStatus: document.notaryStatus,
-    sharedTo: document.sharedTo,
+    sharedTo: counterParty,
     notary: 0,
     notarySigned: false,
   };
@@ -437,6 +454,7 @@ export const downloadFiles = async function (name, key, loggedUser, documentLoca
   const fileFormat = fileSplit[fileSplit.length - 1];
   const storageType = fileSplit[fileSplit.length - 2];
 
+  console.log("Strorage typr:", storageType);
   return new Promise(resolve => {
     if (storageType === "AWS") {
       e2ee.getFileAWS(documentLocation).then(encryptedFile => {
@@ -446,7 +464,7 @@ export const downloadFiles = async function (name, key, loggedUser, documentLoca
           resolve(true);
         });
       });
-    } else if (storageType === "Fleek") {
+    } else if (storageType === "FLEEK") {
       e2ee.getFileFleek(documentLocation).then(encryptedFile => {
         e2e.decryptFile(encryptedFile, decryptedKey).then(decryptedFile => {
           const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex");

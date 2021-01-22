@@ -87,7 +87,7 @@ const DocumentDetails = props => {
             <div class=" header-wrapper">
               <div class="Details-card-info header-container">
                 <div class="title-left">
-                  <h3 className=" header-title">#Rental Agreement</h3>
+                  <h3 className=" header-title">{document.title}</h3>
                 </div>
 
                 <div class="progress-container ">
@@ -105,12 +105,23 @@ const DocumentDetails = props => {
                 {/* table */}
                 <div className="sign-button">
                   {document.notary === caller.address && !document.notarySigned ? (
-                    <Button color="green" onClick={() => notarizeDocument(document.docId, document.hash)}>
+                    <Button
+                      color="green"
+                      icon
+                      labelPosition="left"
+                      onClick={() => notarizeDocument(document.docId, document.hash)}
+                    >
                       <Icon name="signup" />
                       Notarize
                     </Button>
                   ) : !document.partySigned ? (
-                    <Button color="green" onClick={() => signDocument(document.hash, document.docId)}>
+                    <Button
+                      color="green"
+                      icon
+                      labelPosition="left"
+                      onClick={() => signDocument(document.hash, document.docId)}
+                    >
+                      <Icon name="signup" />
                       Sign Document
                     </Button>
                   ) : (
@@ -138,12 +149,12 @@ const DocumentDetails = props => {
               <div class="Details-card-info">
                 <div class="title-left">
                   <img src={LogoAvatar} alt="" srcset="" />
-                  <h3 className="title-message">#Rental Agreement</h3>
+                  <h3 className="title-message">{document.title}</h3>
                 </div>
 
                 <div class="progress-container ">
                   <span class="heading">Shared Date</span>
-                  <h3 className="created-by">22-01-2020</h3>
+                  <h3 className="created-by">{document.timestamp}</h3>
                 </div>
 
                 <div className="actions">
@@ -155,11 +166,36 @@ const DocumentDetails = props => {
                   </div>
 
                   <div className="status">
-                    <div className="docs-icon">
+                    <div
+                      className="docs-icon"
+                      onClick={() => downloadFile(document.title, document.key, document.documentLocation)}
+                    >
                       <img src={Download} alt="" srcset="" />
                     </div>
                     <h6 className="heading">Download</h6>
                   </div>
+
+                  {document.notary ? (
+                    document.notarySigned ? (
+                      <div className="status">
+                        <div className="docs-icon">
+                          <img src={Sign} alt="" srcSet="" />
+                        </div>
+                        <h6 className="heading">
+                          <Icon name="circle" color="green" /> Notarized{" "}
+                        </h6>
+                      </div>
+                    ) : (
+                      <div className="status">
+                        <div className="docs-icon">
+                          <img src={Sign} alt="" srcSet="" />
+                        </div>
+                        <h6 className="heading">
+                          <Icon name="circle" color="red" /> Not Notarized{" "}
+                        </h6>
+                      </div>
+                    )
+                  ) : null}
                 </div>
 
                 {/* table */}
@@ -167,33 +203,56 @@ const DocumentDetails = props => {
                 <Table singleLine striped>
                   <Table.Header>
                     <Table.Row>
-                      <Table.HeaderCell className="table-header">Shared With</Table.HeaderCell>
-                      <Table.HeaderCell className="table-header"> Type</Table.HeaderCell>
+                      <Table.HeaderCell className="table-header">Signers</Table.HeaderCell>
+                      <Table.HeaderCell className="table-header"> Status</Table.HeaderCell>
                       <Table.HeaderCell className="table-header">Signed On</Table.HeaderCell>
-
-                      <Table.HeaderCell className="table-header">Signature Status </Table.HeaderCell>
                     </Table.Row>
                   </Table.Header>
 
                   <Table.Body>
                     <Table.Row>
-                      <Table.Cell className="table-header">Yathish</Table.Cell>
+                      <Table.Cell className="table-header">{document.createdBy}</Table.Cell>
 
                       <Table.Cell>
-                        <Table.Cell className="table-header">Notary</Table.Cell>
-                        {/* conditional rendering -party or notary */}
-                        {/* <Table.Cell className="table-header">Notary</Table.Cell> */}
-                      </Table.Cell>
-
-                      <Table.Cell className="table-header">ghsfgsfd</Table.Cell>
-
-                      <Table.Cell className="table-header">
                         <div>
-                          <Icon name="circle" color="green" /> Notarized
-                          {/* conditional rendering  */}
+                          {document.partySigned ? (
+                            <>
+                              <Icon name="circle" color="green" /> Signed
+                            </>
+                          ) : (
+                            <>
+                              <Icon name="circle" color="red" /> Pending
+                            </>
+                          )}
                         </div>
                       </Table.Cell>
+
+                      <Table.Cell className="table-header">{document.timestamp}</Table.Cell>
                     </Table.Row>
+
+                    {document.sharedTo.map(value => {
+                      return (
+                        <Table.Row>
+                          <Table.Cell className="table-header">{value.name}</Table.Cell>
+
+                          <Table.Cell>
+                            <div>
+                              {value.partySigned ? (
+                                <>
+                                  <Icon name="circle" color="green" /> Signed
+                                </>
+                              ) : (
+                                <>
+                                  <Icon name="circle" color="red" /> Pending
+                                </>
+                              )}
+                            </div>
+                          </Table.Cell>
+
+                          <Table.Cell className="table-header">{value.timestamp}</Table.Cell>
+                        </Table.Row>
+                      );
+                    })}
                   </Table.Body>
                 </Table>
 

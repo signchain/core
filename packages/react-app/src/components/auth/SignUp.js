@@ -49,13 +49,15 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
         name: name,
         email: email,
         notary: notary,
+        joindate : moment(new Date()).format("ll"),
+        userAddress: address
       });
       setSignupStatus(SignupStatus.contract);
       //const dbClient = await authorizeUser(password)
       const client = await loginUserWithChallenge(identity);
       if (client !== null) {
         const registrationStatus = await registerNewUser(
-          "idx.id",
+          idx.id,
           name,
           email,
           accounts[0],
