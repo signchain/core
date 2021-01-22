@@ -140,7 +140,7 @@ export const DetailsContainer = styled.div`
 
   .Details-card {
     background-color: #fff;
-    border-radius: 10px;
+    border-radius: 4px;
     border: 1px solid rgba(209, 209, 209, 0.5);
     display: flex;
     max-width: 100%;
@@ -192,7 +192,6 @@ export const DetailsContainer = styled.div`
     top: 30px;
     right: 30px;
     text-align: left;
-    width: 150px;
   }
 
   .progress {
@@ -223,10 +222,11 @@ export const DetailsContainer = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 30px;
+    text-align: center;
   }
 
   .docs-icon {
-    margin-bottom: 1px;
+    margin-bottom: 6px;
   }
   .btn {
     background-color: #4c51bf;
@@ -271,4 +271,119 @@ export const DetailsCard = styled.div`
 
 export const DocsTitle = styled.div`
   margin-top: 16px;
+`;
+
+export const DetailsInfo = styled.div`
+  /* display: grid;
+  grid-template-columns: repeat(2, 1fr); */
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+
+  .created-by {
+    margin: 0;
+    color: #717171;
+    &:hover {
+      color: blue;
+    }
+  }
+
+  .Details-card {
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid rgba(209, 209, 209, 0.5);
+    display: flex;
+    max-width: 100%;
+    margin: 20px;
+    overflow: hidden;
+    width: 700px;
+    height: auto;
+  }
+
+  .Details-card-preview {
+    background-color: #4c51bf;
+    color: #fff;
+    padding: 30px;
+    max-width: 250px;
+  }
+  .meta-text {
+    color: #717171;
+    /* margin-top: 4px; */
+  }
+  .course-preview a {
+    color: #fff;
+    display: inline-block;
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: 30px;
+    text-decoration: none;
+  }
+
+  .heading {
+    font-size: 12px;
+    color: #717171;
+    margin-top: 2px;
+  }
+
+  .Details-card-info {
+    padding: 30px;
+    position: relative;
+    width: 100%;
+  }
+
+  .progress-container {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    text-align: left;
+    /* width: 150px; */
+  }
+
+  .progress {
+    background-color: #ddd;
+    border-radius: 3px;
+    height: 5px;
+    width: 100%;
+  }
+
+  .progress::after {
+    border-radius: 3px;
+    background-color: #2a265f;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 5px;
+    width: 66%;
+  }
+
+  .progress-text {
+    font-size: 12px;
+
+    letter-spacing: 1px;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .docs-icon {
+    margin-bottom: 6px;
+  }
+  .timpestamp {
+    margin-top: 20px;
+  }
+  @media screen and (max-width: 480px) {
+    .social-panel-container.visible {
+      transform: translateX(0px);
+    }
+
+    .floating-btn {
+      right: 10px;
+    }
+  }
 `;

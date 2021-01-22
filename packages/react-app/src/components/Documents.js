@@ -90,17 +90,17 @@ export default function Documents(props) {
                           <div className="status">
                             <div className="docs-icon">
                               <img src={File} alt="" srcset="" />
-                              <h6 className="heading">{value.fileName}</h6>
                             </div>
+                            <h6 className="heading">{value.fileName}</h6>
                           </div>
                           <div className="status">
                             <div className="docs-icon">
                               <img src={Download} alt="" srcset="" />
-                              <h6 className="heading">Download</h6>
                             </div>
+                            <h6 className="heading">Download</h6>
                           </div>
 
-                          <Button class="btn">Read More</Button>
+                          <Button>Read More</Button>
                         </div>
                       </div>
                     </div>
