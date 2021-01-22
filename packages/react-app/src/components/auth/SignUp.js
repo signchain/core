@@ -7,7 +7,7 @@ import { FormContainer } from "../styles/SignUp.Styles";
 
 import { loginUserWithChallenge, registerNewUser } from "../../lib/threadDb";
 const index = require("../../lib/e2ee.js");
-const moment = require("moment")
+const moment = require("moment");
 
 function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx, seed }) {
   const [open, setOpen] = useState(true);
@@ -45,17 +45,17 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
     if (walletStatus) {
       const accounts = await index.getAllAccounts(pass);
       setSignupStatus(SignupStatus.ceramic);
-      // await idx.set(definitions.profile, {
-      //   name: name,
-      //   email: email,
-      //   notary: notary,
-      // });
+      await idx.set(definitions.profile, {
+        name: name,
+        email: email,
+        notary: notary,
+      });
       setSignupStatus(SignupStatus.contract);
       //const dbClient = await authorizeUser(password)
       const client = await loginUserWithChallenge(identity);
       if (client !== null) {
         const registrationStatus = await registerNewUser(
-          'idx.id',
+          "idx.id",
           name,
           email,
           accounts[0],
@@ -66,9 +66,9 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
         if (registrationStatus) {
           setUserStatus(authStatus.loggedIn);
         } else {
-          localStorage.clear()
+          localStorage.clear();
           console.log("Some error occurred!!!");
-          alert("Account already present!!")
+          alert("Account already present!!");
         }
       }
     }
