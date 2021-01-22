@@ -83,11 +83,11 @@ const generateMessageForEntropy = (ethereum_address, application_name) => {
     const message = generateMessageForEntropy(metamask.address, 'cermaic demo')
     const signedText = await metamask.signer.signMessage(message);
     const hash = utils.keccak256(signedText);
-    const array = hash
+    const seed = hash
       // @ts-ignore
       .replace('0x', '')
       // @ts-ignore
       .match(/.{2}/g)
       .map((hexNoPrefix) => BigNumber.from('0x' + hexNoPrefix).toNumber())
-    return array
+    return {seed, metamask}
   }

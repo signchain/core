@@ -22,7 +22,7 @@ const fileStorage = [
 
 const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
   const [selected, setSelected] = useState(false);
-  const [storageType, setStorage] = useState("Fleek");
+  const [storageType, setStorage] = useState(process.env.REACT_APP_STORAGE);
 
   const props = {
     name: "file",
@@ -52,7 +52,7 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
   return (
     <div className="parties__container" style={{ background: "#fff" }}>
       <div className="wrapper" style={{ padding: "14px", background: "#fff" }}>
-        <div style={{ marginBottom: "14px" }}>
+        {/*<div style={{ marginBottom: "14px" }}>
           <Dropdown
             style={{ float: "left", marginTop: "18px" }}
             placeholder="Select Storage Provider"
@@ -70,7 +70,7 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
               setStorage(data.value);
             }}
           />
-        </div>
+        </div>*/}
 
         <div style={{ marginBottom: "14px" }}>
           <Dragger {...props} style={{ border: "1px solid #22242626", background: "#fff" }}>
