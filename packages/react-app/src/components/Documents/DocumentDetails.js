@@ -87,7 +87,7 @@ const DocumentDetails = props => {
             <div class=" header-wrapper">
               <div class="Details-card-info header-container">
                 <div class="title-left">
-                  <h3 className=" header-title">#{document.title}</h3>
+                  <h3 className=" header-title">#Rental Agreement</h3>
                 </div>
 
                 <div class="progress-container ">
@@ -105,30 +105,16 @@ const DocumentDetails = props => {
                 {/* table */}
                 <div className="sign-button">
                   {document.notary === caller.address && !document.notarySigned ? (
-                    <Button
-                      basic
-                      color="green"
-                      icon
-                      labelPosition="left"
-                      onClick={() => notarizeDocument(document.docId, document.hash)}
-                    >
+                    <Button color="green" onClick={() => notarizeDocument(document.docId, document.hash)}>
                       <Icon name="signup" />
                       Notarize
                     </Button>
                   ) : !document.partySigned ? (
-                    <Button
-                      basic
-                      color="green"
-                      icon
-                      labelPosition="left"
-                      onClick={() => signDocument(document.hash, document.docId)}
-                    >
-                      <Icon name="signup" />
+                    <Button color="green" onClick={() => signDocument(document.hash, document.docId)}>
                       Sign Document
                     </Button>
                   ) : (
-                    <Button disabled basic color="green" icon labelPosition="left">
-                      <Icon name="signup" />
+                    <Button disabled color="green">
                       Sign Document
                     </Button>
                   )}
@@ -152,7 +138,7 @@ const DocumentDetails = props => {
               <div class="Details-card-info">
                 <div class="title-left">
                   <img src={LogoAvatar} alt="" srcset="" />
-                  <h3 className="title-message">#{document.title}</h3>
+                  <h3 className="title-message">#Rental Agreement</h3>
                 </div>
 
                 <div class="progress-container ">
@@ -181,7 +167,6 @@ const DocumentDetails = props => {
                 <Table singleLine striped>
                   <Table.Header>
                     <Table.Row>
-                      <Table.HeaderCell className="table-header">Shared By</Table.HeaderCell>
                       <Table.HeaderCell className="table-header">Shared With</Table.HeaderCell>
                       <Table.HeaderCell className="table-header"> Type</Table.HeaderCell>
                       <Table.HeaderCell className="table-header">Signed On</Table.HeaderCell>
@@ -193,12 +178,11 @@ const DocumentDetails = props => {
                   <Table.Body>
                     <Table.Row>
                       <Table.Cell className="table-header">Yathish</Table.Cell>
-                      <Table.Cell className="table-header">Yathish</Table.Cell>
 
                       <Table.Cell>
-                        <div>
-                          <Icon name="circle" color="red" /> Pending
-                        </div>
+                        <Table.Cell className="table-header">Notary</Table.Cell>
+                        {/* conditional rendering -party or notary */}
+                        {/* <Table.Cell className="table-header">Notary</Table.Cell> */}
                       </Table.Cell>
 
                       <Table.Cell className="table-header">ghsfgsfd</Table.Cell>
@@ -206,6 +190,7 @@ const DocumentDetails = props => {
                       <Table.Cell className="table-header">
                         <div>
                           <Icon name="circle" color="green" /> Notarized
+                          {/* conditional rendering  */}
                         </div>
                       </Table.Cell>
                     </Table.Row>
