@@ -108,7 +108,7 @@ const DocumentDetails = props => {
 
         {!loading ? (
         <DocumentTable>
-          <Link to={`/profile/${did}`}>
+          <Link to={`/profile/${encodeURIComponent(document.createdByDid)}`}>
           <div className="name-content">
             <div className="icon-img">
               <img
@@ -123,6 +123,27 @@ const DocumentDetails = props => {
             </div>
           </div>
           </Link>
+          {
+            document.sharedTo.map(value => {
+              return(
+                <Link to={`/profile/${encodeURIComponent(value.did)}`}>
+                  <div className="name-content">
+                    <div className="icon-img">
+                      <img
+                        className="img-container"
+                        src="https://react.semantic-ui.com/images/avatar/large/patrick.png"
+                        alt=""
+                        srcset=""
+                      />
+                    </div>
+                    <div className="shared-info">
+                      <p className="data">{value.name}</p>
+                    </div>
+                  </div>
+                  </Link>
+              )
+            })
+          }
           <Table singleLine striped>
             <Table.Header>
               <Table.Row>

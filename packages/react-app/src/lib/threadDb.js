@@ -112,8 +112,8 @@ export const getLoginUser = async function(address, idx){
         const query = new Where('address').eq(address)
         const threadId = ThreadID.fromBytes(threadDb)
         const result = await client.find(threadId, 'RegisterUser', query)
-        //const ceramicResult = await idx.get(definitions.profile, idx.id)
-        if (result.length<1){
+        const ceramicResult = await idx.get(definitions.profile, idx.id)
+        if (result.length<1 || ceramicResult === null){
             console.log("Please register user!")
             return null
         }
@@ -140,7 +140,8 @@ export const getAllUsers = async function(loggedUser){
             email: result.email,
             key: result.publicKey,
             userType: result.userType,
-            nonce: result.nonce
+            nonce: result.nonce,
+            did: result.did
         }
         if (loggedUser === result.publicKey) {
             caller =value
@@ -193,7 +194,8 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
             const counterParty = {
                 name: party[i].name,
                 address: party[i].address,
-                email: party[i].email
+                email: party[i].email,
+                did: party[i].did
             }
             sharedParty.push(counterParty)
         }
@@ -219,7 +221,8 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
         title: title,
         createdBy: {
             name:caller.name,
-            address: caller.address
+            address: caller.address,
+            did: caller.did
         },
         documentHash: fileHash.toString("hex"),
         fileLocation: fileLocation,
@@ -253,6 +256,7 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
             address: caller.address,
             _id: caller._id
         },
+        sharedWith: sharedParty,
         date: date.toDateString(),
         fileName: fileName
     }
@@ -373,6 +377,7 @@ export const getSingleDocument = async function(address, tx, writeContracts, doc
 
     let value = {
         createdBy: document.createdBy.name,
+        createdByDid: document.createdBy.did,
         docId: document._id,
         hash: hash,
         documentLocation:document.fileLocation,
