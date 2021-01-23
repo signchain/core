@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Icon, Button, Loader, Step } from "semantic-ui-react";
+import { Table, Icon, Image, Button, Loader, Step } from "semantic-ui-react";
 
 import { WarningStatus, SignSuccess } from "./WarningNote";
 import {
@@ -19,6 +19,7 @@ import Download from "../../images/icons/Download.svg";
 import Notarize from "../../images/icons/notarize.svg";
 import Attachments from "../../images/icons/attachments.svg";
 import LogoAvatar from "../../images/icons/logoavatar.svg";
+import jenny from "../../images/jenny.jpg";
 
 import stepper from "../Stepper/Steps";
 
@@ -92,8 +93,8 @@ const DocumentDetails = props => {
 
                 <div class="progress-container ">
                   {/* conditional rendering */}
-                  <Button>Pending</Button>
-                  {/* <Button color="green">Signed</Button> */}
+                  {/* <Button>Pending</Button> */}
+                  <Button color="green">Signed</Button>
                 </div>
 
                 <div className="note">
@@ -162,7 +163,7 @@ const DocumentDetails = props => {
                     <div className="docs-icon">
                       <img src={Attachments} alt="" srcset="" />
                     </div>
-                    <h6 className="heading">{document.title}</h6>
+                    <h6 className="heading">{document.fileName}</h6>
                   </div>
 
                   <div className="status">
@@ -212,7 +213,9 @@ const DocumentDetails = props => {
                   <Table.Body>
                     <Table.Row>
                       <Link to={`/profile/${encodeURIComponent(document.createdByDid)}`}>
-                      <Table.Cell className="table-header">{document.createdBy}</Table.Cell>
+                      <Table.Cell className="table-header">
+                      <Image avatar src={jenny} />
+                        {document.createdBy}</Table.Cell>
                       </Link>
                       <Table.Cell>
                         <div>
@@ -236,7 +239,10 @@ const DocumentDetails = props => {
                         return(
                           <Table.Row>
                             <Link to={`/profile/${encodeURIComponent(value.did)}`}>
-                            <Table.Cell className="table-header">{value.name}</Table.Cell>
+                            <Table.Cell className="table-header">
+                            <Image avatar src={jenny} /> 
+                              {value.name}
+                            </Table.Cell>
                             </Link>
                             <Table.Cell>
                               <div>

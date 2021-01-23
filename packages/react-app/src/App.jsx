@@ -56,10 +56,14 @@ function App() {
     const [seed, setSeed] = useState([])
     const [connectLoading, setConnectLoading] = useState(false)
 
+    console.log(userStatus  )
+
     const authStatus = {
         "disconnected" : 0,
         "connected" : 1,
-        "loggedIn" : 2
+        "loggedIn" : 2,
+        "warning": 3,
+        "error": 4
 
     }
     const price = useExchangePrice(mainnetProvider);
@@ -94,24 +98,26 @@ function App() {
           let userInfo
           if (client !== null) {
             userInfo = await getLoginUser(user.address, idx)
+            console.log(userInfo)
             if (userInfo !== null) {
               console.log("User Info:", userInfo)
               localStorage.setItem("USER", JSON.stringify(userInfo))
               localStorage.setItem("password", "12345");
-              return userInfo
+              return authStatus.loggedIn
             }
             console.log("Some error!!!")
-            return false
+            return authStatus.error
           }
         }
       }
       else if (user && user.address!==address){
-        alert("Different account !!!")
+        return authStatus.warning
+        console.log('error')
         // handle redirection to signup page 
       }
       else{
         console.log("Cannot login account!!")
-        setUserStatus(authStatus.connected)
+        return authStatus.connected
       }
     }
 
@@ -132,13 +138,7 @@ function App() {
         const idx = new IDX({ ceramic, aliases: definitions })
         console.log(idx);
         setIdx(idx)
-        const res = await loginUser(seed, identity, idx, metamask.address);
-        if(res !== undefined){
-            setUserStatus(authStatus.loggedIn)
-        }
-        else {
-            setUserStatus(authStatus.connected)
-        }
+        setUserStatus(await loginUser(seed, identity, idx, metamask.address))
         setConnectLoading(true)
 
     }

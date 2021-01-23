@@ -8,7 +8,7 @@ const ethers = require('ethers')
 const io = require('socket.io-client');
 
 
-export const registerNewUser = async function(did, name, email, privateKey, userType, address, password){
+export const registerNewUser = async function(did, name, email, privateKey, userType, address){
     try {
         const {threadDb, client} = await getCredentials()
         console.log("GET CREDENTIALS FUNCTION",client)
@@ -28,12 +28,10 @@ export const registerNewUser = async function(did, name, email, privateKey, user
         const query = new Where('address').eq(address)
         const query1 = new Where('email').eq(email).or(query)
         const result = await client.find(threadId, 'RegisterUser', query1)
-        console.log("Query1:",result)
         if (result.length<1){
             const status = await client.create(threadId, 'RegisterUser', [data])
             localStorage.setItem("USER", JSON.stringify(data))
             localStorage.setItem("password", "12345");
-            console.log("User registration status:",status)
             return true
         }
         return false
@@ -44,12 +42,10 @@ export const registerNewUser = async function(did, name, email, privateKey, user
 
 export const solveChallenge = (identity) => {
     return new Promise((resolve, reject) => {
-        console.log("Trying to connect with socket!!")
 
         const socket = io(process.env.REACT_APP_API_SERVER_URL);
 
         socket.on("connect", () => {
-            console.log('Connected to Server!!!')
             const publicKey = identity.public.toString();
 
             // Send public key to server
@@ -396,6 +392,7 @@ export const getSingleDocument = async function(address, tx, writeContracts, doc
         documentLocation:document.fileLocation,
         key: document.key,
         title: document.title,
+        fileName: document.fileName,
         timestamp: signDetails.signature[0].timestamp,
         signStatus: signStatus,
         signers: signDetails.signers,

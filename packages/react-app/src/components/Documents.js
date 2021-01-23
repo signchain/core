@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
-import { Button, Icon, Loader, Table, Modal, Step, Card, Image, Header } from "semantic-ui-react";
+import { Button, Icon, Loader, Segment, Header } from "semantic-ui-react";
 import { getAllFile} from "../lib/threadDb";
 import { Link } from "react-router-dom";
 import { DetailsContainer, DetailsCard, DocsTitle } from "./styles/DocumentDetails.Style";
@@ -14,8 +14,6 @@ export default function Documents(props) {
   const loggedUser = localStorage.getItem("USER");
   const [docs, setDocs] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  console.log("DOCS", docs);
 
   useEffect(() => {
     if (props.writeContracts) {
@@ -33,10 +31,8 @@ export default function Documents(props) {
     setLoading(true);
     const userInfo = JSON.parse(loggedUser);
     const document = await getAllFile(userInfo.publicKey, props.address, props.tx, props.writeContracts);
-    console.log("Docs:", document);
     if (document.length > 0) {
       setDocs(document);
-      console.log(document.sharedWith)
     }
     setLoading(false);
   };
@@ -45,7 +41,9 @@ export default function Documents(props) {
     <>
       <DetailsCard>
         <h2 className="docs-heading">My Documents</h2>
-        {!loading ? (
+        {!loading ? 
+        (docs.length ? 
+        (
           docs.map(value => {
             return (
               <>
@@ -95,7 +93,20 @@ export default function Documents(props) {
               </>
             );
           })
-        ) : (
+        ) : 
+        <Segment placeholder>
+          <Header icon>
+            <Icon name='search' color='violet'/>
+            No documents for you :P.
+          </Header>
+          <Segment.Inline>
+            <Link to="/sign">
+            <Button>Sign a document</Button>
+            </Link>
+          </Segment.Inline>
+        </Segment>
+        
+        ): (
           <Loader active size="medium">
             Loading
           </Loader>

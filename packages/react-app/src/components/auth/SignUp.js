@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Checkbox, Form, Modal, Header, Grid, Segment, Message, Input } from "semantic-ui-react";
+import { Button, Checkbox, Form, Modal, Message, Input } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logoInverted.png";
 import { definitions } from "../../ceramic/config.json";
@@ -14,8 +14,8 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [notary, setNotary] = useState(false);
+  const [error, setError] = useState({status: false, message: ''});
 
   const SignupStatus = { preInit: 0, init: 1, wallet: 2, ceramic: 3, contract: 4 };
   const [signupStatus, setSignupStatus] = useState(SignupStatus.preInit);
@@ -27,7 +27,6 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
       setSignupStatus(SignupStatus.init);
       try {
         if (idx) {
-          console.log("IDDD");
           setSignupStatus(SignupStatus.init);
         }
       } catch (err) {
@@ -62,15 +61,14 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
           email,
           accounts[0],
           notary ? userType.notary : userType.party,
-          address,
-          password,
+          address
         );
         if (registrationStatus) {
           setUserStatus(authStatus.loggedIn);
         } else {
           localStorage.clear();
-          console.log("Some error occurred!!!");
-          alert("Account already present!!");
+          setError({status: true, message: 'An account with same email/ wallet address exists'})
+          setSignupStatus(SignupStatus.init);
         }
       }
     }
@@ -115,18 +113,6 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
                     onChange={e => setEmail(e.target.value)}
                   />
                 </Form.Field>
-                <Form.Field className="form-input" required>
-                  <Input
-                    fluid
-                    icon="lock"
-                    iconPosition="left"
-                    placeholder="Password"
-                    type="password"
-                    className="form-input"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                  />
-                </Form.Field>
 
                 <Checkbox
                   style={{ color: "#718096" }}
@@ -138,6 +124,12 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
                     setNotary(!notary);
                   }}
                 />
+                 {
+                   error.status ? <Message negative>
+                <Message.Header>Account creation failed</Message.Header>
+                 <p> {error.message}</p>
+                </Message> : null
+                }
 
                 {signupStatus == SignupStatus.init ? (
                   <Button type="primary" className="form-input-btn" disabled={!email || !name} onClick={registerUser}>

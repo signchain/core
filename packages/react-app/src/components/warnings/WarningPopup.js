@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Icon, Image, Modal } from "semantic-ui-react";
+import { Button, Icon, Message, Modal } from "semantic-ui-react";
 import { SignInWarningContainer } from "../styles/WarningPopup.Styles";
 import Lock from "../../images/Lock.svg";
 import { Link } from "react-router-dom";
@@ -40,6 +40,7 @@ function WarningPopup({
         >
           <Modal.Content>
             <Modal.Description>
+              { userStatus === authStatus.disconnected ?
               <SignInWarningContainer>
                 <div className="lock-image">
                   <img src={Lock} alt="" />
@@ -63,7 +64,31 @@ function WarningPopup({
                     Sign In
                   </Button>
                 </div>
+              </SignInWarningContainer> :
+              <SignInWarningContainer>
+                <div className="lock-image">
+                  <img src={Lock} alt="" />
+                </div>
+                <div className="warning-text">
+                  <h3>Sign in to use Signchain Application</h3>
+                  <Message negative>
+                <Message.Header>Login failed</Message.Header>
+                 <p> Looks like your current wallet account is different from the previous session. Please try switching the wallet account and <a onClick={() => connectUser()}>connect again </a> <br/>
+                 Alternatively, you can Sign Up again. Beaware that you will lose your previous account.
+                 </p>
+                </Message>
+                 </div>
+                <div className="warning-btn">
+                  <Button
+                    style={{ background: "#4C51BF", color: "#fff" }}
+                    className="SignIn-btn"
+                    onClick={() => {setUserStatus(authStatus.connected)}}
+                  >
+                    Sign Up
+                  </Button>
+                </div>
               </SignInWarningContainer>
+            }
             </Modal.Description>
           </Modal.Content>
         </Modal>
