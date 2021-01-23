@@ -56,10 +56,14 @@ function App() {
     const [seed, setSeed] = useState([])
     const [connectLoading, setConnectLoading] = useState(false)
 
+    console.log(userStatus  )
+
     const authStatus = {
         "disconnected" : 0,
         "connected" : 1,
-        "loggedIn" : 2
+        "loggedIn" : 2,
+        "warning": 3,
+        "error": 4
 
     }
     const price = useExchangePrice(mainnetProvider);
@@ -77,30 +81,43 @@ function App() {
         setInjectedProvider(new Web3Provider(provider));
     }, [setInjectedProvider]);
 
-    async function loginUser(seed, identity, idx) {
+    async function test (seed, identity, idx){
+
+    }
+
+    async function loginUser(seed, identity, idx, address) {
       const pass = Buffer.from(new Uint8Array(seed)).toString("hex")
       console.log("Welcomee!!!", pass)
-      const accounts = await wallet.login(pass);
-      console.log("Accounts", accounts)
-      if (accounts) {
-        const client = await loginUserWithChallenge(identity);
-        console.log("USER Login!!")
-        let userInfo
-        if (client !== null) {
-          userInfo = await getLoginUser(accounts[0], idx)
-          if (userInfo !== null) {
-            console.log("User Info:", userInfo)
-            localStorage.setItem("USER", JSON.stringify(userInfo))
-            localStorage.setItem("password", "12345");
-            return userInfo
+      const user = JSON.parse(localStorage.getItem('USER'))
+      if (user && user.address.toLowerCase() === address.toLowerCase()) {
+        const accounts = await wallet.login(pass);
+        console.log("Accounts", accounts)
+        if (accounts) {
+          const client = await loginUserWithChallenge(identity);
+          console.log("USER Login!!")
+          let userInfo
+          if (client !== null) {
+            userInfo = await getLoginUser(user.address, idx)
+            console.log(userInfo)
+            if (userInfo !== null) {
+              console.log("User Info:", userInfo)
+              localStorage.setItem("USER", JSON.stringify(userInfo))
+              localStorage.setItem("password", "12345");
+              return authStatus.loggedIn
+            }
+            console.log("Some error!!!")
+            return authStatus.error
           }
-          console.log("Some error!!!")
-          return false
         }
+      }
+      else if (user && user.address!==address){
+        return authStatus.warning
+        console.log('error')
+        // handle redirection to signup page 
       }
       else{
         console.log("Cannot login account!!")
-        setUserStatus(authStatus.connected)
+        return authStatus.connected
       }
     }
 
@@ -109,8 +126,9 @@ function App() {
         
         setConnectLoading(true)
         await loadWeb3Modal()
-        const seed = await generateSignature();
+        const {seed, metamask} = await generateSignature();
         setSeed(seed)
+        console.log("Seed:",seed, "metamsk:",metamask)
         const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(seed))
         setIdentity(identity)
         const ceramic = new Ceramic(CERAMIC_URL)
@@ -120,13 +138,7 @@ function App() {
         const idx = new IDX({ ceramic, aliases: definitions })
         console.log(idx);
         setIdx(idx)
-        const res = await loginUser(seed, identity, idx);
-        if(res !== undefined){
-            setUserStatus(authStatus.loggedIn)
-        }
-        else {
-            setUserStatus(authStatus.connected)
-        }
+        setUserStatus(await loginUser(seed, identity, idx, metamask.address))
         setConnectLoading(true)
 
     }
@@ -221,6 +233,16 @@ function App() {
                         {...props}
                     />}/>
                <Route exact path="/home" render={(props) => 
+               <Dashboard
+                    address={address}
+                    tx={tx}
+                    writeContracts={writeContracts}
+                    userStatus={userStatus}
+                    authStatus={authStatus}
+                    idx={idx}
+                    identity = {identity}
+               />}/>
+                <Route exact path="/" render={(props) => 
                <Dashboard
                     address={address}
                     tx={tx}

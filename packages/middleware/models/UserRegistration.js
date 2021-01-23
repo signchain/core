@@ -16,7 +16,7 @@ const UserRegistration = {
             items: {
                 type: 'object',
                 properties: {
-                    createdBy : {type: 'string'},
+                    createdBy : {type: 'object'},
                     sharedTo: {type: 'string'},
                     date: {type: 'string' },
                     title: {type: 'string'},

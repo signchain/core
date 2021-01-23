@@ -9,7 +9,7 @@ const index = require("../../lib/e2ee.js");
 const Preview = ({ parties, fileInfo, title, cc }) => {
   return (
     <div className="preview__container">
-      <div className="wrapper">
+      <div className="wrapper" style={{ padding: "14px" }}>
         <div>
           <h3 clasdName="h2__medium" style={{ textAlign: "left", color: "#4A5568" }}>
             Selected Party

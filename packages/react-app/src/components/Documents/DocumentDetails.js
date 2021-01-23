@@ -1,19 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Container,
-  Divider,
-  Dropdown,
-  Grid,
-  Header,
-  Image,
-  List,
-  Menu,
-  Segment,
-  Item,
-  Icon,
-  Button, Loader,
-} from "semantic-ui-react";
+import { Table, Icon, Image, Button, Loader, Step } from "semantic-ui-react";
 
 import { WarningStatus, SignSuccess } from "./WarningNote";
 import {
@@ -22,16 +8,27 @@ import {
   HeaderContainer,
   TitleHeading,
   DocumentTable,
+  DetailsInfo,
+  DocsTitle,
+  DetailsContainer,
 } from "../styles/DocumentDetails.Style";
 import { attachSignature, downloadFiles, getAllUsers, getSingleDocument, notarizeDoc } from "../../lib/threadDb";
 import { Link } from "react-router-dom";
+import Sign from "../../images/icons/Sign.svg";
+import Download from "../../images/icons/Download.svg";
+import Notarize from "../../images/icons/notarize.svg";
+import Attachments from "../../images/icons/attachments.svg";
+import LogoAvatar from "../../images/icons/logoavatar.svg";
+import jenny from "../../images/jenny.jpg";
+
+import stepper from "../Stepper/Steps";
 
 const DocumentDetails = props => {
   const loggedUser = localStorage.getItem("USER");
   const userInfo = JSON.parse(loggedUser);
   const documentId = decodeURIComponent(props.match.params.doc);
   const signatureId = decodeURIComponent(props.match.params.sig);
-  const did = encodeURIComponent(userInfo.did)
+  const did = encodeURIComponent(userInfo.did);
   const [caller, setCaller] = useState({});
   const [document, setDocument] = useState(null);
   const [downloading, setDownloading] = useState(null);
@@ -50,7 +47,7 @@ const DocumentDetails = props => {
           signatureId,
         );
         console.log("DocumentInfo:", documentInfo);
-        setDocument(documentInfo)
+        setDocument(documentInfo);
         setLoading(false);
       } catch (e) {
         console.log("Error:", e);
@@ -62,7 +59,7 @@ const DocumentDetails = props => {
   const downloadFile = (name, key, location) => {
     setDownloading(name);
     console.log("docment:", location);
-    const password = Buffer.from(new Uint8Array(props.seed)).toString("hex")
+    const password = Buffer.from(new Uint8Array(props.seed)).toString("hex");
     downloadFiles(name, key, userInfo.address, location, password).then(result => {
       setDownloading(null);
     });
@@ -85,132 +82,194 @@ const DocumentDetails = props => {
 
   return (
     <>
-      <DocumentContainer>
-        <DocumentHeader>
-          <HeaderContainer>
-            <div className="document-title-section">
-              <TitleHeading>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad, corrupti.</TitleHeading>
-
-              <p className="description">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos exercitationem aspernatur illum aut rerum
-                atque inventore alias provident consequuntur ea quasi ducimus asperiores
-              </p>
-            </div>
-            <div className="pending-btn">
-              <p>
-                {/* conditional render based on status */}
-                <span className="docs-status-pending">Pending</span>
-                {/* <span className="docs-status-success">Signed</span> */}
-              </p>
-            </div>
-          </HeaderContainer>
-        </DocumentHeader>
-
+      <DocumentHeader>
         {!loading ? (
-        <DocumentTable>
-          <Link to={`/profile/${did}`}>
-          <div className="name-content">
-            <div className="icon-img">
-              <img
-                className="img-container"
-                src="https://react.semantic-ui.com/images/avatar/large/patrick.png"
-                alt=""
-                srcset=""
-              />
-            </div>
-            <div className="shared-info">
-              <p className="data">{document.createdBy}</p>
-            </div>
-          </div>
-          </Link>
-          <Table singleLine striped>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell className="table-header">Document Name</Table.HeaderCell>
-                <Table.HeaderCell className="table-header"> Status</Table.HeaderCell>
-                <Table.HeaderCell className="table-header">Created On</Table.HeaderCell>
+          <DetailsInfo>
+            <div class=" header-wrapper">
+              <div class="Details-card-info header-container">
+                <div class="title-left">
+                  <h3 className=" header-title">{document.title}</h3>
+                </div>
 
-                {
-                  document.notary ? <Table.HeaderCell className="table-header">Notarized </Table.HeaderCell>
-                    : null
-                }
-                <Table.HeaderCell className="table-header">Actions </Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
+                <div class="progress-container ">
+                  {/* conditional rendering */}
+                  {/* <Button>Pending</Button> */}
+                  <Button color="green">Signed</Button>
+                </div>
 
-            <Table.Body>
-              <Table.Row>
-                <Table.Cell collapsing>
-                  <span style={{ color: " #0000EE", cursor: "pointer" }}>
-                    <Icon name="file outline" />
-                    {document.title}
-                  </span>
-                </Table.Cell>
+                <div className="note">
+                  <div className="status">
+                    <p>Please Download the Attachments and read it before signing.</p>
+                  </div>
+                </div>
 
-                <Table.Cell>
-                  {document.partySigned ? (
-                    <div className="table-header">
-                      <Icon name="circle" color="green" />
-                      Signed
-                    </div>
+                {/* table */}
+                <div className="sign-button">
+                  {document.notary === caller.address && !document.notarySigned ? (
+                    <Button
+                      color="green"
+                      icon
+                      labelPosition="left"
+                      onClick={() => notarizeDocument(document.docId, document.hash)}
+                    >
+                      <Icon name="signup" />
+                      Notarize
+                    </Button>
+                  ) : !document.partySigned ? (
+                    <Button
+                      color="green"
+                      icon
+                      labelPosition="left"
+                      onClick={() => signDocument(document.hash, document.docId)}
+                    >
+                      <Icon name="signup" />
+                      Sign Document
+                    </Button>
                   ) : (
-                    <div>
-                      <Icon name="circle" color="red" /> Pending
-                    </div>
+                    <Button disabled color="green">
+                      Sign Document
+                    </Button>
                   )}
-                </Table.Cell>
+                </div>
 
-                <Table.Cell className="table-header">{document.timestamp}</Table.Cell>
+                {/* ********* */}
+              </div>
+            </div>
+          </DetailsInfo>
+        ) : (
+          <Loader active size="medium">
+            Loading
+          </Loader>
+        )}
+      </DocumentHeader>
 
-                {
-                  document.notary ? (
-                    <Table.Cell className="table-header">
-                      {document.notarySigned ? (
-                        <div>
-                          <Icon name="circle" color="green" /> Notarized
+      <DocumentContainer>
+        {!loading ? (
+          <DetailsInfo>
+            <div class="Details-card">
+              <div class="Details-card-info">
+                <div class="title-left">
+                  <img src={LogoAvatar} alt="" srcset="" />
+                  <h3 className="title-message">{document.title}</h3>
+                </div>
+
+                <div class="progress-container ">
+                  <span class="heading">Shared Date</span>
+                  <h3 className="created-by">{document.timestamp}</h3>
+                </div>
+
+                <div className="actions">
+                  <div className="status">
+                    <div className="docs-icon">
+                      <img src={Attachments} alt="" srcset="" />
+                    </div>
+                    <h6 className="heading">{document.fileName}</h6>
+                  </div>
+
+                  <div className="status">
+                    <div
+                      className="docs-icon"
+                      onClick={() => downloadFile(document.title, document.key, document.documentLocation)}
+                    >
+                      <img src={Download} alt="" srcset="" />
+                    </div>
+                    <h6 className="heading">Download</h6>
+                  </div>
+
+                  {document.notary ? (
+                    document.notarySigned ? (
+                      <div className="status">
+                        <div className="docs-icon">
+                          <img src={Sign} alt="" srcSet="" />
                         </div>
-                      ) : (
-                        <div>
-                          <Icon name="circle" color="red" /> Not yet Notarized
+                        <h6 className="heading">
+                          <Icon name="circle" color="green" /> Notarized{" "}
+                        </h6>
+                      </div>
+                    ) : (
+                      <div className="status">
+                        <div className="docs-icon">
+                          <img src={Sign} alt="" srcSet="" />
                         </div>
-                      )}
-                    </Table.Cell>
-                  ) : null
-                }
+                        <h6 className="heading">
+                          <Icon name="circle" color="red" /> Not Notarized{" "}
+                        </h6>
+                      </div>
+                    )
+                  ) : null}
+                </div>
 
-                <Table.Cell collapsing textAlign="right">
-                  {/*<Button icon="download" />*/}
-                  <Button loading={downloading === document.hash} icon="download" onClick={() => downloadFile(document.title,
-                    document.key, document.documentLocation)} />
-                </Table.Cell>
-              </Table.Row>
-            </Table.Body>
-          </Table>
-          {/* conditional rendering goes here- hide for the one who initiated */}
-          <WarningStatus />
-          {/* <SignSuccess /> */}
-          <div className="sign-btn">
-            {document.notary === caller.address && !document.notarySigned ? (
-              <Button basic color="blue" icon labelPosition="left" onClick={() => notarizeDocument(document.docId,
-                document.hash)}>
-                <Icon name="signup" />
-                Notarize
-              </Button>
-            ) : !document.partySigned ? (
-              <Button basic color="blue" icon labelPosition="left" onClick={() => signDocument(document.hash,
-                document.docId)}>
-                <Icon name="signup" />
-                Sign Document
-              </Button>
-            ) : (
-              <Button disabled basic color="blue" icon labelPosition="left">
-                <Icon name="signup" />
-                Sign Document
-              </Button>
-            )}
-          </div>
-        </DocumentTable>
-        ):(
+                {/* table */}
+
+                <Table singleLine striped>
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.HeaderCell className="table-header">Signers</Table.HeaderCell>
+                      <Table.HeaderCell className="table-header"> Status</Table.HeaderCell>
+                      <Table.HeaderCell className="table-header">Signed On</Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Header>
+
+                  <Table.Body>
+                    <Table.Row>
+                      <Link to={`/profile/${encodeURIComponent(document.createdByDid)}`}>
+                      <Table.Cell className="table-header">
+                      <Image avatar src={jenny} />
+                        {document.createdBy}</Table.Cell>
+                      </Link>
+                      <Table.Cell>
+                        <div>
+                          {document.partySigned ? (
+                            <>
+                              <Icon name="circle" color="green" /> Signed
+                            </>
+                          ) : (
+                            <>
+                              <Icon name="circle" color="red" /> Pending
+                            </>
+                          )}
+                        </div>
+                      </Table.Cell>
+
+                      <Table.Cell className="table-header">{document.timestamp}</Table.Cell>
+                    </Table.Row>
+
+                    {
+                      document.sharedTo.map((value) => {
+                        return(
+                          <Table.Row>
+                            <Link to={`/profile/${encodeURIComponent(value.did)}`}>
+                            <Table.Cell className="table-header">
+                            <Image avatar src={jenny} /> 
+                              {value.name}
+                            </Table.Cell>
+                            </Link>
+                            <Table.Cell>
+                              <div>
+                                {
+                                  value.partySigned ?
+                                    <>
+                                      <Icon name="circle" color="green" /> Signed
+                                    </>:
+                                    <>
+                                      <Icon name="circle" color="red" /> Pending
+                                    </>
+                                }
+                              </div>
+                            </Table.Cell>
+
+                          <Table.Cell className="table-header">{value.timestamp}</Table.Cell>
+                        </Table.Row>
+                      );
+                    })}
+                  </Table.Body>
+                </Table>
+
+                {/* ********* */}
+              </div>
+            </div>
+          </DetailsInfo>
+        ) : (
           <Loader active size="medium">
             Loading
           </Loader>

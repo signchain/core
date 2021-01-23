@@ -363,8 +363,7 @@ export const registerDoc = async function(party, fileHash, cipherKey, title, fil
 
 export const uploadDoc = async function(file, password, setSubmitting, storageType, setFileInfo){
 
-    let encryptedKeys=[]
-    let userAddress=[]
+    console.log("Storage type:", storageType)
     const cipherKey = await e2e.generateCipherKey(password)
     const fileSplit = file.name.split(".")
     const fileFormat = fileSplit[fileSplit.length - 1]
@@ -380,9 +379,9 @@ export const uploadDoc = async function(file, password, setSubmitting, storageTy
         let fileKey = fileHash.toString("hex").concat(".")
             .concat(storageType).concat(".").concat(fileFormat)
 
-        if (storageType==="Fleek"){
+        if (storageType==="FLEEK"){
             await storeFileFleek(fileKey, encryptedFile)
-        }else if (storageType==="Slate"){
+        }else if (storageType==="SLATE"){
             let blob = new Blob([encryptedFile])
             const response = await storeFileSlate(blob)
             fileKey = response.url

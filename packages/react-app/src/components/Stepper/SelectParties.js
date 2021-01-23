@@ -5,16 +5,13 @@ import "./SlectParties.css";
 import { Dropdown, Checkbox, Input, Icon } from "semantic-ui-react";
 import jenny from "../../images/jenny.jpg";
 
-
 const SelectParties = ({ users, parties, notaries, setParties, setCC, setDocNotary }) => {
-
   const [displayNotary, setDisplayNotary] = useState(false);
   const [displayCC, setDisplayCC] = useState(false);
 
-
   return (
     <div className="parties__container">
-      <div className="wrapper">
+      <div className="wrapper" style={{ padding: "14px" }}>
         <div style={{ marginBottom: "14px" }}>
           <Dropdown
             placeholder="Select Party"
@@ -34,9 +31,8 @@ const SelectParties = ({ users, parties, notaries, setParties, setCC, setDocNota
           />
         </div>
 
-        <div style={{ float: "left", marginTop: "18px" }}>
+        <div style={{ display: "flex", marginTop: "18px" }}>
           <Checkbox
-          
             label="Add Notary (optional)"
             checked={displayNotary}
             onChange={() => {
@@ -47,7 +43,7 @@ const SelectParties = ({ users, parties, notaries, setParties, setCC, setDocNota
         {displayNotary ? (
           <div>
             <Dropdown
-              style={{ float: "left", marginTop: "18px" }}
+              style={{ marginTop: "18px" }}
               placeholder="Select a Notary"
               fluid
               search
@@ -71,10 +67,11 @@ const SelectParties = ({ users, parties, notaries, setParties, setCC, setDocNota
         ) : (
           <div />
         )}
-        <div style={{ float: "left", marginTop: "18px" }}>
+        <div style={{ display: "flex", marginTop: "18px" }}>
           <Checkbox
             label="Add CC (optional)"
             checked={displayCC}
+            fluid
             onChange={() => {
               setDisplayCC(!displayCC);
             }}
@@ -82,11 +79,19 @@ const SelectParties = ({ users, parties, notaries, setParties, setCC, setDocNota
         </div>
 
         {displayCC ? (
-          <div >
-            <Input style={{ float: "left", marginTop: "18px" }} iconPosition='left' placeholder='Email' onChange={(error, data)=>{setCC(data.value)}}>
-          <Icon name='at' />
-             <input />
-          </Input>
+          <div>
+            <Input
+              style={{ marginTop: "18px", width: "100%" }}
+              iconPosition="left"
+              placeholder="Email"
+              fluid
+              onChange={(error, data) => {
+                setCC(data.value);
+              }}
+            >
+              <Icon name="at" />
+              <input />
+            </Input>
           </div>
         ) : (
           <div />
