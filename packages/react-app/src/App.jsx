@@ -56,8 +56,6 @@ function App() {
     const [seed, setSeed] = useState([])
     const [connectLoading, setConnectLoading] = useState(false)
 
-    console.log(userStatus  )
-
     const authStatus = {
         "disconnected" : 0,
         "connected" : 1,
@@ -68,7 +66,6 @@ function App() {
     }
     const price = useExchangePrice(mainnetProvider);
     const gasPrice = useGasPrice("fast");
-    console.log(gasPrice)
     const userProvider = injectedProvider;
     const address = useUserAddress(userProvider);
     const tx = Transactor(userProvider, gasPrice)
@@ -87,36 +84,28 @@ function App() {
 
     async function loginUser(seed, identity, idx, address) {
       const pass = Buffer.from(new Uint8Array(seed)).toString("hex")
-      console.log("Welcomee!!!", pass)
       const user = JSON.parse(localStorage.getItem('USER'))
       if (user && user.address.toLowerCase() === address.toLowerCase()) {
         const accounts = await wallet.login(pass);
-        console.log("Accounts", accounts)
         if (accounts) {
           const client = await loginUserWithChallenge(identity);
-          console.log("USER Login!!")
           let userInfo
           if (client !== null) {
             userInfo = await getLoginUser(user.address, idx)
-            console.log(userInfo)
             if (userInfo !== null) {
-              console.log("User Info:", userInfo)
               localStorage.setItem("USER", JSON.stringify(userInfo))
               localStorage.setItem("password", "12345");
               return authStatus.loggedIn
             }
-            console.log("Some error!!!")
             return authStatus.error
           }
         }
       }
       else if (user && user.address!==address){
         return authStatus.warning
-        console.log('error')
         // handle redirection to signup page 
       }
       else{
-        console.log("Cannot login account!!")
         return authStatus.connected
       }
     }
@@ -128,7 +117,6 @@ function App() {
         await loadWeb3Modal()
         const {seed, metamask} = await generateSignature();
         setSeed(seed)
-        console.log("Seed:",seed, "metamsk:",metamask)
         const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(seed))
         setIdentity(identity)
         const ceramic = new Ceramic(CERAMIC_URL)
@@ -136,7 +124,6 @@ function App() {
         setCeramic(ceramic)
       // Create the IDX instance with the definitions aliases from the config
         const idx = new IDX({ ceramic, aliases: definitions })
-        console.log(idx);
         setIdx(idx)
         setUserStatus(await loginUser(seed, identity, idx, metamask.address))
         setConnectLoading(true)
@@ -158,7 +145,6 @@ function App() {
     const [route, setRoute] = useState();
 
     useEffect(() => {
-        console.log("SETTING ROUTE",window.location.pathname)
         setRoute(window.location.pathname)
 
     }, [ window.location.pathname ]);

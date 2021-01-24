@@ -11,7 +11,7 @@ const io = require('socket.io-client');
 export const registerNewUser = async function(did, name, email, privateKey, userType, address){
     try {
         const {threadDb, client} = await getCredentials()
-        console.log("GET CREDENTIALS FUNCTION",client)
+        //console.log("GET CREDENTIALS FUNCTION",client)
         const threadId = ThreadID.fromBytes(threadDb)
         let publicKey = e2e.getPublicKey(privateKey)
         const data = {
@@ -157,7 +157,6 @@ export const getAllUsers = async function(loggedUser){
 
 export const registerDoc = async function(party, fileInfo, title, setSubmitting, signer, notary, caller,
                                           tx, writeContracts ){
-    console.log("party: ",party)
     const {threadDb, client} = await getCredentials()
     let encryptedKeys=[]
     let userAddress=[]
@@ -166,9 +165,7 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
 
     const { fileHash, fileLocation, fileName, cipherKey } = fileInfo
     setSubmitting(true)
-    console.log("Party:",party)
     const signature = await signDocument(fileHash, signer, caller.nonce)
-    console.log("sign:",signature)
 
     //prepare encrypted aes key for every user
     for (let i=0;i<party.length;i++){
@@ -186,7 +183,6 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
         }
 
         if (party[i].address!==caller.address) {
-            console.log('iff')
             const counterParty = {
                 name: party[i].name,
                 address: party[i].address,
@@ -198,7 +194,6 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
         encryptedKeys.push(docInfo)
         userAddress.push(party[i].address)
     }
-    console.log("Counter party:", sharedParty)
 
     //get notary
     if(notary!==null){
@@ -208,7 +203,6 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
           notary.address,
           {value: ethers.utils.parseUnits(notary ? "0.1" : "0", "ether")}
         ))
-        console.log("result:",res)
     }
 
     //store document
@@ -227,7 +221,6 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
         notaryStatus: notaryStatus,
         sharedTo: sharedParty
     }])
-    console.log("Doc ID:",docId)
 
     //store signature
     const date = new Date()
@@ -240,7 +233,6 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
             nonce: signature[0]
         }]
     }])
-    console.log("Signature ID:",signatureID)
 
     //metadata
     const info = {
@@ -261,7 +253,6 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     for (let i=0; i<party.length; i++){
         const query = new Where('publicKey').eq(party[i].key)
         const user = await client.find(threadId, 'RegisterUser', query)
-        console.log("USER222:",user)
         if (user[0].documentInfo.length===1 && user[0].documentInfo[0]._id==="-1"){
             user[0].documentInfo = [info]
             user[0].nonce = user[0].nonce+1
@@ -287,7 +278,6 @@ const signDocument = async function (fileHash, signer, replayNonce){
 }
 
 export const attachSignature = async function(documentId, signer, caller, fileHash){
-    console.log("Caller Doc:",caller)
     const {threadDb, client} = await getCredentials()
     const query = new Where('publicKey').eq(caller.key)
     const threadId = ThreadID.fromBytes(threadDb)
@@ -316,7 +306,6 @@ export const notarizeDoc = async function(docId, fileHash, tx, writeContracts , 
     const signature = await attachSignature(docId, signer, caller, fileHash)
     console.log("Signature added!!")
     const result = await tx(writeContracts.Signchain.notarizeDoc(fileHash))
-    console.log("Result:", result)
     return true
 }
 
@@ -329,7 +318,6 @@ export const getAllFile = async function( loggedUserKey ){
     const threadId = ThreadID.fromBytes(threadDb)
     const query = new Where('publicKey').eq(loggedUserKey)
     const users = await client.find(threadId, 'RegisterUser', query)
-    console.log("Document:",users[0].documentInfo)
     let result = []
     for (let i=0;i<users[0].documentInfo.length;i++){
         if (users[0].documentInfo.length===1 && users[0].documentInfo[0]._id==='-1'){
@@ -354,11 +342,9 @@ export const getSingleDocument = async function(address, tx, writeContracts, doc
     const {threadDb, client} = await getCredentials()
     const threadId = ThreadID.fromBytes(threadDb)
     const document = await client.findByID(threadId, 'Document', documentId)
-    console.log("Document:", document)
     const hash = document.documentHash
     const signDetails = await client.findByID(threadId, 'SignatureDetails', signatureId)
 
-    console.log("NotaryStatus:",document.notaryStatus)
     let signStatus = false
     let partySigned = false
 
@@ -406,7 +392,6 @@ export const getSingleDocument = async function(address, tx, writeContracts, doc
 
     if (document.notaryStatus) {
         const notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
-        console.log("NotaryInfo:", notaryInfo)
         value.notary = notaryInfo.notaryAddress
         value.notarySigned = notaryInfo.notarized
     }
@@ -437,7 +422,6 @@ export const downloadFiles = async function (name, key, loggedUser,documentLocat
     const fileFormat = fileSplit[fileSplit.length - 1]
     const storageType = fileSplit[fileSplit.length - 2]
 
-    console.log("Strorage typr:", storageType)
     return new Promise((resolve)=>{
         if (storageType==="AWS") {
             e2ee.getFileAWS(documentLocation).then((encryptedFile) => {

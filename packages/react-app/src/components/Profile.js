@@ -8,14 +8,17 @@ const index = require("../lib/e2ee.js");
 
 export default function Profile({ ceramic, idx }) {
   const [user, setUser] = useState(null);
-  console.log(idx)
   useEffect(() => {
     async function getUserData() {
       try {
         if (idx) {
           const data = await idx.get(definitions.profile, idx.id);
           setUser(data);
-          console.log(data);
+          if(data){
+            console.log("data fetched")
+          }else{
+            console.log("Something is wrong with IDX")
+          }
         }
       } catch (err) {
         console.log(err);

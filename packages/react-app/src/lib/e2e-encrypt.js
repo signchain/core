@@ -52,7 +52,7 @@ export const decryptKey = function(privateKey,encryptedKey){
         return new Promise((resolve) => {
             eccrypto.decrypt(Buffer.from(privateKey, "hex"), encryptedKey)
                 .then(function (decryptedKey) {
-                    console.log('Decrypted key:',decryptedKey)
+                    //console.log('Decrypted key:',decryptedKey)
                     resolve(decryptedKey)
                 });
         })
@@ -72,7 +72,7 @@ export const generateCipherKey = function(password){
     try {
         return new Promise((resolve)=>{
             const cipherKey = crypto.createHash('sha256').update(password).digest();
-            console.log("AES Key:",cipherKey)
+            //console.log("AES Key:",cipherKey)
             resolve(cipherKey)
         })
     }catch (err) {

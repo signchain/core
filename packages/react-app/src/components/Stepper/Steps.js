@@ -104,7 +104,6 @@ const stepper = props => {
       props.tx,
       props.writeContracts,
     );
-    console.log("Register:", docId[0], signatureID[0]);
     const urlParams = `${docId[0]}/${signatureID[0]}`;
     await sendMail(
       parties

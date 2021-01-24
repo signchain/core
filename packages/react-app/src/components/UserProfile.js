@@ -12,7 +12,6 @@ const index = require("../lib/e2ee.js");
 
 const UserProfiles = props => {
   const [user, setUser] = useState(null);
-  console.log(props)
   const id = decodeURIComponent(props.match.params.did);
 
   useEffect(() => {
@@ -21,7 +20,11 @@ const UserProfiles = props => {
         if (props.idx) {
           const data = await props.idx.get(definitions.profile, id);
           setUser(data);
-          console.log("IDX data", data);
+          if(data){
+            console.log("data fetched")
+          }else{
+            console.log("Something is wrong with IDX")
+          }
         }else {
             const data = JSON.parse(localStorage.getItem("USER"))
             console.log(data)

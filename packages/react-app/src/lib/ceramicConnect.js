@@ -77,7 +77,6 @@ const generateMessageForEntropy = (ethereum_address, application_name) => {
 
   export const generateSignature = async () => {
     const metamask = await getAddressAndSigner()
-    console.log(metamask);
     // avoid sending the raw secret by hashing it first
     const secret = hashSync("Password", 10)
     const message = generateMessageForEntropy(metamask.address, 'cermaic demo')
