@@ -39,6 +39,7 @@ const DocumentDetails = props => {
   const [downloading, setDownloading] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sign, setSign] = useState(false);
+  const [signLoader, setSignLoader] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -142,7 +143,7 @@ const DocumentDetails = props => {
                           Sign Document
                         </Button>
                       ) : (
-                        <Button disabled color="green" loading={sign}>
+                        <Button disabled color="green">
                           Sign Document
                         </Button>
                       )}
