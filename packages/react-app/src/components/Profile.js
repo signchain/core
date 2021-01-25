@@ -2,12 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { UserOutlined, MailOutlined, FieldTimeOutlined } from "@ant-design/icons";
 import { definitions } from "../ceramic/config.json";
-import { Loader } from "semantic-ui-react";
+import { Loader, Icon, Header, Segment } from "semantic-ui-react";
 import { ProfileContainer } from "../components/styles/Profile.Style";
 const index = require("../lib/e2ee.js");
 
 export default function Profile({ ceramic, idx }) {
   const [user, setUser] = useState(null);
+  const [userLoading, setUserLoading] = useState(true);
   useEffect(() => {
     async function getUserData() {
       try {
@@ -57,5 +58,19 @@ export default function Profile({ ceramic, idx }) {
           </div>
         </div>
       </ProfileContainer>
-<<<<<<< Updated upstream
-    </}
+    </> :
+    <Segment placeholder>
+    <Header icon>
+      <Icon name='search' color='violet'/>
+      No profile found :(.
+    </Header>
+    <Segment.Inline>
+      There was an issue fetching the user profile.
+    </Segment.Inline>
+  </Segment>
+  ) : (
+    <Loader active size="medium">
+      Fetching profile
+    </Loader>
+  );
+}
