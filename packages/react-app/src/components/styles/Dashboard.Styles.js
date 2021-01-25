@@ -27,6 +27,16 @@ export const DashboardContainer = styled.div`
     }
   }
 
+  .box-2 {
+    width: 170px;
+    height: 200px;
+    border: 1px solid rgba(209, 209, 209, 0.5);
+    box-sizing: border-box;
+    border-radius: 3px;
+    text-align: center;
+    justify-content: center;
+  }
+
   .select-actions {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

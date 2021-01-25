@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Icon, Image, Button, Loader, Step } from "semantic-ui-react";
+import { Table, Icon, Image, Button, Label, Loader, Message } from "semantic-ui-react";
 
 import { WarningStatus, SignSuccess } from "./WarningNote";
 import {
@@ -24,6 +24,7 @@ import jenny from "../../images/jenny.jpg";
 import stepper from "../Stepper/Steps";
 
 const DocumentDetails = props => {
+
   const loggedUser = localStorage.getItem("USER");
   const userInfo = JSON.parse(loggedUser);
   const documentId = decodeURIComponent(props.match.params.doc);
@@ -93,15 +94,23 @@ const DocumentDetails = props => {
 
                 <div class="progress-container ">
                   {/* conditional rendering */}
-                  {/* <Button>Pending</Button> */}
-                  <Button color="green">Signed</Button>
+                  {
+                  document.signStatus ? 
+                  <Label color="green">Signed</Label> :
+                  <Label>Pending</Label>
+                  }
                 </div>
 
-                <div className="note">
-                  <div className="status">
-                    <p>Please Download the Attachments and read it before signing.</p>
-                  </div>
-                </div>
+                {/* <div className="note">
+                  <div className="status"> */}
+                  <Message
+                    size="tiny"
+                    color="violet"
+                >
+                  Please Download the Attachments and read it before signing..
+                  </Message>  
+                  {/* </div>
+                </div> */}
 
                 {/* table */}
                 <div className="sign-button">
@@ -211,28 +220,7 @@ const DocumentDetails = props => {
                   </Table.Header>
 
                   <Table.Body>
-                    <Table.Row>
-                      <Link to={`/profile/${encodeURIComponent(document.createdByDid)}`}>
-                      <Table.Cell className="table-header">
-                      <Image avatar src={jenny} />
-                        {document.createdBy}</Table.Cell>
-                      </Link>
-                      <Table.Cell>
-                        <div>
-                          {document.partySigned ? (
-                            <>
-                              <Icon name="circle" color="green" /> Signed
-                            </>
-                          ) : (
-                            <>
-                              <Icon name="circle" color="red" /> Pending
-                            </>
-                          )}
-                        </div>
-                      </Table.Cell>
-
-                      <Table.Cell className="table-header">{document.timestamp}</Table.Cell>
-                    </Table.Row>
+                  
 
                     {
                       document.sharedTo.map((value) => {
