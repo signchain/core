@@ -47,7 +47,6 @@ const DocumentDetails = props => {
           documentId,
           signatureId,
         );
-        console.log("DocumentInfo:", documentInfo);
         setDocument(documentInfo);
         setLoading(false);
       } catch (e) {
@@ -59,7 +58,6 @@ const DocumentDetails = props => {
 
   const downloadFile = (name, key, location) => {
     setDownloading(name);
-    console.log("docment:", location);
     const password = Buffer.from(new Uint8Array(props.seed)).toString("hex");
     downloadFiles(name, key, userInfo.address, location, password).then(result => {
       setDownloading(null);

@@ -355,7 +355,6 @@ export const getSingleDocument = async function(address, tx, writeContracts, doc
     const {threadDb, client} = await getCredentials()
     const threadId = ThreadID.fromBytes(threadDb)
     const document = await client.findByID(threadId, 'Document', documentId)
-    console.log(document)
     const hash = document.documentHash
     const signDetails = await client.findByID(threadId, 'SignatureDetails', signatureId)
     console.log(signDetails)
