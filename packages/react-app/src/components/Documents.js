@@ -83,8 +83,6 @@ export default function Documents(props) {
                             </div>
                             <h6 className="heading">Download</h6>
                           </div>
-
-                          <Button>Read More</Button>
                         </div>
                       </div>
                     </div>

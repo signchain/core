@@ -44,6 +44,7 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
     if (walletStatus) {
       const accounts = await index.getAllAccounts(pass);
       setSignupStatus(SignupStatus.ceramic);
+      try {
       await idx.set(definitions.profile, {
         name: name,
         email: email,
@@ -51,6 +52,11 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
         joindate : moment(new Date()).format("ll"),
         userAddress: address
       });
+    }
+      catch(e) {
+        console.log("Failed to create profile on IDX")
+
+      }
       setSignupStatus(SignupStatus.contract);
       //const dbClient = await authorizeUser(password)
       const client = await loginUserWithChallenge(identity);

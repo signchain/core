@@ -108,8 +108,9 @@ export const getLoginUser = async function(address, idx){
         const query = new Where('address').eq(address)
         const threadId = ThreadID.fromBytes(threadDb)
         const result = await client.find(threadId, 'RegisterUser', query)
-        const ceramicResult = await idx.get(definitions.profile, idx.id)
-        if (result.length<1 || ceramicResult === null){
+        // By passing Ceramic IDX profile check
+        // const ceramicResult = await idx.get(definitions.profile, idx.id)
+        if (result.length<1){
             console.log("Please register user!")
             return null
         }
