@@ -30,10 +30,10 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
     customRequest: data => {
       uploadFile(data.file);
     },
-    onChange(status) {
-      if (status) {
+    onChange(submitting) {
+      if (selected) {
         message.success(` file uploaded successfully.`);
-      } else {
+      } else if (!submitting) {
         message.error(`file upload failed.`);
       }
     },
@@ -52,26 +52,6 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
   return (
     <div className="parties__container" style={{ background: "#fff" }}>
       <div className="wrapper" style={{ padding: "14px", background: "#fff" }}>
-        {/*<div style={{ marginBottom: "14px" }}>
-          <Dropdown
-            style={{ float: "left", marginTop: "18px" }}
-            placeholder="Select Storage Provider"
-            fluid
-            selection
-            options={fileStorage.map(storage => {
-              return {
-                key: storage.name,
-                text: storage.name,
-                value: storage.name,
-                image: { avatar: true, src: storage.image },
-              };
-            })}
-            onChange={(event, data) => {
-              setStorage(data.value);
-            }}
-          />
-        </div>*/}
-
         <div style={{ marginBottom: "14px" }}>
           <Dragger {...props} style={{ border: "1px solid #22242626", background: "#fff" }}>
             <p className="ant-upload-drag-icon">
@@ -83,7 +63,7 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
         {selected && !submitting ? (
           <Input
             fluid
-            style={{ marginTop: "16px" }}
+            style={{ marginTop: "18px" }}
             placeholder="Enter document title"
             onChange={(event, data) => {
               setTitle(data.value);
