@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Icon, Image, Button, Label, Loader, Message } from "semantic-ui-react";
+import { Table, Icon, Image, Button, Loader, Step } from "semantic-ui-react";
 
 import { WarningStatus, SignSuccess } from "./WarningNote";
 import {
@@ -67,7 +67,12 @@ const DocumentDetails = props => {
   };
 
   const signDocument = async (docHash, docId) => {
+    try{
     const result = await attachSignature(docId, props.userProvider.getSigner(), caller, docHash);
+    }
+    catch(e){
+      alert("Didn't sign it!")
+    }
   };
 
   const notarizeDocument = async (docId, docHash) => {
@@ -96,21 +101,16 @@ const DocumentDetails = props => {
                   {/* conditional rendering */}
                   {
                   document.signStatus ? 
-                  <Label color="green">Signed</Label> :
-                  <Label>Pending</Label>
+                  <Button color="green">Signed</Button> :
+                  <Button>Pending</Button>
                   }
                 </div>
 
-                {/* <div className="note">
-                  <div className="status"> */}
-                  <Message
-                    size="tiny"
-                    color="violet"
-                >
-                  Please Download the Attachments and read it before signing..
-                  </Message>  
-                  {/* </div>
-                </div> */}
+                <div className="note">
+                  <div className="status">
+                    <p>Please Download the Attachments and read it before signing.</p>
+                  </div>
+                </div>
 
                 {/* table */}
                 <div className="sign-button">

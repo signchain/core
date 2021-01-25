@@ -5,14 +5,13 @@ import { Row, Col } from "antd";
 import { UserOutlined, MailOutlined, FieldTimeOutlined } from "@ant-design/icons";
 import { definitions } from "../ceramic/config.json";
 
-import { Loader, Icon, Header, Segment } from "semantic-ui-react";
+import { Loader, Grid, Card, Icon, Table } from "semantic-ui-react";
 // import { Form, Input, Button, Checkbox } from "antd";
 import "./Profile.css";
 const index = require("../lib/e2ee.js");
 
 const UserProfiles = props => {
   const [user, setUser] = useState(null);
-  const [userLoading, setUserLoading] = useState(true);
   const id = decodeURIComponent(props.match.params.did);
 
   useEffect(() => {
@@ -21,7 +20,6 @@ const UserProfiles = props => {
         if (props.idx) {
           const data = await props.idx.get(definitions.profile, id);
           setUser(data);
-          setUserLoading(false);
           if(data){
             console.log("data fetched")
           }else{
@@ -38,7 +36,7 @@ const UserProfiles = props => {
     getUserData();
   }, [props.idx]);
 
-  return userLoading ? (
+  return !userLoading ? (
     user ?
     <>
       <Row>
@@ -71,17 +69,8 @@ const UserProfiles = props => {
             </div>
           </div>
         </Col>
-      </Row> 
-    </> :
-    <Segment placeholder>
-    <Header icon>
-      <Icon name='search' color='violet'/>
-      No profile found :(.
-    </Header>
-    <Segment.Inline>
-      There was an issue fetching the user profile.
-    </Segment.Inline>
-  </Segment>
+      </Row>
+    </>
   ) : (
     <Loader active size="medium">
       Fetching profile

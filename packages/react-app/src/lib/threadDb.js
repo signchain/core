@@ -163,11 +163,11 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     let userAddress=[]
     let sharedParty = []
     let notaryStatus = false
-
+    let res = true                                  
     const { fileHash, fileLocation, fileName, cipherKey } = fileInfo
     setSubmitting(true)
     const signature = await signDocument(fileHash, signer, caller.nonce)
-
+    console.log("Signature",signature)                                        
     //prepare encrypted aes key for every user
     for (let i=0;i<party.length;i++){
         let aesEncKey = await e2e.encryptKey(Buffer.from(party[i].key,"hex"), cipherKey)
@@ -198,15 +198,20 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     //get notary
     if(notary!==null){
         notaryStatus = true
-        const res = await tx(writeContracts.Signchain.saveNotarizeDoc(
+        const notaryRes = await tx(writeContracts.Signchain.saveNotarizeDoc(
           fileHash,
           notary.address,
           {value: ethers.utils.parseUnits(notary ? "0.1" : "0", "ether")}
         ))
+        if(notaryRes === undefined){
+            res = false
+        }
+        console.log("Notary Result",res)
     }
 
     //store document
     const threadId = ThreadID.fromBytes(threadDb)
+    if(res){
     const docId = await client.create(threadId, 'Document', [{
         title: title,
         createdBy: {
@@ -266,6 +271,13 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     console.log("File uploaded!!!")
     setSubmitting(false)
     return {docId, signatureID}
+    }else{
+        setSubmitting(false)
+        return {
+            docId: null,
+            signatureID: null
+        }
+    }
 }
 
 const signDocument = async function (fileHash, signer, replayNonce){
@@ -286,6 +298,7 @@ export const attachSignature = async function(documentId, signer, caller, fileHa
     const signature = await signDocument(fileHash, signer, caller.nonce)
     //verify signature contract call
     const signStatus = await client.findByID(threadId, 'SignatureDetails', signatureId[0].signatureId)
+    console.log("Signature", signature)
     const date = new Date()
     signStatus.signature.push({
         signer: caller.address,
