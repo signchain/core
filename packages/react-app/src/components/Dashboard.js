@@ -25,14 +25,6 @@ const Dashboard = (props) => {
                 <p>Sign & Share</p>
               </div>
             </Link>
-            <Link to="/sign">
-              <div className="box-1">
-                <div className="icon">
-                  <img src={Secure} alt="" srcset="" />
-                </div>
-                <p>Secure & Share</p>
-              </div>
-            </Link>
             <Link to="/verify">
               <div className="box-1">
                 <div className="icon">
@@ -41,6 +33,12 @@ const Dashboard = (props) => {
                 <p>Verify</p>
               </div>
             </Link>
+              <div className="box-2">
+                <div className="icon">
+                  <img src={Secure} alt="" srcset="" />
+                </div>
+                <p>Secure & Share</p> <p>(Coming soon) </p>
+              </div>
           </div>
         </DashboardContainer>
       </>

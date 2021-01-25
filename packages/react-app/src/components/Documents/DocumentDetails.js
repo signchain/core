@@ -24,6 +24,7 @@ import jenny from "../../images/jenny.jpg";
 import stepper from "../Stepper/Steps";
 
 const DocumentDetails = props => {
+
   const loggedUser = localStorage.getItem("USER");
   const userInfo = JSON.parse(loggedUser);
   const documentId = decodeURIComponent(props.match.params.doc);
@@ -93,8 +94,11 @@ const DocumentDetails = props => {
 
                 <div class="progress-container ">
                   {/* conditional rendering */}
-                  {/* <Button>Pending</Button> */}
-                  <Button color="green">Signed</Button>
+                  {
+                  document.signStatus ? 
+                  <Button color="green">Signed</Button> :
+                  <Button>Pending</Button>
+                  }
                 </div>
 
                 <div className="note">
@@ -211,28 +215,7 @@ const DocumentDetails = props => {
                   </Table.Header>
 
                   <Table.Body>
-                    <Table.Row>
-                      <Link to={`/profile/${encodeURIComponent(document.createdByDid)}`}>
-                      <Table.Cell className="table-header">
-                      <Image avatar src={jenny} />
-                        {document.createdBy}</Table.Cell>
-                      </Link>
-                      <Table.Cell>
-                        <div>
-                          {document.partySigned ? (
-                            <>
-                              <Icon name="circle" color="green" /> Signed
-                            </>
-                          ) : (
-                            <>
-                              <Icon name="circle" color="red" /> Pending
-                            </>
-                          )}
-                        </div>
-                      </Table.Cell>
-
-                      <Table.Cell className="table-header">{document.timestamp}</Table.Cell>
-                    </Table.Row>
+                  
 
                     {
                       document.sharedTo.map((value) => {

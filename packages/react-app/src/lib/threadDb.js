@@ -182,15 +182,14 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
             cipherKey: JSON.stringify(userKey)
         }
 
-        if (party[i].address!==caller.address) {
             const counterParty = {
                 name: party[i].name,
                 address: party[i].address,
                 email: party[i].email,
                 did: party[i].did
             }
-            sharedParty.push(counterParty)
-        }
+        sharedParty.push(counterParty)
+    
         encryptedKeys.push(docInfo)
         userAddress.push(party[i].address)
     }
@@ -342,8 +341,10 @@ export const getSingleDocument = async function(address, tx, writeContracts, doc
     const {threadDb, client} = await getCredentials()
     const threadId = ThreadID.fromBytes(threadDb)
     const document = await client.findByID(threadId, 'Document', documentId)
+    console.log(document)
     const hash = document.documentHash
     const signDetails = await client.findByID(threadId, 'SignatureDetails', signatureId)
+    console.log(signDetails)
 
     let signStatus = false
     let partySigned = false
@@ -361,9 +362,13 @@ export const getSingleDocument = async function(address, tx, writeContracts, doc
     let counterParty = document.sharedTo
 
     for (let i=0;i<counterParty.length;i++){
-        if (signDetails.signature[i].signer===counterParty[i].address){
+
+        const signature = signDetails.signature.filter((item) => item.signer === counterParty[i].address.toString())
+        console.log(signature)
+        
+        if (signature.length){
             counterParty[i].partySigned = true
-            counterParty[i].timestamp = signDetails.signature[i].timestamp
+            counterParty[i].timestamp = signature[0].timestamp
         }else{
             counterParty[i].partySigned = false
             counterParty[i].timestamp = 'NA'
