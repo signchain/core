@@ -93,6 +93,7 @@ const stepper = props => {
   };
 
   const submitDocument = async () => {
+    try{
     const { docId, signatureID } = await registerDoc(
       parties.concat([caller]),
       fileInfo,
@@ -104,6 +105,7 @@ const stepper = props => {
       props.tx,
       props.writeContracts,
     );
+    if(docId !== null && signatureID !== null){
     const urlParams = `${docId[0]}/${signatureID[0]}`;
     await sendMail(
       parties
@@ -114,6 +116,15 @@ const stepper = props => {
       { sender: caller.name, docId: urlParams },
     );
     setSubmitStatus(true)
+    }else{
+      alert("Didnt submit mail")
+      setSubmitStatus(false)
+    }
+    }
+    catch(e){
+      console.log(e)
+      setSubmitStatus(false)
+    }
   };
 
   return (
