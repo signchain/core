@@ -352,6 +352,16 @@ export const getAllFile = async function( loggedUserKey ){
     return result
 }
 
+export const getDocumentByHash = async function(docHash) {
+
+    const {threadDb, client} = await getCredentials()
+    const threadId = ThreadID.fromBytes(threadDb)
+    const query = new Where('documentHash').eq(docHash)
+    const result = await client.find(threadId, 'Document', query)
+    return result
+
+}
+
 export const getSingleDocument = async function(address, tx, writeContracts, documentId, signatureId){
     const {threadDb, client} = await getCredentials()
     const threadId = ThreadID.fromBytes(threadDb)

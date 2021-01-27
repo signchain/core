@@ -11,7 +11,6 @@ import { useUserAddress } from "eth-hooks";
 import { useExchangePrice, useGasPrice, useContractLoader } from "./hooks";
 import { Transactor } from "./helpers";
 import wallet from 'wallet-besu'
-import {Account} from "./components";
 import {definitions} from "./ceramic/config.json"
 
 import Share from "./components/Share";
@@ -21,11 +20,7 @@ import Profile from "./components/Profile";
 import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
 import Verify from './components/Verify/Verify'
-import Database from "./components/database/Database";
  import TopNav from './components/Navigation/TopNav'
- import SignUp from './components/auth/SignUp'
- import SignIn from './components/auth/SignIn'
- import SignDocs from './components/Verify/SignDocument'
  import UserProfiles from "./components/UserProfile";
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 import {generateSignature, getProvider} from "./lib/ceramicConnect"
@@ -35,8 +30,6 @@ import { BigNumber, providers, utils } from 'ethers'
 import Ceramic from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
 import { Ed25519Provider } from 'key-did-provider-ed25519'
-import {randomBytes} from 'crypto'
-import {fromString} from 'uint8arrays/from-string'
 import {PrivateKey} from "@textile/hub";
 
 import WarningPopup from './components/warnings/WarningPopup'
@@ -204,11 +197,6 @@ function App() {
                     userProvider={userProvider}
                     seed={seed}
                   />}/>
-                <Route exact path='/signuptest' render={(props)=><SignUp/>}/>
-                 <Route exact path='/signintest' render={(props)=><SignIn/>}/>
-                 <Route exact path='/sharedocs' render={(props)=><SignDocs/>}/>
-
-                {/* *************************** */}
                 <Route exact path="/sign" render={(props) =>
                     <Steps
                         address={address}
