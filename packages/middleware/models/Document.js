@@ -9,6 +9,7 @@ const DocumentStorage = {
         documentHash : {type: 'string'},
         fileLocation: {type: 'string'},
         fileName: {type: 'string'},
+        signatureId: {type:'string'},
         key: {
             type: 'array',
             items :{
