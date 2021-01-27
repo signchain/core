@@ -353,8 +353,8 @@ export const DetailsInfo = styled.div`
   .note {
     display: flex;
 
-    margin-top: 48px;
-    margin-bottom: 48px;
+    margin-top: 30px;
+    margin-bottom: 30px;
     text-align: center;
 
     justify-content: space-between;

@@ -51,13 +51,13 @@ const [current, setCurrent] = useState(0)
 
              
         {current > 0 && (
-            <Button style={{ margin: '0 8px' }} onClick={() => prev()}  className="button">
+            <Button style={{ background: "#4C51BF", color: "#fff" }} onClick={() => prev()}  className="button">
               Previous
             </Button>
           )}
 
              {current < steps.length - 1 && (
-            <Button type="primary" loading={submitting} onClick={() => {next()}} className="button">
+            <Button style={{ background: "#4C51BF", color: "#fff" }} type="primary" loading={submitting} onClick={() => {next()}} className="button">
               Verify
             </Button>
           )}

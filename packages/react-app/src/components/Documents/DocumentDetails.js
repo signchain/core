@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Icon, Image, Button, Loader, Step, Label } from "semantic-ui-react";
+import { Table, Icon, Image, Button, Loader, Message, Label } from "semantic-ui-react";
 import SignWarning from "../warnings/SignWarning";
 import { WarningStatus, SignSuccess } from "./WarningNote";
 import { DocumentContainer, DocumentHeader, DetailsInfo } from "../styles/DocumentDetails.Style";
@@ -133,7 +133,8 @@ const DocumentDetails = props => {
 
                         <div className="note">
                           <div className="status">
-                            <p>Please Download the Attachments and read it before signing.</p>
+                          <p style={{color: "#fcbc2b"}}>Kindly download the attachments and review it before signing.</p>
+                  
                           </div>
                         </div>
 

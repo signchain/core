@@ -49,10 +49,11 @@ function WarningPopup({
                   <h3>Sign in to use Signchain Application</h3>
 
                   <p>
-                    In order for you to use certain features of the Signchain like Signing and Verifying Documents,
+                    In order to use certain features of the Signchain like Signing and Verifying Documents,
                     please sign in using your secure wallet.
                   </p>
-                  <p>If you don't wish to sign in but want to explore, feel free to Browse around.</p>
+                  <p>Signchain currently supports only <a href="https://metamask.io/download.html">MetaMask</a>.
+                  Make sure you have installed and pointed to the right account</p>
                 </div>
                 <div className="warning-btn">
                   <Button

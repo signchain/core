@@ -3,16 +3,15 @@ import { Label, Segment, Button, Modal, Icon } from "semantic-ui-react";
 import { Link, Redirect } from "react-router-dom";
 // import { Steps } from "intro.js-react";
 import Secure from "../../images/icons/secureDocs.svg";
-
+import Signchain from "../../images/icons/signchain.svg";
 import Sign from "../../images/icons/signDocs.svg";
 import Verify from "../../images/icons/VerifyDocs.svg";
 
 import { DashboardContainer } from "./Onboarding.Styles";
 
 const Onboarding = () => {
-  const [firstOpen, setFirstOpen] = useState(true);
-  const [secondOpen, setSecondOpen] = useState(false);
-  const [thirdOpen, setThirdOpen] = useState(false);
+  const [step, setStep] = useState(0);
+  const [open, setOpen] = useState(true)
   const [visited, setVisted] = useState(localStorage.getItem("Visited"));
 
   useEffect(() => {
@@ -24,9 +23,45 @@ const Onboarding = () => {
     return (
       <>
         <Modal
-          onClose={() => setFirstOpen(false)}
-          onOpen={() => setFirstOpen(true)}
-          open={firstOpen}
+          onClose={() => setOpen(false)}
+          onOpen={() => setOpen(true)}
+          open={step === 0}
+          dimmer={false}
+          size="small"
+          style={{ width: "550px", height: "339px" }}
+        >
+          <Modal.Header>Welcome to Signchain</Modal.Header>
+          <Modal.Content centered>
+            <DashboardContainer>
+              <div className="box-1">
+                <div className="icon">
+                  <img src={Signchain} alt="" srcset="" />
+                </div>
+                <p>A decentralized digital signing platform</p>
+              </div>
+
+              <p className="helper-text">
+              A platform that creates and manages tamperproof digitally signed documents in a secure and interoperable manner.
+              </p>
+            </DashboardContainer>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button
+              onClick={() => {
+                setStep(1);
+                
+              }}
+              style={{ background: "rgb(76, 81, 191)", color: "#fff" }}
+            >
+              Next <Icon name="angle right" />
+            </Button>
+          </Modal.Actions>
+          </Modal>
+
+        <Modal
+          onClose={() => setOpen(false)}
+          onOpen={() => setOpen(true)}
+          open={step === 1}
           dimmer={false}
           size="small"
           style={{ width: "550px", height: "339px" }}
@@ -49,19 +84,21 @@ const Onboarding = () => {
           <Modal.Actions>
             <Button
               onClick={() => {
-                setSecondOpen(true);
+                setStep(2);
+                
               }}
               style={{ background: "rgb(76, 81, 191)", color: "#fff" }}
             >
               Next <Icon name="angle right" />
             </Button>
           </Modal.Actions>
+          </Modal>
 
           {/* second Modal */}
 
           <Modal
-            onClose={() => setSecondOpen(false)}
-            open={secondOpen}
+            onClose={() => setOpen(false)}
+            open={step === 2}
             size="small"
             dimmer={false}
             style={{ width: "550px", height: "339px" }}
@@ -86,12 +123,11 @@ const Onboarding = () => {
                 icon="angle left"
                 content="Previous"
                 onClick={() => {
-                  setFirstOpen(true);
-                  setSecondOpen(false);
+                  setStep(1)
                 }}
               />
               <Button
-                onClick={() => setThirdOpen(true)}
+                onClick={() => setStep(3)}
                 className="btn-primary"
                 style={{ background: "rgb(76, 81, 191)", color: "#fff" }}
               >
@@ -104,8 +140,8 @@ const Onboarding = () => {
           {/* Third Modal */}
 
           <Modal
-            onClose={() => setThirdOpen(false)}
-            open={thirdOpen}
+            onClose={() => setOpen(false)}
+            open={step === 3}
             size="small"
             dimmer={false}
             style={{ width: "550px", height: "339px" }}
@@ -130,14 +166,13 @@ const Onboarding = () => {
                 icon="angle left"
                 content="Previous"
                 onClick={() => {
-                  setSecondOpen(true);
-                  setThirdOpen(false);
+                  setStep(2)
                 }}
               />
               <Link to="/home">
                 <Button
                   onClick={() => {
-                    setThirdOpen(true);
+                    setStep(-1);
                   }}
                   className="btn-primary"
                   style={{ background: "rgb(76, 81, 191)", color: "#fff" }}
@@ -148,14 +183,14 @@ const Onboarding = () => {
               </Link>
             </Modal.Actions>
           </Modal>
-        </Modal>
+    
 
         {/* ************************** */}
         <DashboardContainer>
           <h1 className="welcome-heading">Welcome to Signchain</h1>
 
           <div className="select-actions">
-            <div className="box-1" onClick={() => setFirstOpen(true)}>
+            <div className="box-1" onClick={() => setStep(0)}>
               <div className="icon">
                 <img src={Sign} alt="" srcset="" />
               </div>
