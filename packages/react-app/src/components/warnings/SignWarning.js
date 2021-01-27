@@ -4,7 +4,7 @@ import { Button, Header, Icon, Modal } from "semantic-ui-react";
 
 function SignWarning({ sign, setSign }) {
   return (
-    <Modal closeIcon open={open} onClose={() => setSign(false)} onOpen={() => setSign(true)}>
+    <Modal closeIcon open={true} onClose={() => setSign(false)} onOpen={() => setSign(true)}>
       <Header icon="warning sign" content="OOPS" />
       <Modal.Content>
         <p>There was an error while Signing. Do you want to Sign Again?</p>
