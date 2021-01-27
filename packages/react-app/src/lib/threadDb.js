@@ -208,23 +208,7 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
         //console.log("Notary Result",res)
     }
 
-    //store document
     const threadId = ThreadID.fromBytes(threadDb)
-    if(res){
-    const docId = await client.create(threadId, 'Document', [{
-        title: title,
-        createdBy: {
-            name:caller.name,
-            address: caller.address,
-            did: caller.did
-        },
-        documentHash: fileHash.toString("hex"),
-        fileLocation: fileLocation,
-        fileName: fileName,
-        key: encryptedKeys,
-        notaryStatus: notaryStatus,
-        sharedTo: sharedParty
-    }])
 
     //store signature
     const date = new Date()
@@ -236,6 +220,24 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
             timestamp: date.toDateString(),
             nonce: signature[0]
         }]
+    }])
+
+    //store document
+    if(res){
+    const docId = await client.create(threadId, 'Document', [{
+        title: title,
+        createdBy: {
+            name:caller.name,
+            address: caller.address,
+            did: caller.did
+        },
+        signatureId: signatureID[0],
+        documentHash: fileHash.toString("hex"),
+        fileLocation: fileLocation,
+        fileName: fileName,
+        key: encryptedKeys,
+        notaryStatus: notaryStatus,
+        sharedTo: sharedParty
     }])
 
     //metadata
@@ -348,6 +350,16 @@ export const getAllFile = async function( loggedUserKey ){
         result.push(value)
     }
     return result
+}
+
+export const getDocumentByHash = async function(docHash) {
+
+    const {threadDb, client} = await getCredentials()
+    const threadId = ThreadID.fromBytes(threadDb)
+    const query = new Where('documentHash').eq(docHash)
+    const result = await client.find(threadId, 'Document', query)
+    return result
+
 }
 
 export const getSingleDocument = async function(address, tx, writeContracts, documentId, signatureId){
