@@ -34,6 +34,7 @@ export const DashboardContainer = styled.div`
     box-sizing: border-box;
     border-radius: 3px;
     text-align: center;
+    margin: inherit !important;
     justify-content: center;
   }
 

@@ -2,7 +2,6 @@
 const AWS = require('aws-sdk')
 const fleekStorage = require('@fleekhq/fleek-storage-js')
 const wallet = require('wallet-besu')
-const fileDownload = require('js-file-download')
 const e2e = require('./e2e-encrypt.js')
 const ethers = require('ethers')
 
@@ -17,42 +16,12 @@ let s3 = new AWS.S3();
 const fleekApiKey = "U/J0JJhTWcX8bdzzkEaNAw=="
 const fleekApiSecret = "7G3ATZE3xJ4X0PaZ0bRuGfdRbR56/BUYzIEtD9+QJP0="
 
-//Not using
-export const registerUser = async function(name, email, privateKey, userType, tx, writeContracts){
-    try {
-        let publicKey = e2e.getPublicKey(privateKey)
-        publicKey = publicKey.toString("hex")
-        const result = await tx(writeContracts.Signchain.registerUser(
-            name, email, publicKey, userType
-        ))
-
-        return true
-    }catch(err){
-        throw err
-    }
-}
-
 export const createWallet = async function(password){
     return await wallet.create(password,"orion key1")
 }
 
 export const getAllAccounts = async function(password){
     return await wallet.login(password)
-}
-
-//Not using
-export const loginUser = async function(privateKey, tx, writeContracts){
-    try {
-        let publicKey = e2e.getPublicKey(privateKey)
-        publicKey = publicKey.toString("hex")
-        const result = await tx(writeContracts.Signchain.updatePublicKey(
-            publicKey
-        ))
-
-        return true
-    }catch (err) {
-        throw err
-    }
 }
 
 export const getAllUsers = async function(loggedUser, tx, writeContracts){
@@ -85,12 +54,11 @@ export const getAllUsers = async function(loggedUser, tx, writeContracts){
     catch(err) {
         console.log(err)
     }
-    const userDetails = {
-        userArray:userArray,
+    return {
+        userArray: userArray,
         notaryArray: notaryArray,
-        caller:caller
+        caller: caller
     }
-    return userDetails
 }
 
 const storeFileFleek = async (fileName,encryptedData)=>{
@@ -248,119 +216,6 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
     }
 }
 
-// Not using
-export const getAllFile = async function(tx, writeContracts, address){
-    const documents = await tx(writeContracts.Signchain.getAllDocument())
-    let result = []
-    for (let i=0;i<documents.length;i++){
-        const hash = documents[i];
-        const signDetails = await tx(writeContracts.Signchain.getSignedDocuments(hash))
-        const notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
-        let signStatus = true
-        let partySigned = false
-        if (signDetails.signers.length !== signDetails.signatures.length){
-            const array = signDetails.signatures.filter((item) => item[0]===address.toString())
-            if (array.length===1){
-                partySigned = true
-            }
-            signStatus = false;
-        }else{
-            signStatus = true
-            partySigned = true
-        }
-        let value = {
-            hash: hash,
-            title: signDetails.title,
-            timestamp: parseInt(signDetails.timestamp) * 1000,
-            signStatus: signStatus,
-            signers: signDetails.signers,
-            signatures: signDetails.signatures,
-            owner: signDetails.owner,
-            partySigned: partySigned,
-            notary: notaryInfo.notaryAddress,
-            notarySigned: notaryInfo.notarized
-        }
-        result.push(value)
-    }
-    return result
-}
-
-//Change it in verify.js
-export const getFile = async function(tx, writeContracts, address, docHash){
-
-        const signDetails = await tx(writeContracts.Signchain.getSignedDocuments(docHash))
-        if (!signDetails.signers.length)
-          return false
-        const notaryInfo = await getNotaryInfo(docHash, tx, writeContracts)
-        let signStatus = true
-        let partySigned = false
-        if (signDetails.signers.length !== signDetails.signatures.length){
-            const array = signDetails.signatures.filter((item) => item[0]===address.toString())
-            if (array.length===1){
-                partySigned = true
-            }
-            signStatus = false;
-        }else{
-            signStatus = true
-            partySigned = true
-        }
-        let result = {
-            hash: docHash,
-            title: signDetails.title,
-            timestamp: parseInt(signDetails.timestamp) * 1000,
-            signStatus: signStatus,
-            owner: signDetails.owner,
-            signers: signDetails.signers,
-            partySigned: partySigned,
-            notary: notaryInfo.notaryAddress,
-            notarySigned: notaryInfo.notarized
-        }
-
-    return result
-}
-
-//not using
-export const registerDoc = async function(party, fileHash, cipherKey, title, fileKey, setSubmitting, tx,
-    writeContracts, signer, notary){
-
-    let encryptedKeys=[]
-    let userAddress=[]
-
-    setSubmitting(true)
-
-    //const cipherKey = await e2e.generateCipherKey(password)
-
-    const signature = await signDocument(fileHash, tx, writeContracts , signer)
-
-    for (let i=0;i<party.length;i++){
-        let aesEncKey = await e2e.encryptKey(Buffer.from(party[i].key,"hex"), cipherKey)
-        let storeKey = {
-            iv: aesEncKey.iv.toString("hex"),
-            ephemPublicKey: aesEncKey.ephemPublicKey.toString("hex"),
-            ciphertext: aesEncKey.ciphertext.toString("hex"),
-            mac: aesEncKey.mac.toString("hex")
-        }
-        encryptedKeys.push(JSON.stringify(storeKey))
-        userAddress.push(party[i].address)
-    }
-
-    tx(writeContracts.Signchain.signAndShareDocument(
-        fileHash,
-        title,
-        fileKey,
-        encryptedKeys,
-        userAddress,
-        userAddress,
-        signature[0],
-        signature[1],
-        notary ? notary.address : '0x0000000000000000000000000000000000000000',
-        {value: ethers.utils.parseUnits(notary ? "0.1" : "0", "ether")}
-    )).then((receipt) => {
-        setSubmitting(false)
-    })
-
-}
-
 export const uploadDoc = async function(file, password, setSubmitting, storageType, setFileInfo){
 
     console.log("Storage type:", storageType)
@@ -404,71 +259,9 @@ export const uploadDoc = async function(file, password, setSubmitting, storageTy
     return {cipherKey: cipherKey}
 }
 
-
-//not using
-export const downloadFile = async function (name, docHash,password, tx, writeContracts){
-
-    let cipherKey = await tx(writeContracts.Signchain.getCipherKey(docHash))
-
-    cipherKey = JSON.parse(cipherKey)
-    const document = await tx(writeContracts.Signchain.getDocument(docHash))
-    let encryptedKey = {
-        iv: Buffer.from(cipherKey.iv,"hex"),
-        ephemPublicKey: Buffer.from(cipherKey.ephemPublicKey,"hex"),
-        ciphertext: Buffer.from(cipherKey.ciphertext,"hex"),
-        mac: Buffer.from(cipherKey.mac,"hex")
-    }
-
-    const privateKey = await wallet.login(password);
-    const decryptedKey = await e2e.decryptKey(privateKey[0],encryptedKey)
-    const documentHash = document.documentHash
-    let documentLocation = document.documentLocation
-
-    const fileSplit= documentLocation.split(".")
-    const fileFormat = fileSplit[fileSplit.length - 1]
-    const storageType = fileSplit[fileSplit.length - 2]
-
-
-    return new Promise((resolve)=>{
-        if (storageType==="AWS") {
-            getFileAWS(documentLocation).then((encryptedFile) => {
-                e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
-                    const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
-                    fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
-                    resolve(true)
-                })
-            })
-        }else if (storageType==="Fleek"){
-            getFileFleek(documentLocation).then((encryptedFile) => {
-
-                e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
-                    const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
-                    fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
-                    resolve(true)
-                })
-            })
-        }else {
-            documentLocation = documentLocation.slice(0, documentLocation.lastIndexOf("."))
-
-            getFileSlate(documentLocation).then((encryptedFile) => {
-
-                e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
-                    const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
-                    fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
-                    resolve(true)
-                })
-            })
-        }
-    })
-}
-
 const signDocument = async function (fileHash, tx, writeContracts , signer){
-
-
     const selfAddress = await signer.getAddress()
     const replayNonce = await tx(writeContracts.Signchain.replayNonce(selfAddress))
-
-
     const params = [
       ["bytes32", "uint"],
       [
@@ -476,7 +269,6 @@ const signDocument = async function (fileHash, tx, writeContracts , signer){
           replayNonce
       ]
   ];
-
   const paramsHash = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(...params));
   return [replayNonce, await signer.signMessage(ethers.utils.arrayify(paramsHash))]
 
@@ -504,14 +296,4 @@ export const notarizeDoc = async function(fileHash, tx, writeContracts , signer)
     ))
 
     return true
-}
-
-export const getNotaryInfo = async function(fileHash, tx, writeContracts) {
-
-    const notaryDetails = await tx(writeContracts.Signchain.notarizedDocs(
-        fileHash))
-
-    return notaryDetails
-
-
 }

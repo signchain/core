@@ -1,15 +1,15 @@
 /* eslint-disable */
 
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import "antd/dist/antd.css";
 import "./stepper.css";
-import { Steps, message } from "antd";
-import { Grid, Image, Button } from "semantic-ui-react";
+import {Steps} from "antd";
+import {Button, Grid} from "semantic-ui-react";
 import SelectFiles from "./SelectFiles";
 import SelectParties from "./SelectParties";
 import Preview from "./Preview";
-import { getAllUsers, registerDoc } from "../../lib/threadDb";
-import { sendMail } from "../../lib/notifications";
+import {getAllUsers, registerDoc} from "../../lib/threadDb";
+import {sendMail} from "../../lib/notifications";
 import DocumentSubmitPopup from "../warnings/DocumentSubmitPopup";
 import StepSignError from "../warnings/StepSignError";
 

@@ -1,13 +1,14 @@
 // /* eslint-disable */
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 
-import { Row, Col } from "antd";
-import { UserOutlined, MailOutlined, FieldTimeOutlined } from "@ant-design/icons";
-import { definitions } from "../ceramic/config.json";
+import {Col, Row} from "antd";
+import {FieldTimeOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
+import {definitions} from "../ceramic/config.json";
 
-import { Loader, Icon, Header, Segment } from "semantic-ui-react";
+import {Header, Icon, Loader, Segment} from "semantic-ui-react";
 // import { Form, Input, Button, Checkbox } from "antd";
 import "./Profile.css";
+
 const index = require("../lib/e2ee.js");
 
 const UserProfiles = props => {

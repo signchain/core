@@ -1,8 +1,8 @@
 /* eslint-disable */
 
-import React, { useState, useEffect } from "react";
+import React, {useState} from "react";
 import "./SlectParties.css";
-import { Dropdown, Checkbox, Input, Icon } from "semantic-ui-react";
+import {Checkbox, Dropdown, Icon, Input} from "semantic-ui-react";
 import jenny from "../../images/jenny.jpg";
 
 const SelectParties = ({ users, parties, notaries, setParties, setCC, setDocNotary }) => {

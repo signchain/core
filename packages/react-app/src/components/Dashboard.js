@@ -1,6 +1,6 @@
 import React from "react";
 import { Label, Segment } from "semantic-ui-react";
-import "./Dashboard.css";
+
 import Secure from "../images/icons/secureDocs.svg";
 import Sign from "../images/icons/signDocs.svg";
 import Verify from "../images/icons/VerifyDocs.svg";

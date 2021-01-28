@@ -1,5 +1,5 @@
 import React from "react";
-import { WarningNote, Success } from "../styles/DocumentDetails.Style";
+import {Success, WarningNote} from "../styles/DocumentDetails.Style";
 
 export function WarningStatus() {
   return (
