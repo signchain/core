@@ -186,8 +186,7 @@ function App() {
                   blockExplorer={blockExplorer}
               >
                   <Route exact path="/" render={(props)=><Onboarding/>}/>
-                   {/* testing purpose- remove this while merging */}
-                <Route exact path="/warning" render={(props)=><WarningPopup/>}/>
+                
                 <Route exact path="/documents/:doc/:sig" render={(props)=>
                   <DocumentDetails
                     {...props}
@@ -216,16 +215,7 @@ function App() {
                     idx={idx}
                     identity = {identity}
                />}/>
-                {/* <Route exact path="/" render={(props) => 
-               <Dashboard
-                    address={address}
-                    tx={tx}
-                    writeContracts={writeContracts}
-                    userStatus={userStatus}
-                    authStatus={authStatus}
-                    idx={idx}
-                    identity = {identity}
-               />}/> */}
+               
                <Route exact path="/verify" render={(props) =>
                    <Verify
                        address={address}

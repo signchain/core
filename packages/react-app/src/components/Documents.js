@@ -1,15 +1,15 @@
 /* eslint-disable */
-import React, {useEffect, useState} from "react";
-import {Button, Header, Icon, Loader, Segment} from "semantic-ui-react";
-import {getAllFile} from "../lib/threadDb";
-import {Link} from "react-router-dom";
-// import { DetailsContainer, DetailsCard, DocsTitle } from "./styles/DocumentDetails.Style";
-import {Actions, DetailsCard, DetailsContainer, DocsTitle, MetaInfo} from "./styles/DocumentList.styles";
+import React, { useEffect, useState } from "react";
+import { Button, Header, Icon, Loader, Segment } from "semantic-ui-react";
+import { getAllFile } from "../lib/threadDb";
+import { Link } from "react-router-dom";
+
+import { Actions, DetailsCard, DetailsContainer, DocsTitle, MetaInfo } from "./styles/DocumentList.styles";
 import File from "./../images/icons/Files.svg";
 import LogoAvatar from "./../images/icons/logoavatar.svg";
 import Download from "./../images/icons/Download.svg";
 
-import {Collapse} from "antd";
+import { Collapse } from "antd";
 
 const { Panel } = Collapse;
 

@@ -1,11 +1,11 @@
 import React from "react";
-import {Label, Segment} from "semantic-ui-react";
-import "./Dashboard.css";
+import { Label, Segment } from "semantic-ui-react";
+
 import Secure from "../images/icons/secureDocs.svg";
 import Sign from "../images/icons/signDocs.svg";
 import Verify from "../images/icons/VerifyDocs.svg";
-import {Link} from "react-router-dom";
-import {DashboardContainer} from "./styles/Dashboard.Styles";
+import { Link } from "react-router-dom";
+import { DashboardContainer } from "./styles/Dashboard.Styles";
 
 const Dashboard = props => {
   return (
