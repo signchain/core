@@ -1,17 +1,15 @@
 /* eslint-disable */
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import "./Form.css";
-import { Checkbox } from "semantic-ui-react";
-import { Button } from "antd";
-import { Link, useHistory } from "react-router-dom";
+import {Checkbox} from "semantic-ui-react";
+import {Button} from "antd";
+import {Link, useHistory} from "react-router-dom";
 import logo from "../../images/logoInverted.png";
+import {loginUserWithChallenge, registerNewUser} from "../../lib/threadDb";
+// import { createDefinition } from "@ceramicstudio/idx-tools";
+import test from "./img/test.png";
 
 const index = require("../../lib/e2ee.js");
-import { loginUserWithChallenge, registerNewUser} from "../../lib/threadDb";
-import { definitions } from "../../ceramic/config.json";
-// import { createDefinition } from "@ceramicstudio/idx-tools";
-
-import test from "./img/test.png";
 
 function SignUpForm({ address,writeContracts, tx, ceramic, idx, setup, identity }) {
   let history = useHistory();

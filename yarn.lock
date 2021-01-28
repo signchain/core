@@ -1199,15 +1199,16 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@ceramicnetwork/3id-did-resolver@^0.6.7":
-  version "0.6.7"
-  resolved "https://registry.yarnpkg.com/@ceramicnetwork/3id-did-resolver/-/3id-did-resolver-0.6.7.tgz#9a6fd3b3abcb75d08dd21f88dc5ef4d92921c99d"
-  integrity sha512-AQodHN5OK5UbKKi2pMsgwEK5/N4sG+ayin3BDSNVTpP5OJEllj7inNlKuH7LfCUMphwJTX6SULIaZtHex9j+sg==
+"@ceramicnetwork/3id-did-resolver@^0.6.9":
+  version "0.6.9"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/3id-did-resolver/-/3id-did-resolver-0.6.9.tgz#09db1307195c8893d1b20a59a6cfeee529dca056"
+  integrity sha512-XD4DVZFq3Y7uUUcbdiSV3LBsX37JgqB9CVYeN72VMZxwqTJphFN5iS0iBUTsaf/dM37YjuAY4d/RSPcdgPObiA==
   dependencies:
-    "@ceramicnetwork/common" "^0.15.7"
+    "@ceramicnetwork/common" "^0.15.8"
     "@ceramicnetwork/docid" "^0.4.5"
     cids "1.0.2"
     cross-fetch "^3.0.6"
+    lru_map "^0.4.1"
     uint8arrays "^1.1.0"
 
 "@ceramicnetwork/ceramic-common@^0.10.1":
@@ -1268,10 +1269,10 @@
     dids "^0.6.2"
     lodash.clonedeep "^4.5.0"
 
-"@ceramicnetwork/common@^0.15.7":
-  version "0.15.7"
-  resolved "https://registry.yarnpkg.com/@ceramicnetwork/common/-/common-0.15.7.tgz#4195d109489037f6642f4fefac89f72763802a34"
-  integrity sha512-7TSOFiTvvM/eFeT671og6ihbiYzlUPIA6DCzAuQHjN2Nme+o5+oiLZaFqwYvpytz0ISs/1jXSUsFfkQEkilphw==
+"@ceramicnetwork/common@^0.15.8":
+  version "0.15.8"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/common/-/common-0.15.8.tgz#bcdecad357a6ed82dc965b087107039d8f28a3ec"
+  integrity sha512-aBfO4sFCW8Y+EZTr89Vd2YQQ4fdOVWSZmzUzEjB+ptPqOBkUDCL7E8kE4QOgPJ+BVgpDK3bhSu4Uo6PJzWgx6g==
   dependencies:
     "@ceramicnetwork/docid" "^0.4.5"
     cids "1.0.2"
@@ -1294,21 +1295,21 @@
     uint8arrays "^1.1.0"
     varint "^6.0.0"
 
-"@ceramicnetwork/doctype-caip10-link@^0.12.9":
-  version "0.12.9"
-  resolved "https://registry.yarnpkg.com/@ceramicnetwork/doctype-caip10-link/-/doctype-caip10-link-0.12.9.tgz#150e3ebbd37bb4bce3216b3ee894c41f356b2ba0"
-  integrity sha512-o/y+mLgXAkAx6qp8m0RhndnrBP5amPGohbM9QRJ3ltyTUcfewbBBglBzIHYdKSy2XUZGGJG6GLZ+JMMMN5+Sig==
+"@ceramicnetwork/doctype-caip10-link@^0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/doctype-caip10-link/-/doctype-caip10-link-0.13.1.tgz#2837b09a5471d93122ac823c20dde1ce3c039d5c"
+  integrity sha512-fTs++d1VZF4Lo4xKGQnDPdI58yISe2wtWIeqpPvA89x0UQCw4MrZUY0cQdxYZkZJJy4KTDNezBH7wqsmeEbS5A==
   dependencies:
-    "@ceramicnetwork/common" "^0.15.7"
+    "@ceramicnetwork/common" "^0.15.8"
     "@types/lodash.clonedeep" "^4.5.6"
     cids "1.0.2"
 
-"@ceramicnetwork/doctype-tile@^0.12.11":
-  version "0.12.11"
-  resolved "https://registry.yarnpkg.com/@ceramicnetwork/doctype-tile/-/doctype-tile-0.12.11.tgz#3e8cb8fdffc4720d32ffac2ac19e46a2ca10c8ea"
-  integrity sha512-2upsQigmdEegOy4wSsGvSCb9qFAWU3ej3nJGItLGVlxReuHbX2duRHvFFqM/4sBVLWXuLNfYGBkTlQkdh6JMGw==
+"@ceramicnetwork/doctype-tile@^0.13.2":
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/doctype-tile/-/doctype-tile-0.13.2.tgz#e60e13ace1f85a2bfb6381d8ec85746e331e4d09"
+  integrity sha512-e0CWVqNVordVXkP5XBx2o9Ujp4pQ253UdA+tQPsf2SRQt4Y+1D3aHVYU570gp8uCQM69Y2vuf4R/g2HzA9qNqA==
   dependencies:
-    "@ceramicnetwork/common" "^0.15.7"
+    "@ceramicnetwork/common" "^0.15.8"
     "@ethersproject/base64" "^5.0.2"
     "@ethersproject/random" "^5.0.2"
     base64url "^3.0.1"
@@ -1320,16 +1321,16 @@
     fast-json-stable-stringify "^2.1.0"
     lodash.clonedeep "^4.5.0"
 
-"@ceramicnetwork/http-client@^0.9.2":
-  version "0.9.2"
-  resolved "https://registry.yarnpkg.com/@ceramicnetwork/http-client/-/http-client-0.9.2.tgz#24fd7aa4fd407c24128f952d87bd2a6000954af9"
-  integrity sha512-yZ6k+hIhQGBIKARXjpjPstnbpwYw81MWhsi5Cp1WG1sjgxqqM7Zs9ByWKGQdOE4x623YDNS1iTewBU1RIxbKnQ==
+"@ceramicnetwork/http-client@^0.9.5":
+  version "0.9.5"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/http-client/-/http-client-0.9.5.tgz#fff867b8d7ceea6f0f28879fbfd2fdc1e7047a81"
+  integrity sha512-/MZHNwI2oFqM1MoxZkePo/TvPexuTvkk404PgmeWTcXKgXgGaE2D7Wu/js4Bu5MVr8JgiiOHbgI9sIU9CRJTEQ==
   dependencies:
-    "@ceramicnetwork/3id-did-resolver" "^0.6.7"
-    "@ceramicnetwork/common" "^0.15.7"
+    "@ceramicnetwork/3id-did-resolver" "^0.6.9"
+    "@ceramicnetwork/common" "^0.15.8"
     "@ceramicnetwork/docid" "^0.4.5"
-    "@ceramicnetwork/doctype-caip10-link" "^0.12.9"
-    "@ceramicnetwork/doctype-tile" "^0.12.11"
+    "@ceramicnetwork/doctype-caip10-link" "^0.13.1"
+    "@ceramicnetwork/doctype-tile" "^0.13.2"
     cids "1.0.2"
     cross-fetch "^3.0.6"
     did-resolver "^2.1.1"
@@ -1351,29 +1352,30 @@
   resolved "https://registry.yarnpkg.com/@ceramicstudio/idx-constants/-/idx-constants-0.2.1.tgz#cbddb0f90b8569e650ab90dd14f11a776a8088fc"
   integrity sha512-AIBaebBGDxyaO7mii6vMw8NffKMuWQXhSuqldn02cnX8BnHCvcZVjGjnf2JfPs1DBSIRO2rioof76k1FyMHGNg==
 
-"@ceramicstudio/idx-constants@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@ceramicstudio/idx-constants/-/idx-constants-0.5.1.tgz#380f2d520c910056c100a78ef248e7fc8088e89d"
-  integrity sha512-ePYqGOxJUegE0/K69SRGk27e0vSkGkSk+T9ozTByofakVPPCVBvcXTcIwgbKwLgvIXAGCUAKqmXcxgz5keXL/A==
+"@ceramicstudio/idx-constants@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@ceramicstudio/idx-constants/-/idx-constants-0.6.0.tgz#ac3faa69dd31d3fea8faa5183964a3216784073e"
+  integrity sha512-KpuYkaFdxlVU1h7JeqEyiOvcrQH1Rkg/7DIzNbKadoz3zU3fGijHBjd2yP1OeeZxbJttE5ifT/Cf39Q6oAIoOA==
 
-"@ceramicstudio/idx-tools@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@ceramicstudio/idx-tools/-/idx-tools-0.5.0.tgz#95d483560458557b9236392da5fcaa9c43b2f9b7"
-  integrity sha512-NANSFzPWnI2FtQHc1hBoeChaGfeoXnKLaGsi+OGmWCX8SLJKEVTT7S2+SIH6lb6LAaiJBQOzDyYEzjf6M2Wnxw==
+"@ceramicstudio/idx-tools@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@ceramicstudio/idx-tools/-/idx-tools-0.7.0.tgz#c0e600bb424d971e9a52325f3528923c400ca13a"
+  integrity sha512-fV5cc9vYU2rVMAphFwdDju5glxtNVc8K8th2bAmJYCplNk0wSokBTRRu8Knc3VTVxZgt75JSAXBw4iEoy+wOaA==
   dependencies:
-    "@ceramicstudio/idx-constants" "^0.5.1"
-    ajv "^6.12.6"
+    "@ceramicstudio/idx-constants" "^0.6.0"
+    ajv "^7.0.3"
+    ajv-formats "^1.5.1"
     change-case "^4.1.2"
     cids "~1.0.2"
     fast-deep-equal "^3.1.3"
-    uint8arrays "^1.1.0"
+    uint8arrays "^2.0.5"
 
-"@ceramicstudio/idx@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@ceramicstudio/idx/-/idx-0.6.0.tgz#31f3ceb0a3fee06334d77584e33b9048a7a70f04"
-  integrity sha512-m4P+ED3sFlmM8N1QIAR99QmWM18A5bIi4ABsrqciyOVh1kSyEfrL1zRz/Fmf79cZyajZZU6cArr2uO6b/PixBg==
+"@ceramicstudio/idx@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@ceramicstudio/idx/-/idx-0.7.0.tgz#111cbf1f9819a53aafa08fd79690647deed127f0"
+  integrity sha512-hF/6749rUZiQWmx4bszm9bE6zVocANbnw0ywwAFcYGSfUy57Qm9HH9RSf0Ya2RnrBdRSb1vSdt6Q+KdglWmmLw==
   dependencies:
-    "@ceramicstudio/idx-constants" "^0.5.1"
+    "@ceramicstudio/idx-constants" "^0.6.0"
     dataloader "^2.0.0"
 
 "@cnakazawa/watch@^1.0.3":
@@ -3719,12 +3721,19 @@ ajv-errors@^1.0.0:
   resolved "https://registry.yarnpkg.com/ajv-errors/-/ajv-errors-1.0.1.tgz#f35986aceb91afadec4102fbd85014950cefa64d"
   integrity sha512-DCRfO/4nQ+89p/RK43i8Ezd41EqdGIU4ld7nGF8OQ14oc/we5rEntLCUa7+jrn3nn83BosfwZA0wb4pon2o8iQ==
 
+ajv-formats@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/ajv-formats/-/ajv-formats-1.5.1.tgz#0f301b1b3846182f224cc563fc0a032daafb7dab"
+  integrity sha512-s1RBVF4HZd2UjGkb6t6uWoXjf6o7j7dXPQIL7vprcIT/67bTD6+5ocsU0UKShS2qWxueGDWuGfKHfOxHWrlTQg==
+  dependencies:
+    ajv "^7.0.0"
+
 ajv-keywords@^3.1.0, ajv-keywords@^3.4.1, ajv-keywords@^3.5.2:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-3.5.2.tgz#31f29da5ab6e00d1c2d329acf7b5929614d5014d"
   integrity sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==
 
-ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.3, ajv@^6.12.4, ajv@^6.12.6:
+ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.3, ajv@^6.12.4:
   version "6.12.6"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
   integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
@@ -3734,7 +3743,7 @@ ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.3, ajv@^6.12.4, ajv@^6.12.6:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ajv@^7.0.2:
+ajv@^7.0.0, ajv@^7.0.2, ajv@^7.0.3:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-7.0.3.tgz#13ae747eff125cafb230ac504b2406cf371eece2"
   integrity sha512-R50QRlXSxqXcQP5SvKUrw8VZeypvo12i2IX0EeR5PiZ7bEKeHWgzgo264LDadUsCU42lTJVhFikTqJwNeH34gQ==
@@ -10352,6 +10361,11 @@ internal-ip@^4.2.0:
     default-gateway "^4.2.0"
     ipaddr.js "^1.9.0"
 
+intro.js-react@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/intro.js-react/-/intro.js-react-0.3.0.tgz#d37e69beae9d732551c37050a739bd7330da3a57"
+  integrity sha512-9rIAZ4k1eh2J06XNWIg43RnG1GmFuCtpnTpf0u4lGW7X4ARh+ZjDVh/r2P8SO45+QOhYi45hy+ql2ASLOe6HoA==
+
 invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
@@ -12891,7 +12905,7 @@ mock-local-storage@^1.1.15:
     core-js "^0.8.3"
     global "^4.3.2"
 
-moment@^2.24.0, moment@^2.25.3:
+moment@^2.24.0, moment@^2.25.3, moment@^2.29.1:
   version "2.29.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
@@ -15690,6 +15704,11 @@ react-error-overlay@^6.0.3:
   version "6.0.8"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.8.tgz#474ed11d04fc6bda3af643447d85e9127ed6b5de"
   integrity sha512-HvPuUQnLp5H7TouGq3kzBeioJmXms1wHy9EGjz2OURWBp4qZO6AfGEcnxts1D/CbwPLRAgTMPCEgYhA3sEM4vw==
+
+react-icons@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.1.0.tgz#9ca9bcbf2e3aee8e86e378bb9d465842947bbfc3"
+  integrity sha512-FCXBg1JbbR0vWALXIxmFAfozHdVIJmmwCD81Jk0EKOt7Ax4AdBNcaRkWhR0NaKy9ugJgoY3fFvo0PHpte55pXg==
 
 react-is@^16.12.0, react-is@^16.6.0, react-is@^16.6.3, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
   version "16.13.1"

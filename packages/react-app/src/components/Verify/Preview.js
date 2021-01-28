@@ -1,13 +1,11 @@
 /* eslint-disable */
 
 import React, {useEffect} from "react";
-import { Button } from 'antd';
-import { Header, Icon, Loader, Segment, Table } from 'semantic-ui-react'
+import {Button} from 'antd';
+import {Header, Icon, Loader, Segment} from 'semantic-ui-react'
 import "./Preview.css";
 
-import {
-  getDocumentByHash
-} from "../../lib/threadDb";
+import {getDocumentByHash} from "../../lib/threadDb";
 
 
 const Preview = ({ submitting, setSubmitting, fileHash }) => {

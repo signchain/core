@@ -1,6 +1,6 @@
 /* eslint-disable */
-import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import React, {useState} from "react";
+import {Link, useHistory} from "react-router-dom";
 import {getLoginUser, loginUserWithChallenge} from "../../lib/threadDb";
 import wallet from 'wallet-besu'
 import test from "./img/test.png";

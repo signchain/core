@@ -1,6 +1,6 @@
 import React from "react";
 import "./SignInWarning.css";
-import { Button } from "antd";
+import {Button} from "antd";
 import Lock from "../../images/Lock.svg";
 
 function SignInWarning() {

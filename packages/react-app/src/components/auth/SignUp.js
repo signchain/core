@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Button, Checkbox, Form, Modal, Message, Input } from "semantic-ui-react";
-import { Link, useHistory } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {Button, Checkbox, Form, Input, Message, Modal} from "semantic-ui-react";
 import logo from "../../images/logoInverted.png";
-import { definitions } from "../../ceramic/config.json";
-import { FormContainer } from "../styles/SignUp.Styles";
+import {definitions} from "../../ceramic/config.json";
+import {FormContainer} from "../styles/SignUp.Styles";
+import {loginUserWithChallenge, registerNewUser} from "../../lib/threadDb";
 
-import { loginUserWithChallenge, registerNewUser } from "../../lib/threadDb";
 const index = require("../../lib/e2ee.js");
 const moment = require("moment");
 
-function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx, seed }) {
+function SignUp({ authStatus, setUserStatus, identity, address, idx, seed }) {
   const [open, setOpen] = useState(true);
 
   const [name, setName] = useState("");
@@ -20,7 +19,6 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
   const SignupStatus = { preInit: 0, init: 1, wallet: 2, ceramic: 3, contract: 4 };
   const [signupStatus, setSignupStatus] = useState(SignupStatus.preInit);
   const userType = { party: 0, notary: 1 };
-  let history = useHistory();
 
   useEffect(() => {
     async function getUserData() {

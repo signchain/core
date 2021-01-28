@@ -1,4 +1,3 @@
-import {definitions} from "../ceramic/config.json"
 const e2e = require('./e2e-encrypt.js')
 const e2ee = require('./e2ee.js')
 const fileDownload = require('js-file-download')
@@ -29,7 +28,7 @@ export const registerNewUser = async function(did, name, email, privateKey, user
         const query1 = new Where('email').eq(email).or(query)
         const result = await client.find(threadId, 'RegisterUser', query1)
         if (result.length<1){
-            const status = await client.create(threadId, 'RegisterUser', [data])
+            await client.create(threadId, 'RegisterUser', [data])
             localStorage.setItem("USER", JSON.stringify(data))
             localStorage.setItem("password", "12345");
             return true
@@ -317,9 +316,9 @@ export const attachSignature = async function(documentId, signer, caller, fileHa
 }
 
 export const notarizeDoc = async function(docId, fileHash, tx, writeContracts , signer, caller){
-    const signature = await attachSignature(docId, signer, caller, fileHash)
+    await attachSignature(docId, signer, caller, fileHash)
     //console.log("Signature added!!")
-    const result = await tx(writeContracts.Signchain.notarizeDoc(fileHash))
+    await tx(writeContracts.Signchain.notarizeDoc(fileHash))
     return true
 }
 
@@ -357,8 +356,7 @@ export const getDocumentByHash = async function(docHash) {
     const {threadDb, client} = await getCredentials()
     const threadId = ThreadID.fromBytes(threadDb)
     const query = new Where('documentHash').eq(docHash)
-    const result = await client.find(threadId, 'Document', query)
-    return result
+    return await client.find(threadId, 'Document', query)
 
 }
 
@@ -453,7 +451,7 @@ export const downloadFiles = async function (name, key, loggedUser,documentLocat
         if (storageType==="AWS") {
             e2ee.getFileAWS(documentLocation).then((encryptedFile) => {
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
-                    const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
+                    const fileHash = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
                     fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
                     resolve(true)
                 })
@@ -461,7 +459,7 @@ export const downloadFiles = async function (name, key, loggedUser,documentLocat
         }else if (storageType==="FLEEK"){
             e2ee.getFileFleek(documentLocation).then((encryptedFile) => {
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
-                    const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
+                    const fileHash = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
                     fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
                     resolve(true)
                 })
@@ -470,7 +468,7 @@ export const downloadFiles = async function (name, key, loggedUser,documentLocat
             documentLocation = documentLocation.slice(0, documentLocation.lastIndexOf("."))
             e2ee.getFileSlate(documentLocation).then((encryptedFile) => {
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
-                    const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
+                    const fileHash = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
                     fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
                     resolve(true)
                 })

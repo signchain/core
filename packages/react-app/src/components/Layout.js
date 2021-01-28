@@ -1,12 +1,9 @@
 /* eslint-disable */
-import React, { Component } from "react";
-import { useHistory } from "react-router-dom";
-import MainHeader from "./Navigation/HeaderSem";
-import SidePannel from "./Navigation/SidePannel";
-import TopNav from "./Navigation/TopNav";
+import React from "react";
+import {useHistory} from "react-router-dom";
 import "antd/dist/antd.css";
 import "./Layout.css";
-import { Layout } from "antd";
+import {Layout} from "antd";
 
 const { Content } = Layout;
 

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Button, Icon, Image, Modal } from "semantic-ui-react";
+import React from "react";
+import {Button, Modal} from "semantic-ui-react";
 
-import { SignInWarningContainer } from "../styles/WarningPopup.Styles";
+import {SignInWarningContainer} from "../styles/WarningPopup.Styles";
 import Success from "../../images/icons/success.svg";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 function SignSuccessPopUp({ setOpen, open, setSignedStatus }) {
   return (
