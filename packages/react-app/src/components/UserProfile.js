@@ -38,7 +38,7 @@ const UserProfiles = props => {
     getUserData();
   }, [props.idx]);
 
-  return userLoading ? (
+  return !userLoading ? (
     user ?
     <>
       <Row>

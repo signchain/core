@@ -163,11 +163,10 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     let userAddress=[]
     let sharedParty = []
     let notaryStatus = false
-
+    let res = true                                  
     const { fileHash, fileLocation, fileName, cipherKey } = fileInfo
     setSubmitting(true)
     const signature = await signDocument(fileHash, signer, caller.nonce)
-
     //prepare encrypted aes key for every user
     for (let i=0;i<party.length;i++){
         let aesEncKey = await e2e.encryptKey(Buffer.from(party[i].key,"hex"), cipherKey)
@@ -198,29 +197,18 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     //get notary
     if(notary!==null){
         notaryStatus = true
-        const res = await tx(writeContracts.Signchain.saveNotarizeDoc(
+        const notaryRes = await tx(writeContracts.Signchain.saveNotarizeDoc(
           fileHash,
           notary.address,
           {value: ethers.utils.parseUnits(notary ? "0.1" : "0", "ether")}
         ))
+        if(notaryRes === undefined){
+            res = false
+        }
+        //console.log("Notary Result",res)
     }
 
-    //store document
     const threadId = ThreadID.fromBytes(threadDb)
-    const docId = await client.create(threadId, 'Document', [{
-        title: title,
-        createdBy: {
-            name:caller.name,
-            address: caller.address,
-            did: caller.did
-        },
-        documentHash: fileHash.toString("hex"),
-        fileLocation: fileLocation,
-        fileName: fileName,
-        key: encryptedKeys,
-        notaryStatus: notaryStatus,
-        sharedTo: sharedParty
-    }])
 
     //store signature
     const date = new Date()
@@ -232,6 +220,24 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
             timestamp: date.toDateString(),
             nonce: signature[0]
         }]
+    }])
+
+    //store document
+    if(res){
+    const docId = await client.create(threadId, 'Document', [{
+        title: title,
+        createdBy: {
+            name:caller.name,
+            address: caller.address,
+            did: caller.did
+        },
+        signatureId: signatureID[0],
+        documentHash: fileHash.toString("hex"),
+        fileLocation: fileLocation,
+        fileName: fileName,
+        key: encryptedKeys,
+        notaryStatus: notaryStatus,
+        sharedTo: sharedParty
     }])
 
     //metadata
@@ -266,6 +272,13 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
     console.log("File uploaded!!!")
     setSubmitting(false)
     return {docId, signatureID}
+    }else{
+        setSubmitting(false)
+        return {
+            docId: null,
+            signatureID: null
+        }
+    }
 }
 
 const signDocument = async function (fileHash, signer, replayNonce){
@@ -286,6 +299,7 @@ export const attachSignature = async function(documentId, signer, caller, fileHa
     const signature = await signDocument(fileHash, signer, caller.nonce)
     //verify signature contract call
     const signStatus = await client.findByID(threadId, 'SignatureDetails', signatureId[0].signatureId)
+    //console.log("Signature", signature)
     const date = new Date()
     signStatus.signature.push({
         signer: caller.address,
@@ -294,17 +308,17 @@ export const attachSignature = async function(documentId, signer, caller, fileHa
         nonce: signature[0]
     })
     await client.save(threadId,'SignatureDetails',[signStatus])
-    console.log("Updated signature!!")
+   // console.log("Updated signature!!")
 
     user[0].nonce = user[0].nonce+1
     await client.save(threadId,'RegisterUser',[user[0]])
-    console.log("Updated Nonce!!:")
+    //console.log("Updated Nonce!!:")
     return true
 }
 
 export const notarizeDoc = async function(docId, fileHash, tx, writeContracts , signer, caller){
     const signature = await attachSignature(docId, signer, caller, fileHash)
-    console.log("Signature added!!")
+    //console.log("Signature added!!")
     const result = await tx(writeContracts.Signchain.notarizeDoc(fileHash))
     return true
 }
@@ -338,14 +352,22 @@ export const getAllFile = async function( loggedUserKey ){
     return result
 }
 
+export const getDocumentByHash = async function(docHash) {
+
+    const {threadDb, client} = await getCredentials()
+    const threadId = ThreadID.fromBytes(threadDb)
+    const query = new Where('documentHash').eq(docHash)
+    const result = await client.find(threadId, 'Document', query)
+    return result
+
+}
+
 export const getSingleDocument = async function(address, tx, writeContracts, documentId, signatureId){
     const {threadDb, client} = await getCredentials()
     const threadId = ThreadID.fromBytes(threadDb)
     const document = await client.findByID(threadId, 'Document', documentId)
-    console.log(document)
     const hash = document.documentHash
     const signDetails = await client.findByID(threadId, 'SignatureDetails', signatureId)
-    console.log(signDetails)
 
     let signStatus = false
     let partySigned = false
@@ -365,7 +387,6 @@ export const getSingleDocument = async function(address, tx, writeContracts, doc
     for (let i=0;i<counterParty.length;i++){
 
         const signature = signDetails.signature.filter((item) => item.signer === counterParty[i].address.toString())
-        console.log(signature)
         
         if (signature.length){
             counterParty[i].partySigned = true

@@ -41,6 +41,7 @@
     "eth-hooks": "^1.1.2",
     "ethers": "^5.0.24",
     "identity-wallet": "^2.0.0-alpha.13",
+    "intro.js-react": "^0.3.0",
     "js-file-download": "^0.4.12",
     "key-did-provider-ed25519": "^1.0.0",
     "moment": "^2.29.1",

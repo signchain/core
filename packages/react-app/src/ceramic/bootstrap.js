@@ -57,7 +57,12 @@ const Profile = {
 
 async function run() {
   // The seed must be provided as an environment variable
-  const seed = new Uint8Array(randomBytes(32));
+  const seed = new Uint8Array([
+    215, 180,  59, 150, 212,  97,  41, 111,
+     59,  43, 204, 161, 198, 141, 142,  44,
+    116,  61, 191,  43, 169,  10,  70, 196,
+     89,  64, 124, 199, 152, 207,  56,  65
+  ]);
   console.log("Created seed", seed);
   // Connect to the local Ceramic node
   const ceramic = new Ceramic(CERAMIC_URL);
@@ -77,8 +82,8 @@ async function run() {
     schema: profileSchema.commitId.toUrl(),
   });
 
-  await ceramic.pin.add(profileDefinition.id.toString());
-  
+  const res = await ceramic.pin.add(profileDefinition.id.toString());
+  console.log(res)
   // Write config to JSON file
   const config = {
     definitions: {

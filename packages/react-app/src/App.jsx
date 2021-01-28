@@ -11,21 +11,15 @@ import { useUserAddress } from "eth-hooks";
 import { useExchangePrice, useGasPrice, useContractLoader } from "./hooks";
 import { Transactor } from "./helpers";
 import wallet from 'wallet-besu'
-import {Account} from "./components";
 import {definitions} from "./ceramic/config.json"
 
-import Share from "./components/Share";
 import Dashboard from "./components/Dashboard";
 import Documents from "./components/Documents";
 import Profile from "./components/Profile";
 import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
 import Verify from './components/Verify/Verify'
-import Database from "./components/database/Database";
  import TopNav from './components/Navigation/TopNav'
- import SignUp from './components/auth/SignUp'
- import SignIn from './components/auth/SignIn'
- import SignDocs from './components/Verify/SignDocument'
  import UserProfiles from "./components/UserProfile";
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 import {generateSignature, getProvider} from "./lib/ceramicConnect"
@@ -35,10 +29,8 @@ import { BigNumber, providers, utils } from 'ethers'
 import Ceramic from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
 import { Ed25519Provider } from 'key-did-provider-ed25519'
-import {randomBytes} from 'crypto'
-import {fromString} from 'uint8arrays/from-string'
 import {PrivateKey} from "@textile/hub";
-
+import Onboarding from './components/Onboarding/Onboarding'
 import WarningPopup from './components/warnings/WarningPopup'
 import DocumentDetails from './components/Documents/DocumentDetails'
 
@@ -149,11 +141,13 @@ function App() {
 
     }, [ window.location.pathname ]);
 
+
   return (
       <div className="App">
 
         <HashRouter>
           <div className="App">
+            
             <TopNav
               address={address}
               localProvider={userProvider}
@@ -192,7 +186,7 @@ function App() {
                   logoutOfWeb3Modal={logoutOfWeb3Modal}
                   blockExplorer={blockExplorer}
               >
-                
+                  <Route exact path="/" render={(props)=><Onboarding/>}/>
                    {/* testing purpose- remove this while merging */}
                 <Route exact path="/warning" render={(props)=><WarningPopup/>}/>
                 <Route exact path="/documents/:doc/:sig" render={(props)=>
@@ -204,11 +198,6 @@ function App() {
                     userProvider={userProvider}
                     seed={seed}
                   />}/>
-                <Route exact path='/signuptest' render={(props)=><SignUp/>}/>
-                 <Route exact path='/signintest' render={(props)=><SignIn/>}/>
-                 <Route exact path='/sharedocs' render={(props)=><SignDocs/>}/>
-
-                {/* *************************** */}
                 <Route exact path="/sign" render={(props) =>
                     <Steps
                         address={address}
@@ -228,7 +217,7 @@ function App() {
                     idx={idx}
                     identity = {identity}
                />}/>
-                <Route exact path="/" render={(props) => 
+                {/* <Route exact path="/" render={(props) => 
                <Dashboard
                     address={address}
                     tx={tx}
@@ -237,7 +226,7 @@ function App() {
                     authStatus={authStatus}
                     idx={idx}
                     identity = {identity}
-               />}/>
+               />}/> */}
                <Route exact path="/verify" render={(props) =>
                    <Verify
                        address={address}

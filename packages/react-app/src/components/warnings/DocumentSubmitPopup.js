@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Icon, Image, Modal } from "semantic-ui-react";
+
 import { SignInWarningContainer } from "../styles/WarningPopup.Styles";
 import Success from "../../images/icons/success.svg";
 import { Link } from "react-router-dom";
@@ -29,7 +30,7 @@ function DocumentSubmitPopup({ setCurrent, setSubmitStatus }) {
                   In order to view shared documents click on VIEW button or click on SHARE MORE to share more documents.
                 </p>
               </div>
-              <div className="warning-btn">
+              <div style={{ marginTop: "18px" }} className="warning-btn">
                 <Link to="/documents">
                   <Button style={{ backgroundColor: "#4C51BF", color: "#fff" }} className="SignIn-btn">
                     VIEW

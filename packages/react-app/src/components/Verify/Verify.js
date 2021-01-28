@@ -2,12 +2,10 @@
 import React, {useEffect, useState} from 'react';
 import 'antd/dist/antd.css';
 import './verify.css';
-import { Steps, Button, message } from 'antd';
-import { Grid, Image } from 'semantic-ui-react'
+import { Steps } from 'antd';
+import { Grid, Button } from 'semantic-ui-react'
 import SelectFiles from './SelectFiles'
 import Preview from './Preview'
-
-const index = require('../../lib/e2ee.js')
 
 const { Step } = Steps;
 
@@ -18,47 +16,15 @@ const steps = [
   },
   {
     title: 'Verify Document',
-    content: (args) => {return <Preview submitting={args.submitting} docInfo = {args.docInfo}/>},
+    content: (args) => {return <Preview submitting={args.submitting} setSubmitting={args.setSubmitting} fileHash = {args.fileHash}/>},
   },
 ];
 
 const verify=(props)=> {
 
-  const [users, setUsers] = useState([])
-  const [signer, setSigner] = useState()
-  const [caller, setCaller] = useState({})
-  const [docInfo, setDocInfo] = useState([])
   const [submitting, setSubmitting] = useState(false)
-  const [fileHash, setFileHash] = useState("AWS")
+  const [fileHash, setFileHash] = useState("")
 
-  console.log(fileHash)
-
-
-
-
-  useEffect(() => {
-        
-    if (props.writeContracts) {
-      props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
-        console.log(event);
-      });
-        setSigner(props.userProvider.getSigner())
-        index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
-            console.log("Registered users:", result)
-            
-            setUsers(result.userArray)
-            setCaller(result.caller)
-            
-        })
-    }
-}, [props.writeContracts])
-
-const getDocInfo = async () => {
-  setSubmitting(true)
-  const docInfo = await index.getFile(props.tx, props.writeContracts, props.address, fileHash)
-  setDocInfo(docInfo)
-  setSubmitting(false)
-}
 
 const [current, setCurrent] = useState(0)
   const next=()=> {
@@ -67,12 +33,9 @@ const [current, setCurrent] = useState(0)
   }
 
  const prev=() =>{
-   
     setCurrent(current-1);
   }
 
- 
-    // const { current } = this.state;
     return (
       <>
 <div className="step__container">
@@ -81,21 +44,24 @@ const [current, setCurrent] = useState(0)
     <Grid columns='two' >
     <Grid.Row>
       <Grid.Column width={12}>
-        <div className="steps-content">{steps[current].content({ submitting, setSubmitting, getDocInfo, setFileHash, docInfo})}</div>
+        <div className="steps-content">{steps[current].content({ submitting, setSubmitting, setFileHash, fileHash})}</div>
         
         <div className="steps-action" style={{float:'right'}}>
        
-          {current > 0 && (
-            <Button style={{ margin: '0 8px' }} onClick={() => prev()}  className="button">
+
+             
+        {current > 0 && (
+            <Button style={{ background: "#4C51BF", color: "#fff" }} onClick={() => prev()}  className="button">
               Previous
             </Button>
           )}
 
              {current < steps.length - 1 && (
-            <Button type="primary" loading={submitting} onClick={() => {next(); getDocInfo()}} className="button">
+            <Button style={{ background: "#4C51BF", color: "#fff" }} type="primary" loading={submitting} onClick={() => {next()}} className="button">
               Verify
             </Button>
           )}
+         
           
           {current === steps.length - 1 && (null
           )}

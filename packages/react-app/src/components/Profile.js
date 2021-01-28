@@ -29,7 +29,7 @@ export default function Profile({ ceramic, idx }) {
     getUserData();
   }, [idx]);
 
-  return userLoading ? (
+  return !userLoading ? (
     user ?
     <>
       <ProfileContainer>

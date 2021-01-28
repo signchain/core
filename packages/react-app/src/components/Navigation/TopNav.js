@@ -28,7 +28,7 @@ address,
             Home
           </NavLink>
           <NavLink to="/documents" activeStyle>
-            My Documents
+            Documents
           </NavLink>
           <NavLink to="/profile" activeStyle>
             Profile

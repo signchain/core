@@ -11,6 +11,7 @@ import Preview from "./Preview";
 import { getAllUsers, registerDoc } from "../../lib/threadDb";
 import { sendMail } from "../../lib/notifications";
 import DocumentSubmitPopup from "../warnings/DocumentSubmitPopup";
+import StepSignError from "../warnings/StepSignError";
 
 const { Step } = Steps;
 
@@ -66,7 +67,9 @@ const stepper = props => {
   const [submitting, setSubmitting] = useState(false);
   const [fileInfo, setFileInfo] = useState({});
   const [title, setTitle] = useState(null);
-  const [submitStatus, setSubmitStatus] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState(false);
+
+  const [signError, setSignError] = useState(false);
 
   let fileInputRef = React.createRef();
 
@@ -93,107 +96,131 @@ const stepper = props => {
   };
 
   const submitDocument = async () => {
-    const { docId, signatureID } = await registerDoc(
-      parties.concat([caller]),
-      fileInfo,
-      title,
-      setSubmitting,
-      signer,
-      docNotary,
-      caller,
-      props.tx,
-      props.writeContracts,
-    );
-    const urlParams = `${docId[0]}/${signatureID[0]}`;
-    await sendMail(
-      parties
-        .map(party => {
-          return party.email;
-        })
-        .concat([cc]),
-      { sender: caller.name, docId: urlParams },
-    );
-    setSubmitStatus(true)
+    try {
+      const { docId, signatureID } = await registerDoc(
+        parties.concat([caller]),
+        fileInfo,
+        title,
+        setSubmitting,
+        signer,
+        docNotary,
+        caller,
+        props.tx,
+        props.writeContracts,
+      );
+      console.log("DOCS ID", docId, signatureID);
+      if (docId !== null && signatureID !== null) {
+        const urlParams = `${docId[0]}/${signatureID[0]}`;
+        await sendMail(
+          parties
+            .map(party => {
+              return party.email;
+            })
+            .concat([cc]),
+          { sender: caller.name, docId: urlParams },
+        );
+        setSubmitStatus(true);
+      } else {
+        // alert("Failed to pay notary fees");
+        setSignError(true);
+        setSubmitStatus(false);
+      }
+    } catch (e) {
+      console.log(e);
+      // alert("Didnt submit mail");
+      setSignError(true);
+      setSubmitting(false);
+    }
   };
 
   return (
     <>
-      {
-        submitStatus ?
-          <DocumentSubmitPopup setCurrent={setCurrent} setSubmitStatus={setSubmitStatus}/>
-          :
-          <div className="step__container">
-            <Grid columns="two">
-              <Grid.Row>
-                <Grid.Column width={12}>
-                  <div className="steps-content">
-                    {steps[current].content({
-                      users,
-                      notaries,
-                      submitting,
-                      setTitle,
-                      setParties,
-                      setCC,
-                      setFileInfo,
-                      parties,
-                      fileInfo,
-                      title,
-                      cc,
-                      setSubmitting,
-                      setDocNotary,
-                    })}
-                  </div>
+      {signError ? (
+        <StepSignError signError={signError} setSignError={setSignError} setCurrent={setCurrent} />
+      ) : (
+        <>
+          {submitStatus ? (
+            <DocumentSubmitPopup setCurrent={setCurrent} setSubmitStatus={setSubmitStatus} />
+          ) : (
+            <div className="step__container">
+              <Grid columns="two">
+                <Grid.Row>
+                  <Grid.Column width={12}>
+                    <div className="steps-content">
+                      {steps[current].content({
+                        users,
+                        notaries,
+                        submitting,
+                        setTitle,
+                        setParties,
+                        setCC,
+                        setFileInfo,
+                        parties,
+                        fileInfo,
+                        title,
+                        cc,
+                        setSubmitting,
+                        setDocNotary,
+                      })}
+                    </div>
 
-                  <div className="steps-action" style={{ float: "right" }}>
-                    {current > 0 && (
-                      <Button style={{ margin: "0 8px" }} onClick={() => prev()} className="button">
-                        Previous
-                      </Button>
-                    )}
+                    <div className="steps-action" style={{ float: "right" }}>
+                      {current > 0 && (
+                        <Button style={{ margin: "0 8px" }} onClick={() => prev()} className="button">
+                          Previous
+                        </Button>
+                      )}
 
-                    {current < steps.length - 1 && (
-                      <Button
-                        type="primary"
-                        loading={submitting}
-                        onClick={() => next()}
-                        className="next-btn"
-                        style={{ background: "#4C51BF", color: "#fff" }}
-                      >
-                        Next
-                      </Button>
-                    )}
+                      {current < steps.length - 1 && (
+                        <Button
+                          type="primary"
+                          loading={submitting}
+                          onClick={() => next()}
+                          className="next-btn"
+                          style={{ background: "#4C51BF", color: "#fff" }}
+                        >
+                          Next
+                        </Button>
+                      )}
 
-                    {current === steps.length - 1 && (
-                      <Button
-                        type="primary"
-                        style={{ background: "#4C51BF", color: "#fff" }}
-                        loading={submitting}
-                        onClick={() => submitDocument()}
-                        className="next-btn"
-                      >
-                        Sign & Share
-                      </Button>
-                    )}
-                  </div>
-                </Grid.Column>
+                      {current === steps.length - 1 && (
+                        <Button
+                          type="primary"
+                          style={{ background: "#4C51BF", color: "#fff" }}
+                          loading={submitting}
+                          onClick={() => submitDocument()}
+                          className="next-btn"
+                        >
+                          Sign & Share
+                        </Button>
+                      )}
+                    </div>
+                  </Grid.Column>
 
-                <Grid.Column width={4}>
-                  <div className="stepper__container">
-                    <Steps direction="vertical" current={current}>
-                      {steps.map(item => (
-                        <Step
-                          key={item.title}
-                          title={item.title}
-                          style={{ display: "flex", border: "1px solid  #cbd5e0", alignItems: "center", padding: "10px" }}
-                        />
-                      ))}
-                    </Steps>
-                  </div>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          </div>
-      }
+                  <Grid.Column width={4}>
+                    <div className="stepper__container">
+                      <Steps direction="vertical" current={current}>
+                        {steps.map(item => (
+                          <Step
+                            key={item.title}
+                            title={item.title}
+                            style={{
+                              display: "flex",
+                              border: "1px solid  #cbd5e0",
+                              alignItems: "center",
+                              padding: "10px",
+                            }}
+                          />
+                        ))}
+                      </Steps>
+                    </div>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 };

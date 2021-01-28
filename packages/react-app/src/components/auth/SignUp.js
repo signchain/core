@@ -89,7 +89,7 @@ function SignUp({ userStatus, authStatus, setUserStatus, identity, address, idx,
         size="small"
         style={{ width: "450px" }}
       >
-        <Modal.Header>Sign Up</Modal.Header>
+        <Modal.Header>Please provide these details</Modal.Header>
         <Modal.Content image>
           <Modal.Description>
             <FormContainer>

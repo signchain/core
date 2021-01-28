@@ -8,7 +8,8 @@ export const DocumentContainer = styled.div`
 `;
 
 export const DocumentHeader = styled.div`
-  background: linear-gradient(89.72deg, #4c51bf 0.19%, #3a3ab0 28.58%, #4c51bf 99.07%);
+  /* background: linear-gradient(89.72deg, #4c51bf 0.19%, #3a3ab0 28.58%, #4c51bf 99.07%); */
+  background-color: #4143b6;
 
   align-items: center;
 `;
@@ -77,7 +78,7 @@ export const DetailsContainer = styled.div`
   }
 
   .Details-card-preview {
-    background-color: #4c51bf;
+    background-color: #4143b6;
     color: #fff;
     padding: 30px;
     max-width: 250px;
@@ -352,8 +353,8 @@ export const DetailsInfo = styled.div`
   .note {
     display: flex;
 
-    margin-top: 48px;
-    margin-bottom: 48px;
+    margin-top: 30px;
+    margin-bottom: 30px;
     text-align: center;
 
     justify-content: space-between;
