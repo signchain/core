@@ -5,7 +5,7 @@ const { createDefinition, publishSchema } = require("@ceramicstudio/idx-tools");
 const { Ed25519Provider } = require("key-did-provider-ed25519");
 const fromString = require("uint8arrays/from-string");
 
-const CERAMIC_URL = "https://ceramic-clay.3boxlabs.com";
+const CERAMIC_URL = "http://ceramic.signchain.xyz:7007";
 
 const Profile = {
   doctype: "tile",
