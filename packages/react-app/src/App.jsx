@@ -82,7 +82,7 @@ function App() {
           const client = await loginUserWithChallenge(identity);
           let userInfo
           if (client !== null) {
-            userInfo = await getLoginUser(user.address, idx)
+            userInfo = await getLoginUser(user.address)
             if (userInfo !== null) {
               localStorage.setItem("USER", JSON.stringify(userInfo))
               localStorage.setItem("password", "12345");

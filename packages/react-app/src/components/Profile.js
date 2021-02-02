@@ -4,21 +4,48 @@ import {FieldTimeOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
 import {definitions} from "../ceramic/config.json";
 import {Header, Icon, Loader, Segment} from "semantic-ui-react";
 import {ProfileContainer} from "./styles/Profile.Style";
+import {updateUserProfile} from "../lib/threadDb";
 
 export default function Profile({ ceramic, idx }) {
   const [user, setUser] = useState(null);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [dob, setDob] = useState('');
+  const [userId, setUserId] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  const userType = { party: 0, notary: 1 };
+
   const [userLoading, setUserLoading] = useState(true);
   useEffect(() => {
     async function getUserData() {
       try {
         if (idx) {
           const data = await idx.get(definitions.profile, idx.id);
-          setUser(data);
+
+          const userThreadDb = JSON.parse(localStorage.getItem('USER'))
+          setUser(userThreadDb);
+          setName(userThreadDb.name);
+          setEmail(userThreadDb.email);
+          setDob(userThreadDb.profileDetails.DOB);
+          setPhoneNumber(userThreadDb.profileDetails.phoneNumber)
+          setUserId(userThreadDb._id)
           setUserLoading(false);
           if(data){
             console.log("data fetched")
           }else{
+            // Registration on idx
             console.log("Something is wrong with IDX")
+            let notary = true
+            if (userThreadDb.userType===0){
+              notary = false
+            }
+            await idx.set(definitions.profile, {
+              name: userThreadDb.name,
+              email: userThreadDb.email,
+              notary: notary,
+              userAddress: userThreadDb.address
+            });
           }
         }
       } catch (err) {
@@ -27,6 +54,11 @@ export default function Profile({ ceramic, idx }) {
     }
     getUserData();
   }, [idx]);
+
+
+  const updateProfile = async ()=>{
+    await updateUserProfile(name, email, dob, phoneNumber, userId, idx)
+  }
 
   return !userLoading ? (
     user ?

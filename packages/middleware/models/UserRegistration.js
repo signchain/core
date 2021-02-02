@@ -7,6 +7,13 @@ const UserRegistration = {
         did: {type:'string'},
         name: {type: 'string'},
         email: {type: 'string'},
+        profileDetails: {
+            type: 'object',
+            properties: {
+                DOB: {type: 'string'},
+                phoneNumber: {type:'string'}
+            }
+        },
         address: { type: 'string'},
         publicKey: { type: 'string'},
         userType: { type: 'number'},

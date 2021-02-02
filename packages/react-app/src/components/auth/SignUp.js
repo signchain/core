@@ -12,7 +12,7 @@ function SignUp({ authStatus, setUserStatus, identity, address, idx, seed }) {
   const [open, setOpen] = useState(true);
 
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("NA");
   const [notary, setNotary] = useState(false);
   const [error, setError] = useState({status: false, message: ''});
 
@@ -47,7 +47,6 @@ function SignUp({ authStatus, setUserStatus, identity, address, idx, seed }) {
         name: name,
         email: email,
         notary: notary,
-        joindate : moment(new Date()).format("ll"),
         userAddress: address
       });
     }

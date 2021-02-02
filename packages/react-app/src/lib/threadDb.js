@@ -5,7 +5,7 @@ const { Client, Where, ThreadID } = require('@textile/hub')
 const wallet = require('wallet-besu')
 const ethers = require('ethers')
 const io = require('socket.io-client');
-
+const {definitions} = require('../ceramic/config.json')
 
 export const registerNewUser = async function(did, name, email, privateKey, userType, address){
     try {
@@ -17,6 +17,10 @@ export const registerNewUser = async function(did, name, email, privateKey, user
             did:did,
             name: name,
             email: email,
+            profileDetails:{
+                DOB: 'NA',
+                phoneNumber: 'NA'
+            },
             address: address,
             publicKey: publicKey.toString("hex"),
             userType: userType,
@@ -101,14 +105,12 @@ export const getCredentials = async function(){
     return {client, threadDb}
 }
 
-export const getLoginUser = async function(address, idx){
+export const getLoginUser = async function(address){
     try {
         const {threadDb, client} = await getCredentials()
         const query = new Where('address').eq(address)
         const threadId = ThreadID.fromBytes(threadDb)
         const result = await client.find(threadId, 'RegisterUser', query)
-        // By passing Ceramic IDX profile check
-        // const ceramicResult = await idx.get(definitions.profile, idx.id)
         if (result.length<1){
             console.log("Please register user!")
             return null
@@ -477,4 +479,31 @@ export const downloadFiles = async function (name, key, loggedUser,documentLocat
     })
 }
 
+export const updateUserProfile = async function(name, email, dob, phoneNumber,userId, idx){
+    const {threadDb, client} = await getCredentials()
+    const threadId = ThreadID.fromBytes(threadDb)
+    const user = await client.findByID(threadId, 'RegisterUser', userId)
+
+    if (user.length === 1){
+        user[0].name = name
+        user[0].email = email
+        user[0].profileDetails.DOB = dob
+        user[0].profileDetails.phoneNumber = phoneNumber
+
+        await client.save(threadId,'RegisterUser',[user[0]])
+
+        let notary = true;
+        if (user[0].userType ===0) {
+            notary = false;
+        }
+
+        await idx.set(definitions.profile, {
+            name: name,
+            email: email,
+            notary: notary,
+            userAddress: user[0].address
+        });
+    }
+
+}
 
