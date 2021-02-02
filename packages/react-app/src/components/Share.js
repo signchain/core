@@ -1,7 +1,8 @@
 /* eslint-disable */
-import React, { useEffect, useState } from "react";
-import { Button, Dropdown, Grid, Header, Icon } from "semantic-ui-react";
+import React, {useEffect, useState} from "react";
+import {Button, Dropdown, Grid, Header, Icon} from "semantic-ui-react";
 import jenny from "../images/jenny.jpg";
+
 const index = require("../lib/e2ee.js");
 
 export default function Share(props) {

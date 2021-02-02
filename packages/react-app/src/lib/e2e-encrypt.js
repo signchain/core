@@ -101,9 +101,6 @@ export const calculateHash = function(file){
     return ethers.utils.keccak256(file)
 }
 
-export const convertPass = function(pass){
-    return crypto.createHash('sha256').update(pass.toString()).digest()
-}
 
 export const decryptFile = async function(encryptedData,cipherKey){
     const iv = encryptedData.slice(0,16)

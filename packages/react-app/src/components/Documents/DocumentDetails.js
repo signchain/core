@@ -1,20 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Table, Icon, Image, Button, Loader, Message, Label } from "semantic-ui-react";
+import React, {useEffect, useState} from "react";
+import {Button, Icon, Image, Label, Loader, Table} from "semantic-ui-react";
 import SignWarning from "../warnings/SignWarning";
-import { WarningStatus, SignSuccess } from "./WarningNote";
-import { DocumentContainer, DocumentHeader, DetailsInfo } from "../styles/DocumentDetails.Style";
-import {
-  attachSignature,
-  downloadFiles,
-  getAllUsers,
-  getSingleDocument,
-  notarizeDoc,
-  signStatus,
-} from "../../lib/threadDb";
-import { Link } from "react-router-dom";
+import {DetailsInfo, DocumentContainer, DocumentHeader} from "../styles/DocumentDetails.Style";
+import {attachSignature, downloadFiles, getAllUsers, getSingleDocument, notarizeDoc,} from "../../lib/threadDb";
+import {Link} from "react-router-dom";
 import Sign from "../../images/icons/Sign.svg";
 import Download from "../../images/icons/Download.svg";
-import Notarize from "../../images/icons/notarize.svg";
 import Attachments from "../../images/icons/attachments.svg";
 import LogoAvatar from "../../images/icons/logoavatar.svg";
 import jenny from "../../images/jenny.jpg";

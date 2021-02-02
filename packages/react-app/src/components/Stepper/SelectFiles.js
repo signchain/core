@@ -1,10 +1,10 @@
 /* eslint-disable */
 
-import React, { useState } from "react";
+import React, {useState} from "react";
 import "antd/dist/antd.css";
 import upload from "../../images/upload.png";
-import { Upload, message } from "antd";
-import { Dropdown, Input } from "semantic-ui-react";
+import {message, Upload} from "antd";
+import {Input} from "semantic-ui-react";
 
 import fleek from "../../images/fleek.png";
 import AWS from "../../images/aws.png";

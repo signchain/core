@@ -1,9 +1,9 @@
- /* eslint-disable */ 
-import React, {useEffect, useState} from 'react';
+/* eslint-disable */
+import React, {useState} from 'react';
 import 'antd/dist/antd.css';
 import './verify.css';
-import { Steps } from 'antd';
-import { Grid, Button } from 'semantic-ui-react'
+import {Steps} from 'antd';
+import {Button, Grid} from 'semantic-ui-react'
 import SelectFiles from './SelectFiles'
 import Preview from './Preview'
 

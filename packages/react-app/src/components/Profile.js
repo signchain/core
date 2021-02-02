@@ -1,10 +1,9 @@
 // /* eslint-disable */
-import React, { useEffect, useState } from "react";
-import { UserOutlined, MailOutlined, FieldTimeOutlined } from "@ant-design/icons";
-import { definitions } from "../ceramic/config.json";
-import { Loader, Icon, Header, Segment } from "semantic-ui-react";
-import { ProfileContainer } from "../components/styles/Profile.Style";
-const index = require("../lib/e2ee.js");
+import React, {useEffect, useState} from "react";
+import {FieldTimeOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
+import {definitions} from "../ceramic/config.json";
+import {Header, Icon, Loader, Segment} from "semantic-ui-react";
+import {ProfileContainer} from "./styles/Profile.Style";
 
 export default function Profile({ ceramic, idx }) {
   const [user, setUser] = useState(null);

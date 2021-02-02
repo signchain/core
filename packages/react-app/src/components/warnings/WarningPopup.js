@@ -1,8 +1,7 @@
-import React, { useState } from "react";
-import { Button, Icon, Message, Modal } from "semantic-ui-react";
-import { SignInWarningContainer } from "../styles/WarningPopup.Styles";
+import React, {useState} from "react";
+import {Button, Message, Modal} from "semantic-ui-react";
+import {SignInWarningContainer} from "../styles/WarningPopup.Styles";
 import Lock from "../../images/Lock.svg";
-import { Link } from "react-router-dom";
 import SignUp from "../auth/SignUp";
 
 function WarningPopup({

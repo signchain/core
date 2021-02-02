@@ -1,6 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Button, Header, Icon, Modal } from "semantic-ui-react";
+import {Button, Header, Modal} from "semantic-ui-react";
 
 function SignWarning({ signWarning, setSignWarning }) {
   return (

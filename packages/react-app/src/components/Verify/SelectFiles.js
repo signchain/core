@@ -1,9 +1,8 @@
- /* eslint-disable */ 
+/* eslint-disable */
 import React, {useState} from 'react';
 import 'antd/dist/antd.css';
-import upload from '../../images/upload.png'
-import { Upload, message } from 'antd';
-import { Icon } from 'semantic-ui-react'
+import {message, Upload} from 'antd';
+import {Icon} from 'semantic-ui-react'
 
 const index = require('../../lib/e2ee.js')
 const e2e = require('../../lib/e2e-encrypt.js')

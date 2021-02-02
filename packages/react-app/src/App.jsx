@@ -4,12 +4,12 @@ import {HashRouter, Route, Switch} from "react-router-dom";
 import "antd/dist/antd.css";
 import 'semantic-ui-css/semantic.min.css'
 import "./App.css";
-import { getDefaultProvider, Web3Provider } from "@ethersproject/providers";
+import {getDefaultProvider, Web3Provider} from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { useUserAddress } from "eth-hooks";
-import { useExchangePrice, useGasPrice, useContractLoader } from "./hooks";
-import { Transactor } from "./helpers";
+import {useUserAddress} from "eth-hooks";
+import {useContractLoader, useExchangePrice, useGasPrice} from "./hooks";
+import {Transactor} from "./helpers";
 import wallet from 'wallet-besu'
 import {definitions} from "./ceramic/config.json"
 
@@ -19,23 +19,22 @@ import Profile from "./components/Profile";
 import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
 import Verify from './components/Verify/Verify'
- import TopNav from './components/Navigation/TopNav'
- import UserProfiles from "./components/UserProfile";
-import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
-import {generateSignature, getProvider} from "./lib/ceramicConnect"
+import TopNav from './components/Navigation/TopNav'
+import UserProfiles from "./components/UserProfile";
+import {ETHERSCAN_KEY, INFURA_ID} from "./constants";
+import {generateSignature} from "./lib/ceramicConnect"
 import {getLoginUser, loginUserWithChallenge} from "./lib/threadDb"
-import { BigNumber, providers, utils } from 'ethers'
 
 import Ceramic from '@ceramicnetwork/http-client'
-import { IDX } from '@ceramicstudio/idx'
-import { Ed25519Provider } from 'key-did-provider-ed25519'
+import {IDX} from '@ceramicstudio/idx'
+import {Ed25519Provider} from 'key-did-provider-ed25519'
 import {PrivateKey} from "@textile/hub";
 import Onboarding from './components/Onboarding/Onboarding'
 import WarningPopup from './components/warnings/WarningPopup'
 import DocumentDetails from './components/Documents/DocumentDetails'
 
 const blockExplorer = "https://etherscan.io/"
-const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
+const CERAMIC_URL = 'https://ceramic.signchain.xyz'
 const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 })
 
 function App() {
@@ -187,8 +186,7 @@ function App() {
                   blockExplorer={blockExplorer}
               >
                   <Route exact path="/" render={(props)=><Onboarding/>}/>
-                   {/* testing purpose- remove this while merging */}
-                <Route exact path="/warning" render={(props)=><WarningPopup/>}/>
+                
                 <Route exact path="/documents/:doc/:sig" render={(props)=>
                   <DocumentDetails
                     {...props}
@@ -217,16 +215,7 @@ function App() {
                     idx={idx}
                     identity = {identity}
                />}/>
-                {/* <Route exact path="/" render={(props) => 
-               <Dashboard
-                    address={address}
-                    tx={tx}
-                    writeContracts={writeContracts}
-                    userStatus={userStatus}
-                    authStatus={authStatus}
-                    idx={idx}
-                    identity = {identity}
-               />}/> */}
+               
                <Route exact path="/verify" render={(props) =>
                    <Verify
                        address={address}
