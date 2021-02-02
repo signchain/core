@@ -34,7 +34,7 @@ import WarningPopup from './components/warnings/WarningPopup'
 import DocumentDetails from './components/Documents/DocumentDetails'
 
 const blockExplorer = "https://etherscan.io/"
-const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
+const CERAMIC_URL = 'https://ceramic.signchain.xyz'
 const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 })
 
 function App() {
