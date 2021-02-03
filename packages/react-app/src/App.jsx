@@ -15,7 +15,7 @@ import {definitions} from "./ceramic/config.json"
 
 import Dashboard from "./components/Dashboard";
 import Documents from "./components/Documents";
-import Profile from "./components/Profile";
+import Profile from "./components/Profile/Profile";
 import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
 import Verify from './components/Verify/Verify'
