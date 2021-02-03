@@ -228,7 +228,8 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
         createdBy: {
             name:caller.name,
             address: caller.address,
-            did: caller.did
+            did: caller.did,
+            email: caller.email
         },
         signatureId: signatureID[0],
         documentHash: fileHash.toString("hex"),
@@ -247,7 +248,8 @@ export const registerDoc = async function(party, fileInfo, title, setSubmitting,
         createdBy: {
             name:caller.name,
             address: caller.address,
-            _id: caller._id
+            _id: caller._id,
+            email: caller.email
         },
         sharedWith: sharedParty,
         date: date.toDateString(),
@@ -398,6 +400,7 @@ export const getSingleDocument = async function(address, tx, writeContracts, doc
     let value = {
         createdBy: document.createdBy.name,
         createdByDid: document.createdBy.did,
+        createdByEmail: document.createdBy.email,
         docId: document._id,
         hash: hash,
         documentLocation:document.fileLocation,

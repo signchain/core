@@ -3,6 +3,7 @@ import {Button, Icon, Image, Label, Loader, Table} from "semantic-ui-react";
 import SignWarning from "../warnings/SignWarning";
 import {DetailsInfo, DocumentContainer, DocumentHeader} from "../styles/DocumentDetails.Style";
 import {attachSignature, downloadFiles, getAllUsers, getSingleDocument, notarizeDoc,} from "../../lib/threadDb";
+import {sendSignedMail} from "../../lib/notifications"
 import {Link} from "react-router-dom";
 import Sign from "../../images/icons/Sign.svg";
 import Download from "../../images/icons/Download.svg";
@@ -16,6 +17,7 @@ const DocumentDetails = props => {
   const userInfo = JSON.parse(loggedUser);
   const documentId = decodeURIComponent(props.match.params.doc);
   const signatureId = decodeURIComponent(props.match.params.sig);
+  const urlParams = `${documentId}/${signatureId}`;
   const did = encodeURIComponent(userInfo.did);
   const [caller, setCaller] = useState({});
   const [document, setDocument] = useState(null);
@@ -38,6 +40,7 @@ const DocumentDetails = props => {
           documentId,
           signatureId,
         );
+        console.log(documentInfo)
         setDocument(documentInfo);
         setLoading(false);
       } catch (e) {
@@ -65,6 +68,7 @@ const DocumentDetails = props => {
         setSignedStatus(true);
         setSignWarning(false);
         setSignLoader(false);
+        await sendSignedMail(document.createdByEmail, { sender: caller.name, docId: urlParams })
       }
     } catch (e) {
       // alert("Didn't sign it!");
