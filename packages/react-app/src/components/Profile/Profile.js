@@ -16,12 +16,26 @@ export default function Profile({ ceramic, idx }) {
       try {
         if (idx) {
           const data = await idx.get(definitions.profile, idx.id);
-          setUser(data);
+
+          const userThreadDb = JSON.parse(localStorage.getItem('USER'))
+          setUser(userThreadDb);
           setUserLoading(false);
-          if (data) {
-            console.log("data fetched");
-          } else {
-            console.log("Something is wrong with IDX");
+          if(data){
+            console.log("data fetched")
+            console.log("Data:", data)
+          }else{
+            // Registration on idx
+            console.log("Something is wrong with IDX")
+            let notary = true
+            if (userThreadDb.userType===0){
+              notary = false
+            }
+            await idx.set(definitions.profile, {
+              name: userThreadDb.name,
+              email: userThreadDb.email,
+              notary: notary,
+              userAddress: userThreadDb.address
+            });
           }
         }
       } catch (err) {
@@ -34,7 +48,7 @@ export default function Profile({ ceramic, idx }) {
   return !userLoading ? (
     user ? (
       <>
-        <EditProfile open={open} setOpen={setOpen} />
+        <EditProfile open={open} setOpen={setOpen} user={user} idx={idx}/>
         <ProfileContainer>
           <div className="profileContainer">
             <div className="profile">
@@ -44,7 +58,7 @@ export default function Profile({ ceramic, idx }) {
                 <span className="addressSpan">{idx.id}</span>{" "}
               </h3>
               <h3>
-                <span className="addressSpan">{user.userAddress}</span>{" "}
+                <span className="addressSpan">{user.address}</span>{" "}
               </h3>
 
               <div className="meta-info">
@@ -77,7 +91,7 @@ export default function Profile({ ceramic, idx }) {
                             <Icon name="phone" />
                             Phone
                           </Table.Cell>
-                          <Table.Cell> 9999999999</Table.Cell>
+                          <Table.Cell> {user.profileDetails.phoneNumber}</Table.Cell>
                         </Table.Row>
                         <Table.Row>
                           <Table.Cell>
@@ -85,16 +99,16 @@ export default function Profile({ ceramic, idx }) {
                             <Icon name="calendar alternate outline" />
                             DOB
                           </Table.Cell>
-                          <Table.Cell> 14-12-1997</Table.Cell>
+                          <Table.Cell> {user.profileDetails.DOB}</Table.Cell>
                         </Table.Row>
 
-                        <Table.Row>
+                        {/*<Table.Row>
                           <Table.Cell>
                             <Icon name="time" />
                             Member Since
                           </Table.Cell>
                           <Table.Cell>{user.joindate}</Table.Cell>
-                        </Table.Row>
+                        </Table.Row>*/}
                       </Table.Body>
                     </Table>
                     <Button

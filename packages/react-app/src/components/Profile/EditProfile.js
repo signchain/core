@@ -2,15 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Button, Checkbox, Form, Input, Message, Modal } from "semantic-ui-react";
 
 import { FormContainer } from "./EditProfile.Styles";
+import {updateUserProfile} from "../../lib/threadDb";
 
-function EditProfile({ open, setOpen }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+function EditProfile({ open, setOpen, user, idx }) {
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
 
-  const [dob, setDob] = useState("");
-  const [userId, setUserId] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [Type, setType] = useState("Party");
+  const [dob, setDob] = useState(user.profileDetails.DOB);
+  const [userId, setUserId] = useState(user._id);
+  const [phoneNumber, setPhoneNumber] = useState(user.profileDetails.phoneNumber);
+
+  const updateProfile = async ()=>{
+    console.log("Function called!!!")
+    await updateUserProfile(name, email, dob, phoneNumber, userId, idx, user.publicKey)
+  }
 
   return (
     <>
@@ -43,7 +48,6 @@ function EditProfile({ open, setOpen }) {
                     fluid
                     type="email"
                     icon="mail"
-                    pattern=".+@globex.com"
                     size="30"
                     iconPosition="left"
                     placeholder="JohnDoe@domain.com"
@@ -78,7 +82,7 @@ function EditProfile({ open, setOpen }) {
                   />
                 </Form.Field>
 
-                <Button type="primary" className="form-input-btn">
+                <Button type="primary" className="form-input-btn" onClick={updateProfile}>
                   Update
                 </Button>
               </Form>

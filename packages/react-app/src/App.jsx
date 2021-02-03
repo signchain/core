@@ -70,10 +70,6 @@ function App() {
         setInjectedProvider(new Web3Provider(provider));
     }, [setInjectedProvider]);
 
-    async function test (seed, identity, idx){
-
-    }
-
     async function loginUser(seed, identity, idx, address) {
       const pass = Buffer.from(new Uint8Array(seed)).toString("hex")
       const user = JSON.parse(localStorage.getItem('USER'))

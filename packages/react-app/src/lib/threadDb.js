@@ -479,10 +479,13 @@ export const downloadFiles = async function (name, key, loggedUser,documentLocat
     })
 }
 
-export const updateUserProfile = async function(name, email, dob, phoneNumber,userId, idx){
+export const updateUserProfile = async function(name, email, dob, phoneNumber,userId, idx, key){
     const {threadDb, client} = await getCredentials()
     const threadId = ThreadID.fromBytes(threadDb)
-    const user = await client.findByID(threadId, 'RegisterUser', userId)
+    console.log("UserId:",userId)
+    const query = new Where('publicKey').eq(key)
+    const user = await client.find(threadId, 'RegisterUser', query)
+    console.log("User:"+user[0])
 
     if (user.length === 1){
         user[0].name = name
@@ -492,6 +495,7 @@ export const updateUserProfile = async function(name, email, dob, phoneNumber,us
 
         await client.save(threadId,'RegisterUser',[user[0]])
 
+        console.log("Updated on ThreadDB!!!")
         let notary = true;
         if (user[0].userType ===0) {
             notary = false;
@@ -503,6 +507,7 @@ export const updateUserProfile = async function(name, email, dob, phoneNumber,us
             notary: notary,
             userAddress: user[0].address
         });
+        console.log("Updated on IDX!!!")
     }
 
 }
