@@ -15,7 +15,7 @@ import {definitions} from "./ceramic/config.json"
 
 import Dashboard from "./components/Dashboard";
 import Documents from "./components/Documents";
-import Profile from "./components/Profile";
+import Profile from "./components/Profile/Profile";
 import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
 import Verify from './components/Verify/Verify'
@@ -31,6 +31,7 @@ import {Ed25519Provider} from 'key-did-provider-ed25519'
 import {PrivateKey} from "@textile/hub";
 import Onboarding from './components/Onboarding/Onboarding'
 import WarningPopup from './components/warnings/WarningPopup'
+import NetworkChange from './components/warnings/NetworkChange'
 import DocumentDetails from './components/Documents/DocumentDetails'
 
 const blockExplorer = "https://etherscan.io/"
@@ -215,6 +216,8 @@ function App() {
                     idx={idx}
                     identity = {identity}
                />}/>
+
+                <Route exact path='/network' render={()=><NetworkChange/>}/>
                
                <Route exact path="/verify" render={(props) =>
                    <Verify
