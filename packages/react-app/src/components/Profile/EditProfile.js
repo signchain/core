@@ -23,6 +23,7 @@ function EditProfile({ open, setOpen, user, idx }) {
       const pattern= /^\d{10}$/
       if (!phoneNumber.match(pattern)){
         alert("Wrong mobile number!!")
+        return
       }
     }else{
       setPhoneNumber("NA")
@@ -32,12 +33,13 @@ function EditProfile({ open, setOpen, user, idx }) {
       const pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
       if (!email.match(pattern)) {
         alert("Wrong email!!")
+        return
       }
     }else{
       setEmail("NA")
     }
 
-    const result=await updateUserProfile(name, email, dob, phoneNumber, userId, idx, user.publicKey)
+    const result = await updateUserProfile(name, email, dob, phoneNumber, userId, idx, user.publicKey)
     if (result){
       alert("Updated!!")
     }else{
