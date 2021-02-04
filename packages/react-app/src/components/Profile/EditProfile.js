@@ -4,7 +4,8 @@ import { Button, Checkbox, Form, Input, Message, Modal } from "semantic-ui-react
 import { FormContainer } from "./EditProfile.Styles";
 import { updateUserProfile } from "../../lib/threadDb";
 import Warning from "./Warning";
-import updateSuccess from "./updateSuccess";
+import UpdateSuccess from "./updateSuccess";
+import FinalUpdate from "./FinalUpdate";
 
 function EditProfile({ open, setOpen, user, idx }) {
   const [name, setName] = useState(user.name);
@@ -16,6 +17,7 @@ function EditProfile({ open, setOpen, user, idx }) {
   const [loader, setloader] = useState(false);
   const [warning, setWarning] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [updated, setUpdated] = useState(false);
 
   const updateProfile = async () => {
     console.log("Function called!!!");
@@ -28,8 +30,10 @@ function EditProfile({ open, setOpen, user, idx }) {
     if (phoneNumber.length !== 0 && phoneNumber !== "NA") {
       const pattern = /^\d{10}$/;
       if (!phoneNumber.match(pattern)) {
-        // setWarning(true);
-        alert("Wrong mobile number!!");
+        // alert("Wrong mobile number!!");
+        setloader(false);
+        setWarning(true);
+        return;
       }
     } else {
       setPhoneNumber("NA");
@@ -38,8 +42,10 @@ function EditProfile({ open, setOpen, user, idx }) {
     if (email.length !== 0 && email !== "NA") {
       const pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
       if (!email.match(pattern)) {
-        alert("Wrong email!!");
-        // setWarning(true);
+        // alert("Wrong email!!");
+        setloader(false);
+        setWarning(true);
+        return;
       }
     } else {
       setEmail("NA");
@@ -47,11 +53,11 @@ function EditProfile({ open, setOpen, user, idx }) {
 
     const result = await updateUserProfile(name, email, dob, phoneNumber, userId, idx, user.publicKey);
     if (result) {
-      alert("Updated!!");
       setloader(false);
       setOpen(false);
+      setSuccess(true);
     } else {
-      alert("Something went wrong!!!");
+      setUpdated(true);
     }
 
     //
@@ -60,7 +66,8 @@ function EditProfile({ open, setOpen, user, idx }) {
   return (
     <>
       <Warning warning={warning} setWarning={setWarning} />
-      <updateSuccess success={success} setSuccess={setSuccess} />
+      <UpdateSuccess success={success} setSuccess={setSuccess} />
+      <FinalUpdate updated={updated} setUpdated={setUpdated} />
       <Modal
         open={open}
         onClose={() => setOpen(false)}

@@ -3,13 +3,13 @@ import { Button, Icon, Modal } from "semantic-ui-react";
 
 function updateSuccess({ success, setSuccess }) {
   return (
-    <Modal size="mini" onOpen={() => setSuccess(true)} onClick={() => setSuccess(false)}>
-      <Modal.Header>OOPS!!</Modal.Header>
+    <Modal size="mini" open={success} onOpen={() => setSuccess(true)} onClose={() => setSuccess(false)}>
+      <Modal.Header>Success</Modal.Header>
       <Modal.Content>
-        <p>Invalid Email/Phone format.</p>
+        <p>Your Profile has been Updated.</p>
       </Modal.Content>
       <Modal.Actions>
-        <Button negative onClick={() => setSuccess(false)}>
+        <Button positive onClick={() => setSuccess(false)}>
           Close
         </Button>
       </Modal.Actions>

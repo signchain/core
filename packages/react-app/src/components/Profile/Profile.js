@@ -17,24 +17,24 @@ export default function Profile({ ceramic, idx }) {
         if (idx) {
           const data = await idx.get(definitions.profile, idx.id);
 
-          const userThreadDb = JSON.parse(localStorage.getItem('USER'))
+          const userThreadDb = JSON.parse(localStorage.getItem("USER"));
           setUser(userThreadDb);
           setUserLoading(false);
-          if(data){
-            console.log("data fetched")
-            console.log("Data:", data)
-          }else{
+          if (data) {
+            console.log("data fetched");
+            console.log("Data:", data);
+          } else {
             // Registration on idx
-            console.log("Something is wrong with IDX")
-            let notary = true
-            if (userThreadDb.userType===0){
-              notary = false
+            console.log("Something is wrong with IDX");
+            let notary = true;
+            if (userThreadDb.userType === 0) {
+              notary = false;
             }
             await idx.set(definitions.profile, {
               name: userThreadDb.name,
               email: userThreadDb.email,
               notary: notary,
-              userAddress: userThreadDb.address
+              userAddress: userThreadDb.address,
             });
           }
         }
@@ -48,7 +48,7 @@ export default function Profile({ ceramic, idx }) {
   return !userLoading ? (
     user ? (
       <>
-        <EditProfile open={open} setOpen={setOpen} user={user} idx={idx}/>
+        <EditProfile open={open} setOpen={setOpen} user={user} idx={idx} />
         <ProfileContainer>
           <div className="profileContainer">
             <div className="profile">
@@ -64,9 +64,6 @@ export default function Profile({ ceramic, idx }) {
               <div className="meta-info">
                 <div className="about">
                   <Card className="about-card">
-                    <Card.Content header="About" />
-                    <Card.Content description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," />
-
                     <Table fixed>
                       <Table.Body>
                         <Table.Row>
@@ -112,10 +109,11 @@ export default function Profile({ ceramic, idx }) {
                       </Table.Body>
                     </Table>
                     <Button
+                      fluid
                       primary
                       onClick={() => setOpen(true)}
                       className="form-input-btn"
-                      style={{ backgroundColor: "#4c51bf" }}
+                      style={{ backgroundColor: "#4c51bf", marginTop: "8px", width: "100%" }}
                     >
                       Update Profile
                     </Button>

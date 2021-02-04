@@ -3,7 +3,7 @@ import { Button, Icon, Modal } from "semantic-ui-react";
 
 function Warning({ warning, setWarning }) {
   return (
-    <Modal size="mini" onOpen={() => setWarning(true)} onClick={() => setWarning(false)}>
+    <Modal size="mini" open={warning} onOpen={() => setWarning(true)} onClose={() => setWarning(false)}>
       <Modal.Header>OOPS!!</Modal.Header>
       <Modal.Content>
         <p>Invalid Email/Phone format.</p>
