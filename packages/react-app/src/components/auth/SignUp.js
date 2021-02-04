@@ -12,7 +12,7 @@ function SignUp({ authStatus, setUserStatus, identity, address, idx, seed }) {
   const [open, setOpen] = useState(true);
 
   const [name, setName] = useState("");
-  const [email, setEmail] = useState(null);
+  const [email, setEmail] = useState("NA");
   const [notary, setNotary] = useState(false);
   const [error, setError] = useState({ status: false, message: "" });
 

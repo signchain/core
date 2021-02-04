@@ -29,8 +29,8 @@ export const registerNewUser = async function(did, name, email, privateKey, user
         }
 
         const query = new Where('address').eq(address)
-        const query1 = new Where('email').eq(email).or(query)
-        const result = await client.find(threadId, 'RegisterUser', query1)
+        //const query1 = new Where('email').eq(email).or(query)
+        const result = await client.find(threadId, 'RegisterUser', query)
         if (result.length<1){
             await client.create(threadId, 'RegisterUser', [data])
             localStorage.setItem("USER", JSON.stringify(data))
@@ -482,32 +482,50 @@ export const downloadFiles = async function (name, key, loggedUser,documentLocat
 export const updateUserProfile = async function(name, email, dob, phoneNumber,userId, idx, key){
     const {threadDb, client} = await getCredentials()
     const threadId = ThreadID.fromBytes(threadDb)
-    console.log("UserId:",userId)
+    console.log("UserId:",userId, email)
     const query = new Where('publicKey').eq(key)
-    const user = await client.find(threadId, 'RegisterUser', query)
-    console.log("User:"+user[0])
 
-    if (user.length === 1){
-        user[0].name = name
-        user[0].email = email
-        user[0].profileDetails.DOB = dob
-        user[0].profileDetails.phoneNumber = phoneNumber
+    const emailQuery = new Where('email').eq(email)
+    const result = await client.find(threadId, 'RegisterUser', emailQuery)
+    console.log("result:",result[0])
+    try {
+        if ((result.length === 1 && result[0]._id === userId) || result.length<1) {
+            console.log("Updating!!")
+            const user = await client.find(threadId, 'RegisterUser', query)
+            console.log("User:" + user[0])
 
-        await client.save(threadId,'RegisterUser',[user[0]])
+            if (user.length === 1) {
+                user[0].name = name
+                user[0].email = email
+                user[0].profileDetails.DOB = dob
+                user[0].profileDetails.phoneNumber = phoneNumber
 
-        console.log("Updated on ThreadDB!!!")
-        let notary = true;
-        if (user[0].userType ===0) {
-            notary = false;
+                await client.save(threadId, 'RegisterUser', [user[0]])
+
+                console.log("Updated on ThreadDB!!!")
+                let notary = true;
+                if (user[0].userType === 0) {
+                    notary = false;
+                }
+
+                await idx.set(definitions.profile, {
+                    name: name,
+                    email: email,
+                    notary: notary,
+                    userAddress: user[0].address
+                });
+                console.log("Updated on IDX!!!")
+
+                return true;
+            }
+            return false;
+        } else {
+            console.log("Email already exists!!!")
+            return false;
         }
-
-        await idx.set(definitions.profile, {
-            name: name,
-            email: email,
-            notary: notary,
-            userAddress: user[0].address
-        });
-        console.log("Updated on IDX!!!")
+    }catch (e){
+        console.log("Exce:",e)
+        return false
     }
 
 }

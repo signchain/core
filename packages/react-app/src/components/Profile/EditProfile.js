@@ -14,7 +14,37 @@ function EditProfile({ open, setOpen, user, idx }) {
 
   const updateProfile = async ()=>{
     console.log("Function called!!!")
-    await updateUserProfile(name, email, dob, phoneNumber, userId, idx, user.publicKey)
+
+    if (name.length===0){
+      setName("NA")
+    }
+
+    if (phoneNumber.length!==0 && phoneNumber!=='NA'){
+      const pattern= /^\d{10}$/
+      if (!phoneNumber.match(pattern)){
+        alert("Wrong mobile number!!")
+      }
+    }else{
+      setPhoneNumber("NA")
+    }
+
+    if (email.length!==0 && email!=='NA'){
+      const pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+      if (!email.match(pattern)) {
+        alert("Wrong email!!")
+      }
+    }else{
+      setEmail("NA")
+    }
+
+    const result=await updateUserProfile(name, email, dob, phoneNumber, userId, idx, user.publicKey)
+    if (result){
+      alert("Updated!!")
+    }else{
+      alert("Something went wrong!!!")
+    }
+
+    //
   }
 
   return (
@@ -36,7 +66,7 @@ function EditProfile({ open, setOpen, user, idx }) {
                     fluid
                     icon="user"
                     iconPosition="left"
-                    placeholder="Enter your Full Name"
+                    value={name}
                     type="text"
                     className="form-input"
                     onChange={e => setName(e.target.value)}
@@ -46,11 +76,11 @@ function EditProfile({ open, setOpen, user, idx }) {
                 <Form.Field className="form-input">
                   <Input
                     fluid
-                    type="email"
+                    type="text"
                     icon="mail"
                     size="30"
                     iconPosition="left"
-                    placeholder="JohnDoe@domain.com"
+                    value={email}
                     className="form-input"
                     onChange={e => setEmail(e.target.value)}
                   />
@@ -62,9 +92,8 @@ function EditProfile({ open, setOpen, user, idx }) {
                     type="tel"
                     icon="phone"
                     iconPosition="left"
-                    placeholder="Enter your Mobile number"
+                    value={phoneNumber}
                     className="form-input"
-                    pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
                     onChange={e => setPhoneNumber(e.target.value)}
                   />
                 </Form.Field>
@@ -75,9 +104,8 @@ function EditProfile({ open, setOpen, user, idx }) {
                     type="datetime-local"
                     icon="time"
                     iconPosition="left"
-                    placeholder="Enter your DOB"
+                    value={dob}
                     className="form-input"
-                    pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
                     onChange={e => setDob(e.target.value)}
                   />
                 </Form.Field>
