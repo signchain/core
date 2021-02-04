@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Button, Checkbox, Form, Input, Message, Modal } from "semantic-ui-react";
 
 import { FormContainer } from "./EditProfile.Styles";
-import {updateUserProfile} from "../../lib/threadDb";
+import { updateUserProfile } from "../../lib/threadDb";
+import Warning from "./Warning";
+import updateSuccess from "./updateSuccess";
 
 function EditProfile({ open, setOpen, user, idx }) {
   const [name, setName] = useState(user.name);
@@ -11,44 +13,54 @@ function EditProfile({ open, setOpen, user, idx }) {
   const [dob, setDob] = useState(user.profileDetails.DOB);
   const [userId, setUserId] = useState(user._id);
   const [phoneNumber, setPhoneNumber] = useState(user.profileDetails.phoneNumber);
+  const [loader, setloader] = useState(false);
+  const [warning, setWarning] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const updateProfile = async ()=>{
-    console.log("Function called!!!")
+  const updateProfile = async () => {
+    console.log("Function called!!!");
+    setloader(true);
 
-    if (name.length===0){
-      setName("NA")
+    if (name.length === 0) {
+      setName("NA");
     }
 
-    if (phoneNumber.length!==0 && phoneNumber!=='NA'){
-      const pattern= /^\d{10}$/
-      if (!phoneNumber.match(pattern)){
-        alert("Wrong mobile number!!")
+    if (phoneNumber.length !== 0 && phoneNumber !== "NA") {
+      const pattern = /^\d{10}$/;
+      if (!phoneNumber.match(pattern)) {
+        // setWarning(true);
+        alert("Wrong mobile number!!");
       }
-    }else{
-      setPhoneNumber("NA")
+    } else {
+      setPhoneNumber("NA");
     }
 
-    if (email.length!==0 && email!=='NA'){
+    if (email.length !== 0 && email !== "NA") {
       const pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
       if (!email.match(pattern)) {
-        alert("Wrong email!!")
+        alert("Wrong email!!");
+        // setWarning(true);
       }
-    }else{
-      setEmail("NA")
+    } else {
+      setEmail("NA");
     }
 
-    const result=await updateUserProfile(name, email, dob, phoneNumber, userId, idx, user.publicKey)
-    if (result){
-      alert("Updated!!")
-    }else{
-      alert("Something went wrong!!!")
+    const result = await updateUserProfile(name, email, dob, phoneNumber, userId, idx, user.publicKey);
+    if (result) {
+      alert("Updated!!");
+      setloader(false);
+      setOpen(false);
+    } else {
+      alert("Something went wrong!!!");
     }
 
     //
-  }
+  };
 
   return (
     <>
+      <Warning warning={warning} setWarning={setWarning} />
+      <updateSuccess success={success} setSuccess={setSuccess} />
       <Modal
         open={open}
         onClose={() => setOpen(false)}
@@ -110,7 +122,7 @@ function EditProfile({ open, setOpen, user, idx }) {
                   />
                 </Form.Field>
 
-                <Button type="primary" className="form-input-btn" onClick={updateProfile}>
+                <Button type="primary" loading={loader} className="form-input-btn" onClick={updateProfile}>
                   Update
                 </Button>
               </Form>
