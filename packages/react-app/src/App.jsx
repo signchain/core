@@ -46,7 +46,7 @@ function App() {
     const [userStatus, setUserStatus] = useState(0);
     const [seed, setSeed] = useState([])
     const [connectLoading, setConnectLoading] = useState(false)
-
+    const [network, setNetwork] = useState(null);
     const authStatus = {
         "disconnected" : 0,
         "connected" : 1,
@@ -107,6 +107,9 @@ function App() {
         setConnectLoading(true)
         await loadWeb3Modal()
         const {seed, metamask} = await generateSignature();
+        if(metamask){
+          setNetwork(metamask.signer.provider._network.name)
+        }
         setSeed(seed)
         const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(seed))
         setIdentity(identity)
