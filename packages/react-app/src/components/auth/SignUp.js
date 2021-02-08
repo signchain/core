@@ -49,6 +49,8 @@ function SignUp({ authStatus, setUserStatus, identity, address, idx, seed }) {
           notary: notary,
           joindate: moment(new Date()).format("ll"),
           userAddress: address,
+          phoneNumber: 'NA',
+          dob: 'NA'
         });
       } catch (e) {
         console.log("Failed to create profile on IDX");

@@ -10,20 +10,28 @@ export default function Profile({ ceramic, idx }) {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [userLoading, setUserLoading] = useState(true);
+  const [phoneNumber, setPhoneNumber] = useState(null);
+  const [dob, setDob] = useState(null);
 
   useEffect(() => {
     async function getUserData() {
       try {
         if (idx) {
           const data = await idx.get(definitions.profile, idx.id);
-
           const userThreadDb = JSON.parse(localStorage.getItem("USER"));
-          setUser(userThreadDb);
           setUserLoading(false);
           if (data) {
+            setUser(data);
+            setPhoneNumber(data.phoneNumber)
+            setDob(data.dob)
+            setUserLoading(false);
             console.log("data fetched");
             console.log("Data:", data);
           } else {
+            setUser(userThreadDb);
+            setPhoneNumber(userThreadDb.profileDetails.phoneNumber)
+            setDob(userThreadDb.profileDetails.DOB)
+            setUserLoading(false);
             // Registration on idx
             console.log("Something is wrong with IDX");
             let notary = true;
@@ -35,6 +43,8 @@ export default function Profile({ ceramic, idx }) {
               email: userThreadDb.email,
               notary: notary,
               userAddress: userThreadDb.address,
+              phoneNumber: userThreadDb.profileDetails.phoneNumber,
+              dob: userThreadDb.profileDetails.DOB
             });
           }
         }
@@ -48,7 +58,7 @@ export default function Profile({ ceramic, idx }) {
   return !userLoading ? (
     user ? (
       <>
-        <EditProfile open={open} setOpen={setOpen} user={user} idx={idx} />
+        <EditProfile open={open} setOpen={setOpen} user={user} DOB={dob} PhoneNumber={phoneNumber} idx={idx} />
         <ProfileContainer>
           <div className="profileContainer">
             <div className="profile">
@@ -57,10 +67,6 @@ export default function Profile({ ceramic, idx }) {
               <h3>
                 <span className="addressSpan">{idx.id}</span>{" "}
               </h3>
-              <h3>
-                <span className="addressSpan">{user.address}</span>{" "}
-              </h3>
-
               <div className="meta-info">
                 <div className="about">
                   <Card className="about-card">
@@ -88,7 +94,7 @@ export default function Profile({ ceramic, idx }) {
                             <Icon name="phone" />
                             Phone
                           </Table.Cell>
-                          <Table.Cell> {user.profileDetails.phoneNumber}</Table.Cell>
+                          <Table.Cell> {phoneNumber}</Table.Cell>
                         </Table.Row>
                         <Table.Row>
                           <Table.Cell>
@@ -96,7 +102,7 @@ export default function Profile({ ceramic, idx }) {
                             <Icon name="calendar alternate outline" />
                             DOB
                           </Table.Cell>
-                          <Table.Cell> {user.profileDetails.DOB}</Table.Cell>
+                          <Table.Cell> {dob}</Table.Cell>
                         </Table.Row>
 
                         {/*<Table.Row>

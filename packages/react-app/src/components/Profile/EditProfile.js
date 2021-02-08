@@ -7,13 +7,13 @@ import Warning from "./Warning";
 import UpdateSuccess from "./updateSuccess";
 import FinalUpdate from "./FinalUpdate";
 
-function EditProfile({ open, setOpen, user, idx }) {
+function EditProfile({ open, setOpen, user, DOB, PhoneNumber, idx }) {
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
 
-  const [dob, setDob] = useState(user.profileDetails.DOB);
+  const [dob, setDob] = useState(DOB);
   const [userId, setUserId] = useState(user._id);
-  const [phoneNumber, setPhoneNumber] = useState(user.profileDetails.phoneNumber);
+  const [phoneNumber, setPhoneNumber] = useState(PhoneNumber);
   const [loader, setloader] = useState(false);
   const [warning, setWarning] = useState(false);
   const [success, setSuccess] = useState(false);
