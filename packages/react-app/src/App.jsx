@@ -15,7 +15,7 @@ import {definitions} from "./ceramic/config.json"
 
 import Dashboard from "./components/Dashboard";
 import Documents from "./components/Documents";
-import Profile from "./components/Profile";
+import Profile from "./components/Profile/Profile";
 import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
 import Verify from './components/Verify/Verify'
@@ -31,6 +31,7 @@ import {Ed25519Provider} from 'key-did-provider-ed25519'
 import {PrivateKey} from "@textile/hub";
 import Onboarding from './components/Onboarding/Onboarding'
 import WarningPopup from './components/warnings/WarningPopup'
+import NetworkChange from './components/warnings/NetworkChange'
 import DocumentDetails from './components/Documents/DocumentDetails'
 
 const blockExplorer = "https://etherscan.io/"
@@ -69,10 +70,6 @@ function App() {
         setInjectedProvider(new Web3Provider(provider));
     }, [setInjectedProvider]);
 
-    async function test (seed, identity, idx){
-
-    }
-
     async function loginUser(seed, identity, idx, address) {
       const pass = Buffer.from(new Uint8Array(seed)).toString("hex")
       const user = JSON.parse(localStorage.getItem('USER'))
@@ -82,7 +79,7 @@ function App() {
           const client = await loginUserWithChallenge(identity);
           let userInfo
           if (client !== null) {
-            userInfo = await getLoginUser(user.address, idx)
+            userInfo = await getLoginUser(user.address)
             if (userInfo !== null) {
               localStorage.setItem("USER", JSON.stringify(userInfo))
               localStorage.setItem("password", "12345");
@@ -218,6 +215,8 @@ function App() {
                     idx={idx}
                     identity = {identity}
                />}/>
+
+                <Route exact path='/network' render={()=><NetworkChange/>}/>
                
                <Route exact path="/verify" render={(props) =>
                    <Verify

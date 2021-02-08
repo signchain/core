@@ -38,6 +38,16 @@ const Profile = {
         type: "string",
         title: "userAddress",
         maxLength: 150,
+      },
+      phoneNumber: {
+        type: 'string',
+        title: 'phoneNumber',
+        maxLength: 15
+      },
+      dob: {
+        type: 'string',
+        title: 'dob',
+        maxLength: 20
       }
     },
   },

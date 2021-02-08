@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
-import {Button, Checkbox, Form, Input, Message, Modal} from "semantic-ui-react";
+import React, { useEffect, useState } from "react";
+import { Button, Checkbox, Form, Input, Message, Modal } from "semantic-ui-react";
 import logo from "../../images/logoInverted.png";
-import {definitions} from "../../ceramic/config.json";
-import {FormContainer} from "../styles/SignUp.Styles";
-import {loginUserWithChallenge, registerNewUser} from "../../lib/threadDb";
+import { definitions } from "../../ceramic/config.json";
+import { FormContainer } from "../styles/SignUp.Styles";
+import { loginUserWithChallenge, registerNewUser } from "../../lib/threadDb";
 
 const index = require("../../lib/e2ee.js");
 const moment = require("moment");
@@ -12,9 +12,9 @@ function SignUp({ authStatus, setUserStatus, identity, address, idx, seed }) {
   const [open, setOpen] = useState(true);
 
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("NA");
   const [notary, setNotary] = useState(false);
-  const [error, setError] = useState({status: false, message: ''});
+  const [error, setError] = useState({ status: false, message: "" });
 
   const SignupStatus = { preInit: 0, init: 1, wallet: 2, ceramic: 3, contract: 4 };
   const [signupStatus, setSignupStatus] = useState(SignupStatus.preInit);
@@ -43,17 +43,17 @@ function SignUp({ authStatus, setUserStatus, identity, address, idx, seed }) {
       const accounts = await index.getAllAccounts(pass);
       setSignupStatus(SignupStatus.ceramic);
       try {
-      await idx.set(definitions.profile, {
-        name: name,
-        email: email,
-        notary: notary,
-        joindate : moment(new Date()).format("ll"),
-        userAddress: address
-      });
-    }
-      catch(e) {
-        console.log("Failed to create profile on IDX")
-
+        await idx.set(definitions.profile, {
+          name: name,
+          email: email,
+          notary: notary,
+          joindate: moment(new Date()).format("ll"),
+          userAddress: address,
+          phoneNumber: 'NA',
+          dob: 'NA'
+        });
+      } catch (e) {
+        console.log("Failed to create profile on IDX");
       }
       setSignupStatus(SignupStatus.contract);
       //const dbClient = await authorizeUser(password)
@@ -65,13 +65,13 @@ function SignUp({ authStatus, setUserStatus, identity, address, idx, seed }) {
           email,
           accounts[0],
           notary ? userType.notary : userType.party,
-          address
+          address,
         );
         if (registrationStatus) {
           setUserStatus(authStatus.loggedIn);
         } else {
           localStorage.clear();
-          setError({status: true, message: 'An account with same email/ wallet address exists'})
+          setError({ status: true, message: "An account with same email/ wallet address exists" });
           setSignupStatus(SignupStatus.init);
         }
       }
@@ -107,12 +107,13 @@ function SignUp({ authStatus, setUserStatus, identity, address, idx, seed }) {
                   />
                 </Form.Field>
 
-                <Form.Field className="form-input" required>
+                <Form.Field className="form-input">
                   <Input
                     fluid
                     icon="mail"
                     iconPosition="left"
-                    placeholder="Enter your Email  Address"
+                    pattern=".+@globex.com"
+                    placeholder="JohnDoe@domain.com"
                     className="form-input"
                     onChange={e => setEmail(e.target.value)}
                   />
@@ -128,15 +129,15 @@ function SignUp({ authStatus, setUserStatus, identity, address, idx, seed }) {
                     setNotary(!notary);
                   }}
                 />
-                 {
-                   error.status ? <Message negative>
-                <Message.Header>Account creation failed</Message.Header>
-                 <p> {error.message}</p>
-                </Message> : null
-                }
+                {error.status ? (
+                  <Message negative>
+                    <Message.Header>Account creation failed</Message.Header>
+                    <p> {error.message}</p>
+                  </Message>
+                ) : null}
 
                 {signupStatus == SignupStatus.init ? (
-                  <Button type="primary" className="form-input-btn" disabled={!email || !name} onClick={registerUser}>
+                  <Button type="primary" className="form-input-btn" disabled={!name} onClick={registerUser}>
                     Sign Up
                   </Button>
                 ) : signupStatus == SignupStatus.wallet ? (
